@@ -1,24 +1,24 @@
 {
-  "name": "unplugin-starter",
+  "name": "unplugin-gueleton",
   "type": "module",
   "version": "0.1.0",
-  "packageManager": "pnpm@10.11.0",
   "description": "",
   "license": "MIT",
-  "homepage": "https://github.com/antfu/unplugin-starter#readme",
+  "homepage": "https://github.com/siaikin/unplugin-gueleton#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/antfu/unplugin-starter.git"
+    "url": "git+https://github.com/siaikin/unplugin-gueleton.git"
   },
   "bugs": {
-    "url": "https://github.com/antfu/unplugin-starter/issues"
+    "url": "https://github.com/siaikin/unplugin-gueleton/issues"
   },
   "keywords": [
     "unplugin",
     "vite",
     "webpack",
     "rollup",
-    "transform"
+    "transform",
+    "skeleton"
   ],
   "exports": {
     ".": "./dist/index.js",
@@ -31,7 +31,8 @@
     "./types": "./dist/types.js",
     "./vite": "./dist/vite.js",
     "./webpack": "./dist/webpack.js",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./client/vue": "./dist/client/vue/index.js"
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -53,7 +54,7 @@
     "lint": "eslint .",
     "play": "npm -C playground run dev",
     "prepublishOnly": "npm run build",
-    "release": "bumpp && pnpm publish",
+    "release": "bumpp && npm publish",
     "start": "tsx src/index.ts",
     "test": "vitest"
   },
@@ -64,6 +65,7 @@
     "esbuild": "*",
     "rollup": "^3",
     "vite": ">=3",
+    "vue": "^3",
     "webpack": "^4 || ^5"
   },
   "peerDependenciesMeta": {
@@ -85,18 +87,25 @@
     "vite": {
       "optional": true
     },
+    "vue": {
+      "optional": true
+    },
     "webpack": {
       "optional": true
     }
   },
   "dependencies": {
+    "lodash-es": "^4.17.21",
+    "split2": "^4.2.0",
     "unplugin": "^2.3.4"
   },
   "devDependencies": {
+    "@types/lodash-es": "^4.17.12",
     "@antfu/eslint-config": "^4.13.2",
     "@nuxt/kit": "^3.17.4",
     "@nuxt/schema": "^3.17.4",
     "@types/node": "^22.15.21",
+    "@types/split2": "^4.2.3",
     "bumpp": "^10.1.1",
     "eslint": "^9.27.0",
     "nodemon": "^3.1.10",
@@ -106,6 +115,10 @@
     "typescript": "^5.8.3",
     "vite": "^6.3.5",
     "vitest": "^3.1.4",
+    "vue": "^3.5.17",
     "webpack": "^5.99.9"
-  }
+  },
+  "workspaces": [
+    "./playground"
+  ]
 }

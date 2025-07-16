@@ -1,0 +1,40 @@
+import type { Skeleton, SkeletonTreeNode } from '../../shared/types/skeleton'
+
+export function skeletonToDom(skeleton: Skeleton): Node {
+  const rootNode = deepMapSkeleton(skeleton.tree, (node) => {
+    const el = document.createElement(node.tag)
+
+    for (const [key, value] of Object.entries(node.style)) {
+      (el.style as any)[key] = value
+    }
+
+    return el
+  })
+
+  return rootNode
+}
+
+function deepMapSkeleton(rootNode: SkeletonTreeNode, callbackFn: (skeleton: SkeletonTreeNode) => Element): Element {
+  const root = callbackFn(rootNode)
+
+  const cloneMap = new Map<SkeletonTreeNode, Element>()
+  cloneMap.set(rootNode, root)
+
+  const queue = [rootNode]
+
+  while (queue.length) {
+    const node = queue.shift()!
+
+    const skeletonNode = cloneMap.get(node)!
+
+    for (const child of node.children) {
+      const skeletonChild = callbackFn(child)
+      cloneMap.set(child, skeletonChild)
+
+      skeletonNode.appendChild(skeletonChild)
+      queue.push(child)
+    }
+  }
+
+  return root
+}
