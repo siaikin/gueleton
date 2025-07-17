@@ -34,13 +34,17 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = options => 
   //   prestoreData = JSON.parse(jsonString)
   // },
   transform: {
-    filter: {
-      code: {
-        include: '__GUELETON_PRESTORE_DATA__',
-      },
-    },
-    handler(code) {
-      return code.replace('__GUELETON_PRESTORE_DATA__', JSON.stringify(prestoreData))
+    // filter: {
+    //   code: {
+    //     include: '__GUELETON_PRESTORE_DATA__',
+    //   },
+    // },
+    handler(code, id) {
+      console.log(id)
+      if (code.includes('__GUELETON_PRESTORE_DATA__')) {
+        return code.replace('__GUELETON_PRESTORE_DATA__', JSON.stringify(prestoreData))
+      }
+      return code;
     },
   },
   vite: {

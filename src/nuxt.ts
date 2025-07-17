@@ -1,5 +1,5 @@
 import type { Options } from './types'
-import { addVitePlugin, addWebpackPlugin, defineNuxtModule } from '@nuxt/kit'
+import { addVitePlugin, addWebpackPlugin, defineNuxtModule, addComponent } from '@nuxt/kit'
 import vite from './vite'
 import webpack from './webpack'
 
@@ -19,6 +19,12 @@ export default defineNuxtModule<ModuleOptions>({
     addVitePlugin(() => vite(options))
     addWebpackPlugin(() => webpack(options))
 
-    // ...
+    {
+      const names = [
+        'Gueleton',
+        'GueletonProvider',
+      ]
+      names.forEach((name) => addComponent({ name, export: name, filePath: "unplugin-gueleton/client/vue" }));
+    }
   },
 })
