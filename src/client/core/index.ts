@@ -1,4 +1,5 @@
 export { domToSkeleton } from './dom-to-skeleton'
+export { prune, type PruneOptions } from './prune'
 export { skeletonToDom } from './skeleton-to-dom'
 
 // (function () {

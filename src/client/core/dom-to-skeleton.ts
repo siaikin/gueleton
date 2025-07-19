@@ -18,6 +18,8 @@ const copiedCssProperties: string[] = [
   ...['flex-direction', 'align-items', 'justify-content', 'flex-wrap', 'gap', 'flex', 'flex-shrink', 'flex-grow', 'flex-basis', 'flex-flow', 'align-content', 'align-self'],
   // grid 布局
   ...['grid-template-columns', 'grid-template-rows', 'grid-template-areas', 'grid-column-gap', 'grid-row-gap', 'grid-gap', 'grid-column-start', 'grid-column-end', 'grid-row-start', 'grid-row-end', 'grid-auto-columns', 'grid-auto-rows', 'grid-auto-flow', 'grid-template'],
+  // transform 相关属性
+  ...['transform', 'transform-origin', 'transform-style', 'transform-box'],
 ]
 
 export function domToSkeleton(dom: Element, _options: Partial<SkeletonOptions> = {}): Skeleton {

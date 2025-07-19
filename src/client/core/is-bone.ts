@@ -17,12 +17,27 @@ const inlineTags = [
 ]
 
 /**
- * 判断节点是否可作为骨骼节点.
- * 在骨架中, 骨骼节点将具有宽高和背景颜色.
+ * 判断节点是否可作为骨骼节点. 在骨架中, 骨骼节点将具有宽高和背景颜色.
+ *
+ * 骨骼节点是满足下列任意条件的 DOM 元素:
+ * - 自身是 {@link inlineTags} 或 {@link boneableTags} 中列出的元素, 且面积大于等于 32
+ * - 子节点中包含非空文本节点
+ * - 子节点中包含 {@link inlineTags} 或 {@link boneableTags} 中列出的元素, 且面积大于等于 32
+ * - 自身存在 `data-gueleton-bone` 属性
+ *
+ * 根据 depth 参数, 上述条件中的子节点也会被递归判断.
  */
 export function isBoneable(node: Node, depth: number = 1): boolean {
-  if (node.nodeType !== Node.ELEMENT_NODE)
+  if (node.nodeType !== Node.ELEMENT_NODE) {
     return false
+  }
+
+  {
+    const element = node as HTMLElement
+    if (Object.hasOwn(element.dataset, 'gueletonBone')) {
+      return true
+    }
+  }
 
   let result = false
   walk(

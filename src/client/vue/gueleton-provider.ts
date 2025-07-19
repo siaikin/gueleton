@@ -1,10 +1,12 @@
 import type { SetupContext, SlotsType } from 'vue'
+import { isNil } from 'lodash-es'
 import { defineComponent, provide } from 'vue'
 import { DevelopmentStorage, ProductionStorage } from '../core/storage'
 
 export const GueletonProviderKey = Symbol('GueletonProviderKey')
 export interface GueletonProviderKeyType<T extends object = object> {
-  getPrestoreData: (id: string) => T
+  getPrestoreData: (id: string) => T | null
+  hasPrestoreData: (id: string) => boolean
   setPrestoreData: (id: string, data: T) => Promise<void>
 }
 
@@ -36,6 +38,10 @@ export const GueletonProvider = /*#__PURE__*/ defineComponent(
       },
       setPrestoreData: async (id, data) => {
         await storage.setItem(id, JSON.stringify(data))
+      },
+      hasPrestoreData: (id) => {
+        const temp = storage.getItem(id)
+        return !isNil(temp) && temp.length > 0
       },
     })
 

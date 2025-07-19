@@ -15,10 +15,3 @@ export {
 }
 
 export default GueletonPlugin
-
-declare module 'vue' {
-  interface GlobalComponents {
-    Gueleton: typeof Gueleton
-    GueletonProvider: typeof GueletonProvider
-  }
-}

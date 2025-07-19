@@ -1,16 +1,26 @@
-import type { ComponentPublicInstance, SetupContext, SlotsType } from 'vue'
+import type { ComponentPublicInstance, SetupContext, SlotsType, VNode } from 'vue'
+import type { PruneOptions } from '../core'
 import type { GueletonProviderKeyType } from './gueleton-provider'
+import type { PrimitiveProps } from './primitive'
 import { isEmpty, isNil } from 'lodash-es'
-import { computed, defineComponent, h, inject, onMounted, ref, toRefs, watch } from 'vue'
-import { domToSkeleton, skeletonToDom } from '../core'
+import { Comment, computed, defineComponent, h, inject, ref, toRefs, watch } from 'vue'
+import { domToSkeleton, prune, skeletonToDom } from '../core'
 import { createContextNotFoundError } from '../core/utils'
 import { GueletonProviderKey } from './gueleton-provider'
+import { Primitive } from './primitive'
+import { useMounted } from './utils'
 
-interface ComponentProps<DATA> {
+interface ComponentProps<DATA> extends PrimitiveProps {
   id: string
   data: DATA
-  limit?: number
-  as?: string
+  /**
+   * 这个参数可以让你直接在代码中设置预存数据, 而不依赖构建时的 vite/webpack 插件.
+   * 当 prestoreData 不为空时, 会直接使用 prestoreData, 而不会根据 data 生成预存数据.
+   *
+   * 内部使用 [lodash.isEmpty](https://lodash.com/docs/4.17.15#isEmpty) 判断 prestoreData 是否为空.
+   */
+  prestoreData?: DATA | null | undefined
+  limit?: PruneOptions
   loading?: boolean
 }
 
@@ -18,7 +28,7 @@ interface Events extends Record<string, any[]> {
 }
 
 interface ComponentSlots<DATA> {
-  default?: (params: { data: DATA }) => any
+  default?: (params: { data: DATA }) => VNode[]
 }
 
 // eslint-disable-next-line style/spaced-comment
@@ -31,27 +41,25 @@ export const Gueleton = /*#__PURE__*/ defineComponent(
 
     const { getPrestoreData, setPrestoreData } = provider
 
-    const { id, data } = toRefs(props)
-    const loading = computed(() => isNil(props.loading) ? false : props.loading)
-    const limit = computed(() => props.limit ?? undefined)
+    const { id } = toRefs(props)
+    const data = computed(() => props.data)
+    const loading = computed(() => props.loading)
+    const limit = computed(() => props.limit)
 
-    watch([data, limit], ([_data, _limit]) => {
-      if (isEmpty(_data)) {
+    const prestoreData = computed(() => props.prestoreData ?? getPrestoreData(id.value))
+
+    watch([id, data, limit], ([_id, _data, _limit]) => {
+      if (!isEmpty(prestoreData.value)) {
         return
       }
 
-      const cutedData = (_data as Array<any>).slice(0, _limit)
-      setPrestoreData(id.value, cutedData as T)
+      setPrestoreData(_id, prune(_data as object, _limit) as T)
     })
 
-    const presotreData = getPrestoreData(id.value)
-
-    const isMounted = ref(false)
-    onMounted(() => isMounted.value = true)
+    const isMounted = useMounted()
 
     const containerRef = ref<Element | ComponentPublicInstance | null>(null)
     watch([containerRef, isMounted, loading], async ([_container, _isMounted, _loading], _, onCleanup) => {
-      console.log(_container, _isMounted, _loading)
       if (isNil(_container) || !_isMounted || !_loading) {
         return
       }
@@ -67,18 +75,25 @@ export const Gueleton = /*#__PURE__*/ defineComponent(
     }, { immediate: true, flush: 'post' })
 
     return () => {
+      const outputData = (loading.value && !isEmpty(prestoreData.value)) ? prestoreData.value : data.value
       return h(
-        props.as || 'div',
+        Primitive,
         {
           ...attrs,
+          // eslint-disable-next-line ts/ban-ts-comment
+          // @ts-expect-error
+          as: props.as,
+          // eslint-disable-next-line ts/ban-ts-comment
+          // @ts-expect-error
+          asChild: props.asChild,
           ref: containerRef,
         },
-        slots.default?.({ data: loading.value ? presotreData : props.data }),
+        () => slots.default?.({ data: outputData })?.filter(node => node.type !== Comment),
       )
     }
   },
   {
-    props: ['id', 'data', 'limit', 'as', 'loading'],
+    props: ['id', 'data', 'limit', 'loading', 'as', 'asChild', 'prestoreData'],
   },
 )
 

@@ -24,27 +24,12 @@ prestoreData = JSON.parse(jsonString)
 // eslint-disable-next-line unused-imports/no-unused-vars
 export const unpluginFactory: UnpluginFactory<Options | undefined> = options => ({
   name: 'unplugin-gueleton',
-  // buildStart() {
-  //   prestoreRoot = `${trimEnd(process.cwd(), '/')}/.gueleton`
-  //   console.log(prestoreRoot)
-  //   mkdirSync(prestoreRoot, { recursive: true })
-
-  //   prestoreIndexJsonPath = `${prestoreRoot}/index.json`
-  //   const jsonString = readFileSync(prestoreIndexJsonPath, { encoding: 'utf-8' }) || '{}'
-  //   prestoreData = JSON.parse(jsonString)
-  // },
   transform: {
-    // filter: {
-    //   code: {
-    //     include: '__GUELETON_PRESTORE_DATA__',
-    //   },
-    // },
-    handler(code, id) {
-      console.log(id)
+    handler(code) {
       if (code.includes('__GUELETON_PRESTORE_DATA__')) {
         return code.replace('__GUELETON_PRESTORE_DATA__', JSON.stringify(prestoreData))
       }
-      return code;
+      return code
     },
   },
   vite: {
@@ -52,7 +37,8 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = options => 
       if (prestoreRoot) {
         if (isArray(server.watcher.options.ignored)) {
           server.watcher.options.ignored.push(prestoreRoot)
-        } else if (server.watcher.options.ignored) {
+        }
+        else if (server.watcher.options.ignored) {
           server.watcher.options.ignored = [server.watcher.options.ignored, prestoreRoot]
         }
       }
@@ -87,15 +73,12 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = options => 
           })
           delete prestoreData[json.key]
         }
-        else if (req.method === 'PUT') {
-          throw new Error(`Method not allowed ${req.method}`)
-        }
         else {
           throw new Error(`Method not allowed ${req.method}`)
         }
 
         if (prestoreIndexJsonPath) {
-          writeFileSync(prestoreIndexJsonPath, JSON.stringify(prestoreData), { encoding: 'utf-8' })
+          writeFileSync(prestoreIndexJsonPath, JSON.stringify(prestoreData, null, 2), { encoding: 'utf-8' })
         }
 
         res.statusCode = 200
