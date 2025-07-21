@@ -70,7 +70,7 @@ const prestoreData = ref([
     :data="list"
     :prestore-data="prestoreData"
     :limit="3"
-    :loading="loading"
+    :loading="true"
     as-child
   >
     <div class="h-96 overflow-auto border m-4">

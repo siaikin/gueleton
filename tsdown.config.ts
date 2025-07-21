@@ -1,8 +1,21 @@
 import { defineConfig } from 'tsdown'
 
 export default defineConfig({
+  target: 'es2015',
   entry: [
     'src/*.ts',
     'src/client/vue/index.ts',
   ],
+  shims: true,
+  dts: {
+    sourcemap: true,
+  },
+  exports: {
+    customExports: (exports, context) => {
+      exports['./client/vue'] = exports['./client/vue/index']
+      delete exports['./client/vue/index']
+
+      return exports
+    },
+  },
 })

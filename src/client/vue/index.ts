@@ -9,9 +9,8 @@ const GueletonPlugin: Plugin = {
   },
 }
 
-export {
-  Gueleton,
-  GueletonProvider,
-}
+export type * from './global.d'
+export * from './gueleton'
+export * from './gueleton-provider'
 
 export default GueletonPlugin

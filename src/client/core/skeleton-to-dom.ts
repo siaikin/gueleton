@@ -1,3 +1,4 @@
+import { isString, kebabCase } from 'lodash-es'
 import type { Skeleton, SkeletonTreeNode } from '../../shared/types/skeleton'
 
 export function skeletonToDom(skeleton: Skeleton): Node {
@@ -5,7 +6,11 @@ export function skeletonToDom(skeleton: Skeleton): Node {
     const el = document.createElement(node.tag)
 
     for (const [key, value] of Object.entries(node.style)) {
-      (el.style as any)[key] = value
+      el.style.setProperty(kebabCase(key), value)
+    }
+
+    if (isString(node.className) && node.className.length > 0) {
+      el.classList.add(...node.className.split(' '))
     }
 
     return el

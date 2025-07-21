@@ -25,11 +25,18 @@ prestoreData = JSON.parse(jsonString)
 export const unpluginFactory: UnpluginFactory<Options | undefined> = options => ({
   name: 'unplugin-gueleton',
   transform: {
+    filter: {
+      id: /\.(m|c)?(j|t)sx?$/,
+      code: {
+        include: '__GUELETON_PRESTORE_DATA__',
+      },
+    },
     handler(code) {
-      if (code.includes('__GUELETON_PRESTORE_DATA__')) {
-        return code.replace('__GUELETON_PRESTORE_DATA__', JSON.stringify(prestoreData))
-      }
-      return code
+      return code.replace('__GUELETON_PRESTORE_DATA__', JSON.stringify(prestoreData))
+      // if (code.includes('__GUELETON_PRESTORE_DATA__')) {
+      //   return code.replace('__GUELETON_PRESTORE_DATA__', JSON.stringify(prestoreData))
+      // }
+      // return code
     },
   },
   vite: {
@@ -86,8 +93,8 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = options => 
       })
     },
   },
-  webpack() {
-  },
+  // webpack() {
+  // },
 })
 
 export const unplugin = /* #__PURE__ */ createUnplugin(unpluginFactory)

@@ -1,11 +1,10 @@
-import type { SkeletonOptions } from '../../shared'
-import type { Skeleton, SkeletonTreeNode } from '../../shared/types/skeleton'
-import { merge } from 'lodash-es'
-import { DefaultSkeletonOptions } from '../../shared'
+import type * as CSS from 'csstype'
+import type { Skeleton, SkeletonOptions, SkeletonTreeNode } from '../../shared'
+import { isArray, kebabCase } from 'lodash-es'
 import { isBonableContainer, isBoneable } from './is-bone'
 import { getChildNodes, isCustomElement, isEmptyTextNode } from './utils'
 
-const copiedCssProperties: string[] = [
+const copiedCssProperties: (keyof CSS.StandardPropertiesHyphen)[] = [
   // position
   ...['position', 'z-index', 'top', 'left', 'right', 'bottom'],
   'text-align',
@@ -17,14 +16,12 @@ const copiedCssProperties: string[] = [
   // flex 布局
   ...['flex-direction', 'align-items', 'justify-content', 'flex-wrap', 'gap', 'flex', 'flex-shrink', 'flex-grow', 'flex-basis', 'flex-flow', 'align-content', 'align-self'],
   // grid 布局
-  ...['grid-template-columns', 'grid-template-rows', 'grid-template-areas', 'grid-column-gap', 'grid-row-gap', 'grid-gap', 'grid-column-start', 'grid-column-end', 'grid-row-start', 'grid-row-end', 'grid-auto-columns', 'grid-auto-rows', 'grid-auto-flow', 'grid-template'],
+  ...['grid-template-columns', 'grid-template-rows', 'grid-template-areas', 'column-gap', 'row-gap', 'grid-column-start', 'grid-column-end', 'grid-row-start', 'grid-row-end', 'grid-auto-columns', 'grid-auto-rows', 'grid-auto-flow', 'grid-template'],
   // transform 相关属性
   ...['transform', 'transform-origin', 'transform-style', 'transform-box'],
-]
+] as const
 
-export function domToSkeleton(dom: Element, _options: Partial<SkeletonOptions> = {}): Skeleton {
-  const options = merge({}, DefaultSkeletonOptions, _options)
-
+export function domToSkeleton<CSSTYPE>(dom: Element, options: SkeletonOptions<CSSTYPE>): Skeleton {
   const tree = deepMapDom(dom, (node) => {
     const element = node as Element
     const nodeName = element.nodeName.toLowerCase()
@@ -32,6 +29,7 @@ export function domToSkeleton(dom: Element, _options: Partial<SkeletonOptions> =
     const skeletonNode: SkeletonTreeNode = {
       attrs: {},
       style: {},
+      className: '',
       tag: isCustomElement(node) ? 'div' : nodeName,
       children: [],
     }
@@ -44,11 +42,11 @@ export function domToSkeleton(dom: Element, _options: Partial<SkeletonOptions> =
           skeletonNode.style[key] = value === 'inline' ? 'inline-block' : value
           break
         default:
-          skeletonNode.style[key] = value
+          skeletonNode.style[key] = value as any
       }
     }
 
-    if (isBoneable(node, options.quality)) {
+    if (isBoneable(node, options.depth)) {
       switch (nodeName) {
         case 'img':
         case 'video':
@@ -62,9 +60,12 @@ export function domToSkeleton(dom: Element, _options: Partial<SkeletonOptions> =
       const rect = element.getBoundingClientRect()
       skeletonNode.style.width = `${rect.width}px`
       skeletonNode.style.height = `${rect.height}px`
-      skeletonNode.style['border-radius'] = `${options.radius}px`
-      skeletonNode.style['background-color'] = options.color
-      skeletonNode.style['background-clip'] = 'content-box'
+
+      assignStyle(skeletonNode.style, options.bone.style)
+      skeletonNode.className = isArray(options.bone.className) ? options.bone.className.join(' ') : options.bone.className
+      // skeletonNode.style['border-radius'] = `${options.radius}px`
+      // skeletonNode.style['background-color'] = options.color
+      // skeletonNode.style['background-clip'] = 'content-box'
     }
 
     return skeletonNode
@@ -84,9 +85,10 @@ export function domToSkeleton(dom: Element, _options: Partial<SkeletonOptions> =
     root.style.left = '0'
     root.style.width = '100%'
     root.style.margin = '0'
+    root.style.zIndex = '10'
     // root.style.height = '100%';
-    root.style['background-color'] = options.backgroundColor
-    root.style['z-index'] = '10'
+    assignStyle(root.style, options.container.style)
+    root.className = isArray(options.container.className) ? options.container.className.join(' ') : options.container.className
   }
 
   return {
@@ -107,7 +109,7 @@ function deepMapDom(domNode: Node, callbackFn: (node: Node) => SkeletonTreeNode,
 
   const queue = []
 
-  if (isBoneable(domNode, options.quality)) {
+  if (isBoneable(domNode, options.depth)) {
     return root
   }
   else {
@@ -141,7 +143,7 @@ function deepMapDom(domNode: Node, callbackFn: (node: Node) => SkeletonTreeNode,
 
       skeletonNode.children.push(skeletonChild)
 
-      if (isBoneable(child, options.quality)) {
+      if (isBoneable(child, options.depth)) {
         // no need to traverse
       }
       else {
@@ -151,4 +153,14 @@ function deepMapDom(domNode: Node, callbackFn: (node: Node) => SkeletonTreeNode,
   }
 
   return root
+}
+
+function assignStyle(target: CSS.StandardPropertiesHyphen, source: CSS.StandardProperties & CSS.StandardPropertiesHyphen): void {
+  const keys = Object.keys(source) as (keyof (CSS.StandardProperties & CSS.StandardPropertiesHyphen))[]
+
+  for (const key of keys) {
+    const kebabCaseKey = kebabCase(key) as (keyof CSS.StandardPropertiesHyphen)
+
+    target[kebabCaseKey] = source[key] as any
+  }
 }

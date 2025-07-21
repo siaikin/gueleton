@@ -3,7 +3,7 @@ import HelloWorld from './HelloWorld.vue'
 </script>
 
 <template>
-  <GueletonProvider>
+  <GueletonProvider :bone="{ className: 'animate-pulse' }">
     <div>
       <h1>Vue 应用初始化</h1>
       <HelloWorld />
@@ -11,5 +11,4 @@ import HelloWorld from './HelloWorld.vue'
   </GueletonProvider>
 </template>
 
-<style>
-</style>
+<style></style>
