@@ -1,5 +1,5 @@
-import { isString, kebabCase } from 'lodash-es'
 import type { Skeleton, SkeletonTreeNode } from '../../shared/types/skeleton'
+import { isString, kebabCase } from 'lodash-es'
 
 export function skeletonToDom(skeleton: Skeleton): Node {
   const rootNode = deepMapSkeleton(skeleton.tree, (node) => {

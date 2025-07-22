@@ -5,7 +5,7 @@ import type { GueletonProviderKeyType } from './gueleton-provider'
 import type { PrimitiveProps } from './primitive'
 import { isEmpty, isNil, merge } from 'lodash-es'
 import { Comment, computed, defineComponent, h, inject, ref, toRefs, watch } from 'vue'
-import { domToSkeleton, prune, skeletonToDom } from '../core'
+import { prune, skeleton } from '../core'
 import { createContextNotFoundError } from '../core/utils'
 import { GueletonProviderKey } from './gueleton-provider'
 import { Primitive } from './primitive'
@@ -23,6 +23,7 @@ export type GueletonProps<DATA> = {
   prestoreData?: DATA | null | undefined
   limit?: PruneOptions
   loading?: boolean
+  inPlace?: boolean
 } & Partial<SkeletonOptions<CSSProperties>> & PrimitiveProps
 
 export interface GueletonEvents extends Record<string, any[]> {
@@ -56,37 +57,33 @@ export const Gueleton = /*#__PURE__*/ (<T extends object>() => {
       const data = computed(() => props.data)
       const loading = computed(() => props.loading)
       const limit = computed(() => props.limit)
+      const inPlace = computed(() => props.inPlace)
 
-      const prestoreData = computed(() => props.prestoreData ?? getPrestoreData(id.value))
+      const prestoreData = ref<T | null | undefined>(props.prestoreData)
+      watch(prestoreData, async val => isNil(val) && (prestoreData.value = await getPrestoreData(id.value)), { immediate: true })
 
-      watch([id, data, limit], ([_id, _data, _limit]) => {
-        if (!isEmpty(prestoreData.value)) {
-          return
-        }
-
-        setPrestoreData(_id, prune(_data as object, _limit) as T)
-      })
-
-      const isMounted = useMounted()
+      /**
+       * 当 prestoreData 为空时, 会根据 data 和 limit 生成预存数据, 并发送到 devServer
+       */
+      watch([id, data, limit], ([_id, _data, _limit]) => isEmpty(prestoreData.value) && !isEmpty(_data) && setPrestoreData(_id, prune(_data as object, _limit) as T))
 
       const containerRef = ref<Element | ComponentPublicInstance | null>(null)
-      watch([containerRef, isMounted, loading, mergedSkeletonOptions], async ([_container, _isMounted, _loading, _mergedSkeletonOptions], _, onCleanup) => {
-        if (isNil(_container) || !_isMounted || !_loading) {
-          return
-        }
+      watch(
+        [containerRef, useMounted(), loading, mergedSkeletonOptions, prestoreData, inPlace],
+        async ([_container, _isMounted, _loading, _mergedSkeletonOptions, _prestoreData, _inPlace], _, onCleanup) => {
+          if (isNil(_container) || !_isMounted || !_loading) {
+            return
+          }
 
-        const _el = _container instanceof Element ? _container : _container.$el
-        const temp = domToSkeleton(_el, _mergedSkeletonOptions)
-        const skeletonDom = skeletonToDom(temp)
-        _el.appendChild(skeletonDom)
-
-        onCleanup(() => {
-          skeletonDom.parentElement?.removeChild(skeletonDom)
-        })
-      }, { immediate: true, flush: 'post' })
+          const _el = _container instanceof Element ? _container : _container.$el
+          const { attach, detach } = skeleton(_el, { ..._mergedSkeletonOptions, inPlace: _inPlace })
+          attach()
+          onCleanup(() => detach())
+        },
+        { immediate: true, flush: 'post' },
+      )
 
       return () => {
-        const outputData = (loading.value && !isEmpty(prestoreData.value)) ? prestoreData.value : data.value
         return h(
           Primitive,
           {
@@ -99,12 +96,16 @@ export const Gueleton = /*#__PURE__*/ (<T extends object>() => {
             asChild: props.asChild,
             ref: containerRef,
           },
-          () => slots.default?.({ data: outputData })?.filter(node => node.type !== Comment),
+          () => slots.default?.({ data: (loading.value && !isEmpty(prestoreData.value)) ? prestoreData.value : data.value })
+          /**
+           * 只是为了更好的开发体验, 允许默认插槽中存在注释节点, render 时会过滤掉注释节点
+           */
+            ?.filter(node => node.type !== Comment),
         )
       }
     },
     {
-      props: ['id', 'data', 'limit', 'loading', 'as', 'asChild', 'prestoreData', 'depth', 'bone', 'container'],
+      props: ['id', 'data', 'limit', 'loading', 'as', 'asChild', 'prestoreData', 'depth', 'bone', 'container', 'inPlace'],
     },
   )
 })()

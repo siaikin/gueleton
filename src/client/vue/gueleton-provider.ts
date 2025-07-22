@@ -1,14 +1,15 @@
 import type { CSSProperties, Ref, SetupContext, SlotsType } from 'vue'
+import type { SkeletonOptions } from '../../shared'
 import { isNil, merge } from 'lodash-es'
 import { computed, defineComponent, provide } from 'vue'
+import { DefaultSkeletonOptions } from '../../shared'
 import { DevelopmentStorage, ProductionStorage } from '../core/storage'
-import { DefaultSkeletonOptions, SkeletonOptions } from '../../shared'
 
 export const GueletonProviderKey = Symbol('GueletonProviderKey')
 export interface GueletonProviderKeyType<T extends object = object> {
   options: Ref<SkeletonOptions<CSSProperties>>
-  getPrestoreData: (id: string) => T | null
-  hasPrestoreData: (id: string) => boolean
+  getPrestoreData: (id: string) => Promise<T | null>
+  hasPrestoreData: (id: string) => Promise<boolean>
   setPrestoreData: (id: string, data: T) => Promise<void>
 }
 
@@ -36,18 +37,18 @@ export const GueletonProvider = /*#__PURE__*/ defineComponent(
 
     provide<GueletonProviderKeyType>(GueletonProviderKey, {
       options,
-      getPrestoreData: (id) => {
+      getPrestoreData: async (id) => {
         try {
-          return JSON.parse(storage.getItem(id) ?? 'null')
+          return JSON.parse(await storage.getItem(id) ?? 'null')
         }
         catch (err) {
           console.error(err)
           return null
         }
       },
-      setPrestoreData: (id, data) => storage.setItem(id, JSON.stringify(data)),
-      hasPrestoreData: (id) => {
-        const temp = storage.getItem(id)
+      setPrestoreData: async (id, data) => await storage.setItem(id, JSON.stringify(data)),
+      hasPrestoreData: async (id) => {
+        const temp = await storage.getItem(id)
         return !isNil(temp) && temp.length > 0
       },
     })

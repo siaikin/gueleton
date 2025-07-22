@@ -11,10 +11,10 @@ import { isNumber } from 'lodash-es'
 export function walk<T>(
   rootNode: T,
   getChildren: (node: T) => T[],
-  callbackFn: (child: T) => boolean | undefined,
-  options: { depth: number },
+  callbackFn: (child: T) => boolean | void,
+  options?: { depth?: number },
 ): void {
-  const maxDepth = isNumber(options.depth) ? options.depth : Number.MAX_SAFE_INTEGER
+  const maxDepth = isNumber(options?.depth) ? Math.max(options.depth, 0) : Number.MAX_SAFE_INTEGER
   callbackFn(rootNode)
 
   const queue: { depth: number, node: T }[] = [{ depth: 0, node: rootNode }]

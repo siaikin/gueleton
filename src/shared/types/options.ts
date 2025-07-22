@@ -23,7 +23,7 @@ export const DefaultSkeletonOptions: SkeletonOptions = {
   depth: 1,
   bone: {
     style: {
-      backgroundColor: 'rgba(0, 0, 0, 0.06)',
+      backgroundColor: 'rgba(240, 240, 240, 1)',
       borderRadius: '8px',
     },
     className: '',

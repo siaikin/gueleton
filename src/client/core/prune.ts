@@ -1,4 +1,4 @@
-import { cloneDeep, isArray, isNumber, isObject, merge, pick } from 'lodash-es'
+import { cloneDeep, isArray, isNumber, isPlainObject, merge, pick } from 'lodash-es'
 
 interface Options {
   /**
@@ -22,11 +22,11 @@ export function prune<T extends object>(data: T, limit?: PruneOptions): Record<s
 export function prune<T>(data: T, limit?: PruneOptions): any {
   const pruneOptions: Options = merge({ length: 0, properties: [] }, isNumber(limit) ? { length: limit, properties: [] } : limit)
 
-  if (isObject(data)) {
-    return pruneObject(data, pruneOptions.properties)
-  }
-  else if (isArray(data)) {
+  if (isArray(data)) {
     return data.slice(0, pruneOptions.length || undefined).map(item => pruneObject(item, pruneOptions.properties))
+  }
+  else if (isPlainObject(data)) {
+    return pruneObject(data as object, pruneOptions.properties)
   }
 
   return data

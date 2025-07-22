@@ -1,8 +1,8 @@
 import type * as CSS from 'csstype'
 import type { Skeleton, SkeletonOptions, SkeletonTreeNode } from '../../shared'
-import { isArray, kebabCase } from 'lodash-es'
+import { isArray } from 'lodash-es'
 import { isBonableContainer, isBoneable } from './is-bone'
-import { getChildNodes, isCustomElement, isEmptyTextNode } from './utils'
+import { assignStyle, getChildNodes, isCustomElement, isEmptyTextNode } from './utils'
 
 const copiedCssProperties: (keyof CSS.StandardPropertiesHyphen)[] = [
   // position
@@ -153,14 +153,4 @@ function deepMapDom(domNode: Node, callbackFn: (node: Node) => SkeletonTreeNode,
   }
 
   return root
-}
-
-function assignStyle(target: CSS.StandardPropertiesHyphen, source: CSS.StandardProperties & CSS.StandardPropertiesHyphen): void {
-  const keys = Object.keys(source) as (keyof (CSS.StandardProperties & CSS.StandardPropertiesHyphen))[]
-
-  for (const key of keys) {
-    const kebabCaseKey = kebabCase(key) as (keyof CSS.StandardPropertiesHyphen)
-
-    target[kebabCaseKey] = source[key] as any
-  }
 }

@@ -117,10 +117,6 @@
     "vite": "^6.3.5",
     "vitest": "^3.1.4",
     "vue": "^3.5.17",
-    "webpack": "^5.99.9"
-  },
-  "workspaces": [
-    "./playground/webpack",
-    "./playground/vite"
-  ]
+    "webpack": "^5.100.2"
+  }
 }
