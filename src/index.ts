@@ -83,16 +83,14 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = (options) =
   return {
     name: 'unplugin-gueleton',
     async buildStart() {
-      unpluginContext = this as unknown as UnpluginContext
-
       await mkdir(prestoreRoot, { recursive: true })
       if (!existsSync(prestoreIndexJsonPath)) {
         try {
           await writeFile(prestoreIndexJsonPath, '{}', { encoding: 'utf-8' })
-          unpluginContext.warn(`Inited prestore data at ${prestoreIndexJsonPath}`)
+          unpluginContext?.warn(`Inited prestore data at ${prestoreIndexJsonPath}`)
         }
         catch (err) {
-          unpluginContext.error(`Failed to write prestore data to ${prestoreIndexJsonPath}`)
+          unpluginContext?.error(`Failed to write prestore data to ${prestoreIndexJsonPath}`)
           throw err
         }
       }
@@ -102,7 +100,7 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = (options) =
         assign(prestoreData, _prestoreData)
       }
       catch (err) {
-        unpluginContext.error(`Failed to read prestore data from ${prestoreIndexJsonPath}`)
+        unpluginContext?.error(`Failed to read prestore data from ${prestoreIndexJsonPath}`)
         throw err
       }
     },
@@ -114,6 +112,10 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = (options) =
         },
       },
       handler(code) {
+        if (!unpluginContext) {
+          unpluginContext = this
+        }
+
         return code.replace(PRESTORE_DATA_KEY, JSON.stringify(prestoreData))
       },
     },
