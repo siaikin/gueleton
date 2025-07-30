@@ -27,7 +27,7 @@ export interface GueletonProviderSlots {
 export const GueletonProvider = /*#__PURE__*/ defineComponent(
   (props: GueletonProviderProps, { slots }: SetupContext<GueletonProviderEvents, SlotsType<GueletonProviderSlots>>) => {
     const options = computed(() => ({
-      depth: props.depth ?? DefaultSkeletonOptions.depth,
+      fuzzy: props.fuzzy ?? DefaultSkeletonOptions.fuzzy,
       bone: merge({}, DefaultSkeletonOptions.bone, props.bone),
       container: merge({}, DefaultSkeletonOptions.container, props.container),
     }))
@@ -39,10 +39,10 @@ export const GueletonProvider = /*#__PURE__*/ defineComponent(
       options,
       getPrestoreData: async (id) => {
         try {
-          return JSON.parse(await storage.getItem(id) ?? 'null')
+          return JSON.parse(await storage.getItem(id) ?? '')
         }
         catch (err) {
-          console.error(err)
+          console.warn(`getPrestoreData error: ${err}`)
           return null
         }
       },
@@ -56,7 +56,7 @@ export const GueletonProvider = /*#__PURE__*/ defineComponent(
     return slots.default ?? (() => { })
   },
   {
-    props: ['depth', 'bone', 'container'],
+    props: ['fuzzy', 'bone', 'container'],
   },
 )
 

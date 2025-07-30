@@ -1,20 +1,5 @@
-import { getChildNodes, isEmptyTextNode, walk } from './utils'
-
-/**
- * https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements#text_content
- */
-const boneableTags = [
-  ...['area', 'audio', 'img', 'track', 'video'],
-  ...['embed', 'fencedframe', 'iframe', 'object'],
-  ...['svg'],
-  ...['canvas'],
-  // Forms
-  ...['button', 'input', 'meter', 'progress', 'select', 'textarea'],
-]
-
-const inlineTags = [
-  ...['a', 'abbr', 'b', 'bdi', 'bdo', 'br', 'cite', 'code', 'data', 'dfn', 'em', 'i', 'kbd', 'mark', 'q', 'rb', 'rp', 'rt', 'rtc', 's', 'samp', 'small', 'span', 'strong', 'sub', 'sup', 'time', 'u', 'var', 'wbr'],
-]
+import { Tags } from './constants'
+import { EarlyReturn, getChildNodes, isEmptyTextNode, walk } from './utils'
 
 /**
  * 判断节点是否可作为骨骼节点. 在骨架中, 骨骼节点将具有宽高和背景颜色.
@@ -25,18 +10,32 @@ const inlineTags = [
  * - 子节点中包含 {@link inlineTags} 或 {@link boneableTags} 中列出的元素, 且面积大于等于 32
  * - 自身存在 `data-gueleton-bone` 属性
  *
- * 根据 depth 参数, 上述条件中的子节点也会被递归判断.
+ * 自身存在 `data-gueleton-bone-skip` 属性时, 将跳过该节点以及子节点.
+ *
+ * 根据 fuzzy 参数, 上述条件中的子节点也会被递归判断.
  */
-export function isBoneable(node: Node, depth: number = 1): boolean {
+export function isBoneable(node: Node, fuzzy: number = 1): boolean {
+  // fuzzy = Math.max(fuzzy, 1)
+
   if (node.nodeType !== Node.ELEMENT_NODE) {
     return false
   }
 
+  // dataset
   {
     const element = node as HTMLElement
+
+    if (Object.hasOwn(element.dataset, 'gueletonBoneSkip')) {
+      return false
+    }
+
     if (Object.hasOwn(element.dataset, 'gueletonBone')) {
       return true
     }
+  }
+
+  if (checkElementBonable(node, Tags.Boneable)) {
+    return true
   }
 
   let result = false
@@ -46,41 +45,46 @@ export function isBoneable(node: Node, depth: number = 1): boolean {
     (child) => {
       if (child.nodeType === Node.TEXT_NODE && !isEmptyTextNode(child)) {
         result = true
-        return true
+        return EarlyReturn
       }
 
-      if (child.nodeType === Node.ELEMENT_NODE) {
-        const tagName = (child as Element).tagName.toLowerCase()
-        const bbox = (child as Element).getBoundingClientRect()
-        const isHaveSize = bbox.width * bbox.height >= 32
-
-        if (
-          (inlineTags.includes(tagName) || boneableTags.includes(tagName))
-          && isHaveSize
-        ) {
-          result = true
-          return true
-        }
-      }
+      // if (checkElementBonable(child, voidTags)) {
+      //   result = true
+      //   return EarlyReturn
+      // }
     },
-    { depth },
+    { depth: fuzzy },
   )
 
-  if (depth === 0) {
-    for (const child of getChildNodes(node)) {
-      if (child.nodeType === Node.TEXT_NODE && !isEmptyTextNode(child)) {
-        result = true
-        break
-      }
-    }
-  }
+  // if (fuzzy === 0) {
+  //   for (const child of getChildNodes(node)) {
+  //     if (child.nodeType === Node.TEXT_NODE && !isEmptyTextNode(child)) {
+  //       result = true
+  //       break
+  //     }
+  //   }
+  // }
 
   return result
 }
 
-export function isBonableContainer(node: Node): boolean {
-  if (node.nodeType !== Node.ELEMENT_NODE)
+function checkElementBonable(node: Node, tags: string[]): boolean {
+  if (node.nodeType !== Node.ELEMENT_NODE || !(node instanceof HTMLElement)) {
     return false
+  }
+
+  const tagName = node.tagName.toLowerCase()
+  const bbox = node.getBoundingClientRect()
+  const isHaveSize = bbox.width * bbox.height >= 32
+  const isVisible = node.checkVisibility({ contentVisibilityAuto: true, opacityProperty: true, visibilityProperty: true })
+
+  return tags.includes(tagName) && isHaveSize && isVisible
+}
+
+export function isBonableContainer(node: Node): boolean {
+  if (node.nodeType !== Node.ELEMENT_NODE) {
+    return false
+  }
 
   const children = getChildNodes(node)
   return children.some(child => child.nodeType === Node.ELEMENT_NODE)

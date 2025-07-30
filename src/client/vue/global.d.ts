@@ -7,7 +7,7 @@ declare module 'vue' {
     GueletonProvider: typeof GueletonProvider
   }
   interface ComponentCustomProps {
-    dataGueletonBone: string
+    dataGueletonBone?: string
   }
 }
 

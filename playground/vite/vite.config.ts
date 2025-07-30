@@ -5,6 +5,7 @@ import Vue from 'unplugin-vue/vite'
 import { defineConfig } from 'vite'
 import Inspect from 'vite-plugin-inspect'
 import Unplugin from '../../src/vite'
+import path from 'node:path'
 
 export default defineConfig({
   plugins: [
@@ -13,4 +14,9 @@ export default defineConfig({
     Inspect(),
     Unplugin(),
   ],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
 })

@@ -1,7 +1,7 @@
 export function isEmptyTextNode(node: Node): boolean {
-  if (node.nodeType === Node.TEXT_NODE) {
-    return !/\S/.test((node as Text).wholeText)
+  if (node.nodeType !== Node.TEXT_NODE) {
+    return false
   }
 
-  return false
+  return !/\S/.test(node.textContent ?? '')
 }

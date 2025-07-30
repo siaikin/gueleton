@@ -3,7 +3,7 @@ import type { SkeletonOptions } from '../../shared'
 import type { PruneOptions } from '../core'
 import type { GueletonProviderKeyType } from './gueleton-provider'
 import type { PrimitiveProps } from './primitive'
-import { isEmpty, isNil, merge } from 'lodash-es'
+import { isEmpty, isNil, isNumber, merge } from 'lodash-es'
 import { Comment, computed, defineComponent, h, inject, ref, toRefs, watch } from 'vue'
 import { prune, skeleton } from '../core'
 import { createContextNotFoundError } from '../core/utils'
@@ -45,9 +45,9 @@ export const Gueleton = /*#__PURE__*/ (<T extends object>() => {
       const { options, getPrestoreData, setPrestoreData } = provider
 
       const mergedSkeletonOptions = computed(() => {
-        const { depth, bone, container } = options.value
+        const { fuzzy, bone, container } = options.value
         return {
-          depth: props.depth ?? depth,
+          fuzzy: isNumber(props.fuzzy) ? props.fuzzy : fuzzy,
           bone: merge({}, bone, props.bone),
           container: merge({}, container, props.container),
         }
@@ -56,8 +56,8 @@ export const Gueleton = /*#__PURE__*/ (<T extends object>() => {
       const { id } = toRefs(props)
       const data = computed(() => props.data)
       const loading = computed(() => props.loading)
-      const limit = computed(() => props.limit)
-      const inPlace = computed(() => props.inPlace)
+      const limit = computed(() => props.limit ?? 1)
+      const inPlace = computed(() => !isNil(props.inPlace) && props.inPlace !== false)
 
       const prestoreData = ref<T | null | undefined>(props.prestoreData)
       watch(prestoreData, async val => isNil(val) && (prestoreData.value = await getPrestoreData(id.value)), { immediate: true })
@@ -65,7 +65,12 @@ export const Gueleton = /*#__PURE__*/ (<T extends object>() => {
       /**
        * 当 prestoreData 为空时, 会根据 data 和 limit 生成预存数据, 并发送到 devServer
        */
-      watch([id, data, limit], ([_id, _data, _limit]) => isEmpty(prestoreData.value) && !isEmpty(_data) && setPrestoreData(_id, prune(_data as object, _limit) as T))
+      watch([id, data, limit], ([_id, _data, _limit]) => {
+        if (!isEmpty(prestoreData.value) || isEmpty(_data)) {
+          return
+        }
+        setPrestoreData(_id, prune(_data as object, _limit) as T)
+      })
 
       const containerRef = ref<Element | ComponentPublicInstance | null>(null)
       watch(
@@ -76,9 +81,8 @@ export const Gueleton = /*#__PURE__*/ (<T extends object>() => {
           }
 
           const _el = _container instanceof Element ? _container : _container.$el
-          const { attach, detach } = skeleton(_el, { ..._mergedSkeletonOptions, inPlace: _inPlace })
-          attach()
-          onCleanup(() => detach())
+          const unmount = skeleton(_el, { ..._mergedSkeletonOptions, inPlace: _inPlace })
+          onCleanup(() => unmount())
         },
         { immediate: true, flush: 'post' },
       )
@@ -88,24 +92,20 @@ export const Gueleton = /*#__PURE__*/ (<T extends object>() => {
           Primitive,
           {
             ...attrs,
-            // eslint-disable-next-line ts/ban-ts-comment
-            // @ts-expect-error
             as: props.as,
-            // eslint-disable-next-line ts/ban-ts-comment
-            // @ts-expect-error
             asChild: props.asChild,
             ref: containerRef,
           },
           () => slots.default?.({ data: (loading.value && !isEmpty(prestoreData.value)) ? prestoreData.value : data.value })
-          /**
-           * 只是为了更好的开发体验, 允许默认插槽中存在注释节点, render 时会过滤掉注释节点
-           */
+            /**
+             * 只是为了更好的开发体验, 允许默认插槽中存在注释节点, render 时会过滤掉注释节点
+             */
             ?.filter(node => node.type !== Comment),
         )
       }
     },
     {
-      props: ['id', 'data', 'limit', 'loading', 'as', 'asChild', 'prestoreData', 'depth', 'bone', 'container', 'inPlace'],
+      props: ['id', 'data', 'limit', 'loading', 'as', 'asChild', 'prestoreData', 'fuzzy', 'bone', 'container', 'inPlace'],
     },
   )
 })()

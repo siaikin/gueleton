@@ -61,8 +61,6 @@ export const Primitive = defineComponent({
     if (asTag !== 'template')
       return () => h(props.as!, attrs, { default: slots.default })
 
-    // eslint-disable-next-line ts/ban-ts-comment
-    // @ts-expect-error
     return () => h(Slot, attrs, { default: slots.default })
   },
 })

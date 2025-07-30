@@ -1,33 +1,26 @@
-import type { SkeletonOptions } from '../../shared'
-import { domToSkeleton } from './dom-to-skeleton'
-import { skeletonInPlace } from './skeleton-in-place'
-import { skeletonToDom } from './skeleton-to-dom'
-
-export function skeleton<CSSTYPE>(dom: Element, options: SkeletonOptions<CSSTYPE> & { inPlace?: boolean }): {
-  attach: () => void
-  detach: () => void
-} {
-  if (options.inPlace) {
-    const { detachBone, attachBone } = skeletonInPlace(dom, options)
-    return {
-      detach: detachBone,
-      attach: attachBone,
-    }
-  }
-  else {
-    let skeletonDom: Node | null = null
-    return {
-      attach: () => {
-        const temp = domToSkeleton(dom, options)
-        skeletonDom = skeletonToDom(temp)
-        dom.appendChild(skeletonDom)
-      },
-
-      detach: () => {
-        skeletonDom?.parentNode?.removeChild(skeletonDom)
-      },
-    }
-  }
-}
+import type { SkeletonOptions, SkeletonPlugin } from '../../shared'
+import { preprocessPlugin, skeletonInPlacePlugin, skeletonOverlayPlugin } from './plugins'
 
 export { prune, type PruneOptions } from './prune'
+
+export function skeleton<CSSTYPE>(dom: HTMLElement, options: SkeletonOptions<CSSTYPE> & { inPlace?: boolean }): () => void {
+  const plugins: SkeletonPlugin<CSSTYPE>[] = [
+    preprocessPlugin,
+  ]
+
+  if (options.inPlace) {
+    plugins.push(skeletonInPlacePlugin)
+  } else {
+    plugins.push(skeletonOverlayPlugin)
+  }
+
+  const unmountList = plugins.map(plugin => {
+    const { name, mount, unmount } = plugin(dom, options)
+    mount()
+    return unmount
+  })
+
+  return () => {
+    unmountList.forEach(unmount => unmount())
+  }
+}

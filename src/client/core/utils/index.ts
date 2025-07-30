@@ -1,4 +1,4 @@
-export * from './assign-style'
+export * from './assign-styles'
 export * from './errors'
 export * from './get-child-nodes'
 export * from './is-custom-element'
