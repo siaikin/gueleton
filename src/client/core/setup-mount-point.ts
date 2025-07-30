@@ -1,7 +1,7 @@
-import { kebabCase } from "lodash-es"
+import { kebabCase } from 'lodash-es'
 
 export function setupMountPoint(mountPoint: HTMLElement): void {
-  const nodeName = mountPoint.nodeName.toLowerCase()
+  // const nodeName = mountPoint.nodeName.toLowerCase()
   const styleMap = mountPoint.computedStyleMap()
 
   const position = styleMap.get('position')?.toString()
@@ -23,8 +23,8 @@ export function setupMountPoint(mountPoint: HTMLElement): void {
 
 export function resetMountPoint(mountPoint: HTMLElement): void {
   const entries = Object.entries(mountPoint.dataset)
-  .filter(([key]) => key.startsWith('original'))
-  .map(([key, value]) => [key.replace('original', ''), value] as const)
+    .filter(([key]) => key.startsWith('original'))
+    .map(([key, value]) => [key.replace('original', ''), value] as const)
 
   for (const [key] of entries) {
     delete mountPoint.dataset[key]

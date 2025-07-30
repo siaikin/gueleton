@@ -3,7 +3,7 @@ import { onMounted, ref } from 'vue'
 import { Gueleton } from '../../../../src/client/vue'
 
 const loading = ref(false)
-const inPlace = ref(false)
+const type = ref('overlay')
 const fuzzy = ref(1)
 
 const posts = ref([])
@@ -77,8 +77,11 @@ onMounted(() => fetchData())
       <input v-model="loading" type="checkbox">
     </label>
     <label class="border border-black p-1">
-      In-place
-      <input v-model="inPlace" type="checkbox">
+      type
+      <select v-model="type">
+        <option value="overlay">Overlay</option>
+        <option value="inPlace">In-place</option>
+      </select>
     </label>
     <label class="border border-black p-1">
       Fuzzy
@@ -89,7 +92,7 @@ onMounted(() => fetchData())
 
   <a-tabs default-active-key="1">
     <a-tab-pane key="1" tab="Posts">
-      <Gueleton id="posts" v-slot="{ data }" :data="posts" :loading="loading" :fuzzy="fuzzy" :in-place="inPlace">
+      <Gueleton id="posts" v-slot="{ data }" :data="posts" :loading="loading" :fuzzy="fuzzy" :type="type">
         <a-table :data-source="data" :columns="postsColumns" row-key="id" />
       </Gueleton>
     </a-tab-pane>

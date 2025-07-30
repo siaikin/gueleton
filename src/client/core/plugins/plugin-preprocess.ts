@@ -1,7 +1,7 @@
-import { SkeletonOptions } from '../../../shared'
+import type { SkeletonOptions, SkeletonPlugin } from '../../../shared'
 import { getChildNodes, isEmptyTextNode, walk } from '../utils'
 
-export function preprocessPlugin<CSSTYPE>(root: HTMLElement, options: SkeletonOptions<CSSTYPE>) {
+export function preprocessPlugin<CSSTYPE>(root: HTMLElement, _options: SkeletonOptions<CSSTYPE>): SkeletonPlugin {
   const textNodes = new Map<Node, HTMLSpanElement>()
 
   walk<HTMLElement | Node>(
@@ -27,13 +27,12 @@ export function preprocessPlugin<CSSTYPE>(root: HTMLElement, options: SkeletonOp
         textNode.parentNode?.replaceChild(spanEl, textNode)
         spanEl.appendChild(textNode)
       }
-
     },
     unmount() {
       for (const [textNode, spanEl] of textNodes) {
         spanEl.parentNode?.replaceChild(textNode, spanEl)
         spanEl.remove()
       }
-    }
+    },
   }
-} 
+}

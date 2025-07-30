@@ -1,11 +1,11 @@
-import { SkeletonOptions } from "../../../shared"
-import { createSkeletonBone, createSkeletonContainer, setupSkeletonBone, setupSkeletonContainer } from "../setup-skeleton-bone"
-import { isBoneable } from "../is-bone"
-import { assignStyles, getChildNodes, SkipChildren, walk } from "../utils"
-import { resetMountPoint, setupMountPoint } from "../setup-mount-point"
-import { CopiedCssProperties } from "../constants"
+import type { SkeletonOptions, SkeletonPlugin } from '../../../shared'
+import { CopiedCssProperties } from '../constants'
+import { isBoneable } from '../is-bone'
+import { resetMountPoint, setupMountPoint } from '../setup-mount-point'
+import { createSkeletonBone, createSkeletonContainer, setupSkeletonBone, setupSkeletonContainer } from '../setup-skeleton-bone'
+import { assignStyles, getChildNodes, SkipChildren, walk } from '../utils'
 
-export function skeletonInPlacePlugin<CSSTYPE>(root: HTMLElement, options: SkeletonOptions<CSSTYPE>) {
+export function skeletonInPlacePlugin<CSSTYPE>(root: HTMLElement, options: SkeletonOptions<CSSTYPE>): SkeletonPlugin {
   const bones = new Map<HTMLElement, HTMLElement>()
 
   walk<HTMLElement | Node>(
@@ -47,6 +47,6 @@ export function skeletonInPlacePlugin<CSSTYPE>(root: HTMLElement, options: Skele
         resetMountPoint(child)
         bone.remove()
       }
-    }
+    },
   }
 }

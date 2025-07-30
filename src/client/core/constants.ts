@@ -44,5 +44,5 @@ export const Tags = {
   /**
    * 作为 bone 时, 将占满父元素
    */
-  AutoFill: ['td', 'th']
+  AutoFill: ['td', 'th'],
 }

@@ -88,6 +88,7 @@ function _resolveFlag<U extends object>(nodeWithFlag: U | WalkFlag | ReturnType<
  * @param getChildren 与 {@link walk} 中 `getChildren` 相同
  * @param callbackFn  回调函数, 接收当前遍历的子节点、父节点、映射后的父节点和 `withFlag` 函数作为参数.
  * @param options 与 {@link walk} 中 `options` 相同
+ * @param options.depth 深度相关配置参数
  * @returns 映射后的根节点
  */
 export function walkWithMap<T extends object, U extends object>(

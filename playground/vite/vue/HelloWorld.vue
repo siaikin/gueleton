@@ -21,7 +21,7 @@ import ShadcnTable from './shadcn/ShadcnTable.vue'
 
 const list = ref([])
 const loading = ref(false)
-const inPlace = ref(false)
+const type = ref('overlay')
 const fuzzy = ref(1)
 </script>
 
@@ -37,8 +37,11 @@ const fuzzy = ref(1)
       ({{ fuzzy }})
     </label>
     <label class="mr-2">
-      In Place
-      <input v-model="inPlace" type="checkbox">
+      type
+      <select v-model="type">
+        <option value="overlay">Overlay</option>
+        <option value="inPlace">In-place</option>
+      </select> 
     </label>
   </div>
 
@@ -56,42 +59,42 @@ const fuzzy = ref(1)
 
       <Gueleton
         id="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
-        :in-place="inPlace"
+        :type="type"
       >
         <AntdvStepper />
       </Gueleton>
 
       <Gueleton
         id="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
-        :in-place="inPlace"
+        :type="type"
       >
         <AntdvTable />
       </Gueleton>
 
       <Gueleton
         id="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
-        :in-place="inPlace"
+        :type="type"
       >
         <AntdvTree />
       </Gueleton>
 
       <Gueleton
         id="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
-        :in-place="inPlace"
+        :type="type"
       >
         <AntdvForm />
       </Gueleton>
 
       <Gueleton
         id="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
-        :in-place="inPlace"
+        :type="type"
       >
         <AntdvBreadcrumb />
       </Gueleton>
 
       <Gueleton
         id="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
-        :in-place="inPlace"
+        :type="type"
       >
         <AntdvMenu />
       </Gueleton>
@@ -103,42 +106,42 @@ const fuzzy = ref(1)
 
     <Gueleton
       id="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
-      :in-place="inPlace"
+      :type="type"
     >
       <ElementPlusStepper />
     </Gueleton>
 
     <Gueleton
       id="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
-      :in-place="inPlace"
+      :type="type"
     >
       <ElementPlusTable />
     </Gueleton>
 
     <Gueleton
       id="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
-      :in-place="inPlace"
+      :type="type"
     >
       <ElementPlusTree />
     </Gueleton>
 
     <Gueleton
       id="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
-      :in-place="inPlace"
+      :type="type"
     >
       <ElementPlusForm />
     </Gueleton>
 
     <Gueleton
       id="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
-      :in-place="inPlace"
+      :type="type"
     >
       <ElementPlusBreadcrumb />
     </Gueleton>
 
     <Gueleton
       id="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
-      :in-place="inPlace"
+      :type="type"
     >
       <ElementPlusMenu />
     </Gueleton>
@@ -149,14 +152,14 @@ const fuzzy = ref(1)
 
     <Gueleton
       id="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
-      :in-place="inPlace"
+      :type="type"
     >
       <ShadcnStepper />
     </Gueleton>
 
     <Gueleton
       id="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
-      :in-place="inPlace"
+      :type="type"
     >
       <ShadcnTable />
     </Gueleton>
@@ -168,21 +171,21 @@ const fuzzy = ref(1)
 
     <Gueleton
       id="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
-      :in-place="inPlace"
+      :type="type"
     >
       <ShadcnForm />
     </Gueleton>
 
     <Gueleton
       id="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
-      :in-place="inPlace"
+      :type="type"
     >
       <ShadcnBreadcrumb />
     </Gueleton>
 
     <Gueleton
       id="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
-      :in-place="inPlace"
+      :type="type"
     >
       <ShadcnMenu />
     </Gueleton>

@@ -13,13 +13,15 @@ export class DevelopmentStorage implements SkeletonStorage {
     const url = new URL('/gueleton-api/storage', location.href)
     url.searchParams.set('key', key)
     const res = await fetch(url.toString(), { method: 'GET' })
-    const a = await res.text()
-    return a
+    return await res.text()
   }
 
   async removeItem(key: string): Promise<void> {
     await fetch('/gueleton-api/storage', {
       method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json;charset=UTF-8',
+      },
       body: JSON.stringify({ key }),
     })
   }
@@ -27,6 +29,9 @@ export class DevelopmentStorage implements SkeletonStorage {
   async setItem(key: string, value: string): Promise<void> {
     await fetch('/gueleton-api/storage', {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json;charset=UTF-8',
+      },
       body: JSON.stringify({ key, value }),
     })
   }

@@ -1,14 +1,14 @@
-import { isArray, kebabCase } from "lodash-es"
-import { SkeletonOptions } from "../../shared"
+import type { SkeletonOptions } from '../../shared'
+import { isArray, kebabCase } from 'lodash-es'
 
-export function createSkeletonBone<CSSTYPE>(source: HTMLElement, options: SkeletonOptions<CSSTYPE>): HTMLElement {
+export function createSkeletonBone<CSSTYPE>(source: HTMLElement, _options: SkeletonOptions<CSSTYPE>): HTMLElement {
   const nodeName = source.nodeName.toLowerCase()
   const boneNode = document.createElement('div')
   boneNode.dataset.as = nodeName
   return boneNode
 }
 
-export function setupSkeletonBone<CSSTYPE>(bone: HTMLElement, source: HTMLElement, options: SkeletonOptions<CSSTYPE>) {
+export function setupSkeletonBone<CSSTYPE>(bone: HTMLElement, source: HTMLElement, options: SkeletonOptions<CSSTYPE>): void {
   const styleMap = source.computedStyleMap()
 
   for (const key of Object.keys(options.bone.style || {})) {
@@ -22,21 +22,20 @@ export function setupSkeletonBone<CSSTYPE>(bone: HTMLElement, source: HTMLElemen
     bone.style.setProperty('display', 'inline-block')
   }
 
-
   const className = isArray(options.bone.className) ? options.bone.className.join(' ') : options.bone.className
   className.length > 0 && bone.classList.add(...className.split(' '))
 
   // boneNode.dataset.gueletonBoneSkip = 'true'
 }
 
-export function createSkeletonContainer<CSSTYPE>(source: HTMLElement, options: SkeletonOptions<CSSTYPE>): HTMLElement {
+export function createSkeletonContainer<CSSTYPE>(source: HTMLElement, _options: SkeletonOptions<CSSTYPE>): HTMLElement {
   const nodeName = source.nodeName.toLowerCase()
   const containerNode = document.createElement('div')
   containerNode.dataset.as = nodeName
   return containerNode
 }
 
-export function setupSkeletonContainer<CSSTYPE>(container: HTMLElement, options: SkeletonOptions<CSSTYPE>) {
+export function setupSkeletonContainer<CSSTYPE>(container: HTMLElement, options: SkeletonOptions<CSSTYPE>): void {
   for (const key of Object.keys(options.container.style || {})) {
     const value = options.container.style[key as keyof CSSTYPE]
     if (value) {
@@ -57,4 +56,3 @@ export function setupSkeletonContainer<CSSTYPE>(container: HTMLElement, options:
 
   // container.dataset.gueletonBoneSkip = 'true'
 }
-

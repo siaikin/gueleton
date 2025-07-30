@@ -1,12 +1,12 @@
-import { isNil } from "lodash-es"
-import { SkeletonOptions } from "../../../shared"
-import { CopiedCssProperties } from "../constants"
-import { isBoneable } from "../is-bone"
-import { walkWithMap, getChildNodes, SkipChildren, isCustomElement, assignStyles } from "../utils"
-import { resetMountPoint, setupMountPoint } from "../setup-mount-point"
-import { createSkeletonBone, createSkeletonContainer, setupSkeletonBone, setupSkeletonContainer } from "../setup-skeleton-bone"
+import type { SkeletonOptions, SkeletonPlugin } from '../../../shared'
+import { isNil } from 'lodash-es'
+import { CopiedCssProperties } from '../constants'
+import { isBoneable } from '../is-bone'
+import { resetMountPoint, setupMountPoint } from '../setup-mount-point'
+import { createSkeletonBone, createSkeletonContainer, setupSkeletonBone, setupSkeletonContainer } from '../setup-skeleton-bone'
+import { assignStyles, getChildNodes, isCustomElement, SkipChildren, walkWithMap } from '../utils'
 
-export function skeletonOverlayPlugin<CSSTYPE>(root: HTMLElement, options: SkeletonOptions<CSSTYPE>) {
+export function skeletonOverlayPlugin<CSSTYPE>(root: HTMLElement, options: SkeletonOptions<CSSTYPE>): SkeletonPlugin {
   const tree = walkWithMap<HTMLElement | Node, HTMLElement>(
     root,
     node => getChildNodes(node),
@@ -34,7 +34,8 @@ export function skeletonOverlayPlugin<CSSTYPE>(root: HTMLElement, options: Skele
         setupSkeletonContainer(skeletonContainer, options)
 
         return skeletonContainer
-      } else if (isBoneable(child, options.fuzzy)) {
+      }
+      else if (isBoneable(child, options.fuzzy)) {
         const skeletonNode = createSkeletonBone(child, options)
         assignStyles(skeletonNode, child, CopiedCssProperties)
         setupSkeletonBone(skeletonNode, child, options)
@@ -46,7 +47,8 @@ export function skeletonOverlayPlugin<CSSTYPE>(root: HTMLElement, options: Skele
         mappedParent.appendChild(skeletonNode)
 
         return withFlag(skeletonNode, SkipChildren)
-      } else {
+      }
+      else {
         const skeletonNode = document.createElement(isCustomElement(child) ? 'div' : child.nodeName.toLowerCase())
 
         assignStyles(skeletonNode, child, CopiedCssProperties)
@@ -55,7 +57,6 @@ export function skeletonOverlayPlugin<CSSTYPE>(root: HTMLElement, options: Skele
 
         return skeletonNode
       }
-
     },
   )
 
@@ -72,6 +73,6 @@ export function skeletonOverlayPlugin<CSSTYPE>(root: HTMLElement, options: Skele
     unmount() {
       root.removeChild(tree)
       resetMountPoint(root)
-    }
+    },
   }
 }

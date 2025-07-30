@@ -2,6 +2,7 @@ import type * as CSS from 'csstype'
 
 export interface SkeletonOptions<CSSTYPE = CSS.StandardProperties> {
   fuzzy: number
+  type: 'overlay' | 'inPlace'
   bone: SkeletonBoneOptions<CSSTYPE>
   container: SkeletonContainerOptions<CSSTYPE>
 }
@@ -18,6 +19,7 @@ export interface SkeletonContainerOptions<CSSTYPE> {
 
 export const DefaultSkeletonOptions: SkeletonOptions = {
   fuzzy: 1,
+  type: 'overlay',
   bone: {
     style: {
       backgroundColor: 'rgba(240, 240, 240, 1)',

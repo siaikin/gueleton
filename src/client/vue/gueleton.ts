@@ -4,7 +4,7 @@ import type { PruneOptions } from '../core'
 import type { GueletonProviderKeyType } from './gueleton-provider'
 import type { PrimitiveProps } from './primitive'
 import { isEmpty, isNil, isNumber, merge } from 'lodash-es'
-import { Comment, computed, defineComponent, h, inject, ref, toRefs, watch } from 'vue'
+import { Comment, computed, defineComponent, h, inject, ref, toRef, toRefs, watch } from 'vue'
 import { prune, skeleton } from '../core'
 import { createContextNotFoundError } from '../core/utils'
 import { GueletonProviderKey } from './gueleton-provider'
@@ -23,7 +23,6 @@ export type GueletonProps<DATA> = {
   prestoreData?: DATA | null | undefined
   limit?: PruneOptions
   loading?: boolean
-  inPlace?: boolean
 } & Partial<SkeletonOptions<CSSProperties>> & PrimitiveProps
 
 export interface GueletonEvents extends Record<string, any[]> {
@@ -45,9 +44,10 @@ export const Gueleton = /*#__PURE__*/ (<T extends object>() => {
       const { options, getPrestoreData, setPrestoreData } = provider
 
       const mergedSkeletonOptions = computed(() => {
-        const { fuzzy, bone, container } = options.value
+        const { fuzzy, type, bone, container } = options.value
         return {
           fuzzy: isNumber(props.fuzzy) ? props.fuzzy : fuzzy,
+          type: isNil(props.type) ? type : props.type,
           bone: merge({}, bone, props.bone),
           container: merge({}, container, props.container),
         }
@@ -57,31 +57,32 @@ export const Gueleton = /*#__PURE__*/ (<T extends object>() => {
       const data = computed(() => props.data)
       const loading = computed(() => props.loading)
       const limit = computed(() => props.limit ?? 1)
-      const inPlace = computed(() => !isNil(props.inPlace) && props.inPlace !== false)
 
-      const prestoreData = ref<T | null | undefined>(props.prestoreData)
-      watch(prestoreData, async val => isNil(val) && (prestoreData.value = await getPrestoreData(id.value)), { immediate: true })
+      const prestoreData = ref<T | null | undefined>(null)
+      watch(toRef(props, 'prestoreData'), val => prestoreData.value = val, { immediate: true })
 
       /**
        * 当 prestoreData 为空时, 会根据 data 和 limit 生成预存数据, 并发送到 devServer
        */
-      watch([id, data, limit], ([_id, _data, _limit]) => {
+      watch([id, data, limit], async ([_id, _data, _limit]) => {
         if (!isEmpty(prestoreData.value) || isEmpty(_data)) {
           return
         }
-        setPrestoreData(_id, prune(_data as object, _limit) as T)
-      })
+        await setPrestoreData(_id, prune(_data, _limit) as T)
+        // 保存成功后, 更新 prestoreData
+        prestoreData.value = await getPrestoreData(_id)
+      }, { immediate: true })
 
       const containerRef = ref<Element | ComponentPublicInstance | null>(null)
       watch(
-        [containerRef, useMounted(), loading, mergedSkeletonOptions, prestoreData, inPlace],
-        async ([_container, _isMounted, _loading, _mergedSkeletonOptions, _prestoreData, _inPlace], _, onCleanup) => {
+        [containerRef, useMounted(), loading, mergedSkeletonOptions, prestoreData],
+        async ([_container, _isMounted, _loading, _mergedSkeletonOptions, _prestoreData], _, onCleanup) => {
           if (isNil(_container) || !_isMounted || !_loading) {
             return
           }
 
           const _el = _container instanceof Element ? _container : _container.$el
-          const unmount = skeleton(_el, { ..._mergedSkeletonOptions, inPlace: _inPlace })
+          const unmount = skeleton(_el, { ..._mergedSkeletonOptions })
           onCleanup(() => unmount())
         },
         { immediate: true, flush: 'post' },
@@ -105,7 +106,7 @@ export const Gueleton = /*#__PURE__*/ (<T extends object>() => {
       }
     },
     {
-      props: ['id', 'data', 'limit', 'loading', 'as', 'asChild', 'prestoreData', 'fuzzy', 'bone', 'container', 'inPlace'],
+      props: ['id', 'data', 'limit', 'loading', 'as', 'asChild', 'prestoreData', 'fuzzy', 'bone', 'container', 'type'],
     },
   )
 })()

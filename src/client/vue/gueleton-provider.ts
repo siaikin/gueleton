@@ -28,6 +28,7 @@ export const GueletonProvider = /*#__PURE__*/ defineComponent(
   (props: GueletonProviderProps, { slots }: SetupContext<GueletonProviderEvents, SlotsType<GueletonProviderSlots>>) => {
     const options = computed(() => ({
       fuzzy: props.fuzzy ?? DefaultSkeletonOptions.fuzzy,
+      type: props.type ?? DefaultSkeletonOptions.type,
       bone: merge({}, DefaultSkeletonOptions.bone, props.bone),
       container: merge({}, DefaultSkeletonOptions.container, props.container),
     }))

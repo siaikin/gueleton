@@ -11,7 +11,7 @@ export default defineConfig({
     sourcemap: true,
   },
   exports: {
-    customExports: (exports, context) => {
+    customExports: (exports) => {
       exports['./client/vue'] = exports['./client/vue/index']
       delete exports['./client/vue/index']
 
