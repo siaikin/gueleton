@@ -106,13 +106,14 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = (options) =
     },
     transform: {
       filter: {
-        id: /\.(m|c)?(j|t)sx?$/,
+        id: /\.([mc])?([jt])sx?(\S*)$/,
         code: {
           include: PRESTORE_DATA_KEY,
         },
       },
       handler(code) {
         if (!unpluginContext) {
+          // eslint-disable-next-line ts/no-this-alias
           unpluginContext = this
         }
 
