@@ -49,6 +49,7 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = (options) =
         const key = searchParams.get('key')
 
         res.statusCode = 200
+        res.setHeader('Content-Type', 'text/plain')
         res.end(isNil(key) ? '' : prestoreData[key] ?? '')
         return
       }

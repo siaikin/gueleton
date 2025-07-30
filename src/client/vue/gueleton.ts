@@ -59,7 +59,9 @@ export const Gueleton = /*#__PURE__*/ (<T extends object>() => {
       const limit = computed(() => props.limit ?? 1)
 
       const prestoreData = ref<T | null | undefined>(null)
-      watch(toRef(props, 'prestoreData'), val => prestoreData.value = val, { immediate: true })
+      watch([id, toRef(props, 'prestoreData')], async ([_id, _prestoreData]) => {
+        prestoreData.value = _prestoreData ?? await getPrestoreData(_id)
+      }, { immediate: true })
 
       /**
        * 当 prestoreData 为空时, 会根据 data 和 limit 生成预存数据, 并发送到 devServer
