@@ -41,7 +41,7 @@ export const Gueleton = /*#__PURE__*/ (<T extends object>() => {
         throw createContextNotFoundError(GueletonProviderKey, 'GueletonProvider')
       }
 
-      const { options, getPrestoreData, setPrestoreData } = provider
+      const { options, limit, getPrestoreData, setPrestoreData } = provider
 
       const mergedSkeletonOptions = computed(() => {
         const { fuzzy, type, bone, container } = options.value
@@ -52,11 +52,11 @@ export const Gueleton = /*#__PURE__*/ (<T extends object>() => {
           container: merge({}, container, props.container),
         }
       })
+      const mergedLimit = computed(() => props.limit ?? limit.value)
 
       const { id } = toRefs(props)
       const data = computed(() => props.data)
       const loading = computed(() => props.loading)
-      const limit = computed(() => props.limit ?? 1)
 
       const prestoreData = ref<T | null | undefined>(null)
       watch([id, toRef(props, 'prestoreData')], async ([_id, _prestoreData]) => {
@@ -66,11 +66,11 @@ export const Gueleton = /*#__PURE__*/ (<T extends object>() => {
       /**
        * 当 prestoreData 为空时, 会根据 data 和 limit 生成预存数据, 并发送到 devServer
        */
-      watch([id, data, limit], async ([_id, _data, _limit]) => {
+      watch([id, data, mergedLimit], async ([_id, _data, _mergedLimit]) => {
         if (!isEmpty(prestoreData.value) || isEmpty(_data)) {
           return
         }
-        await setPrestoreData(_id, prune(_data, _limit) as T)
+        await setPrestoreData(_id, prune(_data, _mergedLimit) as T)
         // 保存成功后, 更新 prestoreData
         prestoreData.value = await getPrestoreData(_id)
       }, { immediate: true })
