@@ -1,4 +1,4 @@
-import {CSSProperties, Ref, SetupContext, SlotsType, toRef} from 'vue'
+import type { CSSProperties, Ref, SetupContext, SlotsType } from 'vue'
 import type { SkeletonOptions } from '../../shared'
 import type { PruneOptions } from '../core'
 import { isNil, merge } from 'lodash-es'
@@ -65,7 +65,7 @@ export const GueletonProvider = /*#__PURE__*/ defineComponent(
     return slots.default ?? (() => { })
   },
   {
-    props: ['fuzzy', 'bone', 'container'],
+    props: ['fuzzy', 'bone', 'container', 'limit', 'type'],
   },
 )
 
