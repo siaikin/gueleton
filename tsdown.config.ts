@@ -19,6 +19,6 @@ export default defineConfig({
     },
   },
   copy: [
-    'src/client/assets',
+    { from: 'src/client/assets', to: 'dist/client/assets' },
   ],
 })
