@@ -93,7 +93,7 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = (options) =
     res.end(JSON.stringify(prestoreData))
   }
 
-  const panelPagePath: string = fileURLToPath(new URL('./client/panel.html', import.meta.url))
+  const panelPagePath: string = fileURLToPath(new URL('./client/assets/panel.html', import.meta.url))
   const panelPageHandler = async (req: IncomingMessage, res: ServerResponse<IncomingMessage>): Promise<void> => {
     const page = await readFile(panelPagePath, { encoding: 'utf-8' })
     res.statusCode = 200

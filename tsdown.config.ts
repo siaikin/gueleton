@@ -19,6 +19,6 @@ export default defineConfig({
     },
   },
   copy: [
-    'src/client/panel.html',
+    'src/client/assets',
   ],
 })
