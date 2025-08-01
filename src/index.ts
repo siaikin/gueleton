@@ -103,6 +103,7 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = (options) =
 
   return {
     name: 'unplugin-gueleton',
+    enforce: 'post',
     async buildStart() {
       await mkdir(prestoreRoot, { recursive: true })
       if (!existsSync(prestoreIndexJsonPath)) {
@@ -159,12 +160,12 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = (options) =
         server.middlewares.use(`${apiPrefix}/storage`, handler)
         server.middlewares.use(`${apiPrefix}`, panelPageHandler)
 
-        /**
-         * @see https://github.com/antfu-collective/vite-plugin-inspect/blob/a9128d5234e1377574a687ddc637b1bbc7de511c/src/node/index.ts#L145
-         */
-        const _printUrls = server.printUrls
-        const config = server.config
-        server.printUrls = () => {
+        // print panel url
+        {
+          /**
+           * @see https://github.com/antfu-collective/vite-plugin-inspect/blob/a9128d5234e1377574a687ddc637b1bbc7de511c/src/node/index.ts#L145
+           */
+          const config = server.config
           let host = `${config.server.https ? 'https' : 'http'}://localhost:${config.server.port || '80'}`
 
           const url = server.resolvedUrls?.local[0]
@@ -178,8 +179,6 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = (options) =
               config.logger.warn(`Parse resolved url failed: ${error}`)
             }
           }
-
-          _printUrls()
 
           const colorUrl = (url: string): string => c.green(url.replace(/:(\d+)\//, (_, port) => `:${c.bold(port)}/`))
 
