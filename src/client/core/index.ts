@@ -3,7 +3,12 @@ import { preprocessPlugin, skeletonInPlacePlugin, skeletonOverlayPlugin } from '
 
 export { prune, type PruneOptions } from './prune'
 
-export function skeleton<CSSTYPE>(dom: HTMLElement, options: SkeletonOptions<CSSTYPE>): () => void {
+export function skeleton<CSSTYPE>(dom: Node, options: SkeletonOptions<CSSTYPE>): () => void {
+  if (!skeletonSourceElementCheck(dom)) {
+    // maybe error log
+    return () => {}
+  }
+
   const plugins: SkeletonPluginFactory<CSSTYPE>[] = [
     preprocessPlugin,
   ]
@@ -28,4 +33,8 @@ export function skeleton<CSSTYPE>(dom: HTMLElement, options: SkeletonOptions<CSS
   return () => {
     unmountList.forEach(unmount => unmount())
   }
+}
+
+function skeletonSourceElementCheck(node: Node): node is HTMLElement {
+  return node.nodeType === Node.ELEMENT_NODE
 }

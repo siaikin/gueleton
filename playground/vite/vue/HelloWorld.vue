@@ -41,126 +41,98 @@ const fuzzy = ref(1)
       <select v-model="type">
         <option value="overlay">Overlay</option>
         <option value="inPlace">In-place</option>
-      </select> 
+      </select>
     </label>
   </div>
 
-  <details class="p-4">
+  <details open class="p-4">
     <summary>Antdv</summary>
 
-    <details class="p-4">
+    <details open class="p-4">
       <summary>Page</summary>
 
       <AntdvPage />
     </details>
 
-    <details class="p-4">
+    <details open class="p-4">
       <summary>Components</summary>
 
-      <Gueleton
-        dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
-        :type="type"
-      >
+      <Gueleton dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading"
+        :fuzzy="fuzzy" :type="type">
         <AntdvStepper />
       </Gueleton>
 
-      <Gueleton
-        dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
-        :type="type"
-      >
+      <Gueleton dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading"
+        :fuzzy="fuzzy" :type="type">
         <AntdvTable />
       </Gueleton>
 
-      <Gueleton
-        dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
-        :type="type"
-      >
+      <Gueleton dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading"
+        :fuzzy="fuzzy" :type="type">
         <AntdvTree />
       </Gueleton>
 
-      <Gueleton
-        dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
-        :type="type"
-      >
+      <Gueleton dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading"
+        :fuzzy="fuzzy" :type="type">
         <AntdvForm />
       </Gueleton>
 
-      <Gueleton
-        dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
-        :type="type"
-      >
+      <Gueleton dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading"
+        :fuzzy="fuzzy" :type="type">
         <AntdvBreadcrumb />
       </Gueleton>
 
-      <Gueleton
-        dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
-        :type="type"
-      >
+      <Gueleton dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading"
+        :fuzzy="fuzzy" :type="type">
         <AntdvMenu />
       </Gueleton>
     </details>
   </details>
 
-  <details class="p-4">
+  <details open class="p-4">
     <summary>Element Plus</summary>
 
-    <Gueleton
-      dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
-      :type="type"
-    >
+    <Gueleton dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading"
+      :fuzzy="fuzzy" :type="type">
       <ElementPlusStepper />
     </Gueleton>
 
-    <Gueleton
-      dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
-      :type="type"
-    >
+    <Gueleton dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading"
+      :fuzzy="fuzzy" :type="type">
       <ElementPlusTable />
     </Gueleton>
 
-    <Gueleton
-      dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
-      :type="type"
-    >
+    <Gueleton dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading"
+      :fuzzy="fuzzy" :type="type">
       <ElementPlusTree />
     </Gueleton>
 
-    <Gueleton
-      dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
-      :type="type"
-    >
+    <Gueleton dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading"
+      :fuzzy="fuzzy" :type="type">
       <ElementPlusForm />
     </Gueleton>
 
-    <Gueleton
-      dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
-      :type="type"
-    >
+    <Gueleton dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading"
+      :fuzzy="fuzzy" :type="type">
       <ElementPlusBreadcrumb />
     </Gueleton>
 
-    <Gueleton
-      dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
-      :type="type"
-    >
+    <Gueleton dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading"
+      :fuzzy="fuzzy" :type="type">
       <ElementPlusMenu />
     </Gueleton>
   </details>
 
-  <details class="p-4">
+  <details open class="p-4">
     <summary>Shadcn</summary>
 
-    <Gueleton
-      dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
-      :type="type"
-    >
+    <Gueleton dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading"
+      :fuzzy="fuzzy" :type="type">
       <ShadcnStepper />
     </Gueleton>
 
-    <Gueleton
-      dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
-      :type="type"
-    >
+    <Gueleton dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading"
+      :fuzzy="fuzzy" :type="type">
       <ShadcnTable />
     </Gueleton>
 
@@ -169,28 +141,36 @@ const fuzzy = ref(1)
       <AntdvTree />
     </Gueleton> -->
 
-    <Gueleton
-      dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
-      :type="type"
-    >
+    <Gueleton dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading"
+      :fuzzy="fuzzy" :type="type">
       <ShadcnForm />
     </Gueleton>
 
-    <Gueleton
-      dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
-      :type="type"
-    >
+    <Gueleton dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading"
+      :fuzzy="fuzzy" :type="type">
       <ShadcnBreadcrumb />
     </Gueleton>
 
-    <Gueleton
-      dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
-      :type="type"
-    >
+    <Gueleton dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading"
+      :fuzzy="fuzzy" :type="type">
       <ShadcnMenu />
     </Gueleton>
   </details>
 
+  <details open class="p-4">
+    <summary>Empty</summary>
+
+    <Gueleton dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading"
+      :fuzzy="fuzzy" :type="type">
+      Only text
+    </Gueleton>
+
+    <Gueleton dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading"
+      :fuzzy="fuzzy" :type="type">
+      <!-- Only comment -->
+    </Gueleton>
+
+  </details>
   <!-- <Gueleton id="switchGameList" v-slot="{ data }" :data="list" :limit="3" :loading="true" as-child :fuzzy="1" in-place>
     <div class="h-full overflow-auto border m-4 p-4">
       <div v-for="item in data" :key="item.id" class="p-4 border-b border-gray-200 hover:bg-gray-100 transition-colors">
