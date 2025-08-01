@@ -18,4 +18,7 @@ export default defineConfig({
       return exports
     },
   },
+  copy: [
+    'src/client/panel.html',
+  ],
 })

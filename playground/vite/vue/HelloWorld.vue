@@ -58,42 +58,42 @@ const fuzzy = ref(1)
       <summary>Components</summary>
 
       <Gueleton
-        id="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
+        dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
         :type="type"
       >
         <AntdvStepper />
       </Gueleton>
 
       <Gueleton
-        id="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
+        dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
         :type="type"
       >
         <AntdvTable />
       </Gueleton>
 
       <Gueleton
-        id="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
+        dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
         :type="type"
       >
         <AntdvTree />
       </Gueleton>
 
       <Gueleton
-        id="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
+        dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
         :type="type"
       >
         <AntdvForm />
       </Gueleton>
 
       <Gueleton
-        id="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
+        dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
         :type="type"
       >
         <AntdvBreadcrumb />
       </Gueleton>
 
       <Gueleton
-        id="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
+        dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
         :type="type"
       >
         <AntdvMenu />
@@ -105,42 +105,42 @@ const fuzzy = ref(1)
     <summary>Element Plus</summary>
 
     <Gueleton
-      id="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
+      dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
       :type="type"
     >
       <ElementPlusStepper />
     </Gueleton>
 
     <Gueleton
-      id="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
+      dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
       :type="type"
     >
       <ElementPlusTable />
     </Gueleton>
 
     <Gueleton
-      id="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
+      dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
       :type="type"
     >
       <ElementPlusTree />
     </Gueleton>
 
     <Gueleton
-      id="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
+      dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
       :type="type"
     >
       <ElementPlusForm />
     </Gueleton>
 
     <Gueleton
-      id="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
+      dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
       :type="type"
     >
       <ElementPlusBreadcrumb />
     </Gueleton>
 
     <Gueleton
-      id="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
+      dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
       :type="type"
     >
       <ElementPlusMenu />
@@ -151,14 +151,14 @@ const fuzzy = ref(1)
     <summary>Shadcn</summary>
 
     <Gueleton
-      id="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
+      dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
       :type="type"
     >
       <ShadcnStepper />
     </Gueleton>
 
     <Gueleton
-      id="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
+      dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
       :type="type"
     >
       <ShadcnTable />
@@ -170,21 +170,21 @@ const fuzzy = ref(1)
     </Gueleton> -->
 
     <Gueleton
-      id="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
+      dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
       :type="type"
     >
       <ShadcnForm />
     </Gueleton>
 
     <Gueleton
-      id="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
+      dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
       :type="type"
     >
       <ShadcnBreadcrumb />
     </Gueleton>
 
     <Gueleton
-      id="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
+      dataKey="switchGameList" class="overflow-auto border m-4 p-4" :data="list" :loading="loading" :fuzzy="fuzzy"
       :type="type"
     >
       <ShadcnMenu />

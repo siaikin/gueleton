@@ -12,7 +12,14 @@ import { Primitive } from './primitive'
 import { useMounted } from './utils'
 
 export type GueletonProps<DATA> = {
-  id: string
+  /**
+   * 标记预存数据的 key, 可以在在面板中查看和操作预存数据.
+   * 相同的 key 将共享相同的预存数据.
+   */
+  dataKey: string
+  /**
+   * 代理的原始数据. gueleton 将根据原始数据和 limit 参数生成预存数据.
+   */
   data: DATA
   /**
    * 这个参数可以让你直接在代码中设置预存数据, 而不依赖构建时的 vite/webpack 插件.
@@ -21,7 +28,15 @@ export type GueletonProps<DATA> = {
    * 内部使用 [lodash.isEmpty](https://lodash.com/docs/4.17.15#isEmpty) 判断 prestoreData 是否为空.
    */
   prestoreData?: DATA | null | undefined
+  /**
+   * 预存数据的裁剪规则. 接受一个 number 或 对象.
+   * - 当 limit 为 number 时, 表示取前 limit 项, 仅对数组有效.
+   * - 当 limit 为对象时, length 表示取前 length 项, properties 表示裁剪对象的属性, 仅对对象有效.
+   */
   limit?: PruneOptions
+  /**
+   * 控制是否显示骨架屏.
+   */
   loading?: boolean
 } & Partial<SkeletonOptions<CSSProperties>> & PrimitiveProps
 
@@ -29,7 +44,7 @@ export interface GueletonEvents extends Record<string, any[]> {
 }
 
 export interface GueletonSlots<DATA> {
-  default?: (params: { data: DATA }) => VNode[]
+  default?: (params: { data: DATA | null | undefined }) => VNode[]
 }
 
 // eslint-disable-next-line style/spaced-comment
@@ -54,25 +69,25 @@ export const Gueleton = /*#__PURE__*/ (<T extends object>() => {
       })
       const mergedLimit = computed(() => props.limit ?? limit.value)
 
-      const { id } = toRefs(props)
+      const { dataKey } = toRefs(props)
       const data = computed(() => props.data)
       const loading = computed(() => props.loading)
 
       const prestoreData = ref<T | null | undefined>(null)
-      watch([id, toRef(props, 'prestoreData')], async ([_id, _prestoreData]) => {
-        prestoreData.value = _prestoreData ?? await getPrestoreData(_id)
+      watch([dataKey, toRef(props, 'prestoreData')], async ([_dataKey, _prestoreData]) => {
+        prestoreData.value = _prestoreData ?? await getPrestoreData(_dataKey)
       }, { immediate: true })
 
       /**
        * 当 prestoreData 为空时, 会根据 data 和 limit 生成预存数据, 并发送到 devServer
        */
-      watch([id, data, mergedLimit], async ([_id, _data, _mergedLimit]) => {
+      watch([dataKey, data, mergedLimit], async ([_dataKey, _data, _mergedLimit]) => {
         if (!isEmpty(prestoreData.value) || isEmpty(_data)) {
           return
         }
-        await setPrestoreData(_id, prune(_data, _mergedLimit) as T)
+        await setPrestoreData(_dataKey, prune(_data, _mergedLimit) as T)
         // 保存成功后, 更新 prestoreData
-        prestoreData.value = await getPrestoreData(_id)
+        prestoreData.value = await getPrestoreData(_dataKey)
       }, { immediate: true })
 
       const containerRef = ref<Element | ComponentPublicInstance | null>(null)
@@ -99,7 +114,7 @@ export const Gueleton = /*#__PURE__*/ (<T extends object>() => {
             asChild: props.asChild,
             ref: containerRef,
           },
-          () => slots.default?.({ data: (loading.value && !isEmpty(prestoreData.value)) ? prestoreData.value : data.value })
+          () => slots.default?.({ data: loading.value ? prestoreData.value : data.value })
             /**
              * 只是为了更好的开发体验, 允许默认插槽中存在注释节点, render 时会过滤掉注释节点
              */
@@ -108,7 +123,7 @@ export const Gueleton = /*#__PURE__*/ (<T extends object>() => {
       }
     },
     {
-      props: ['id', 'data', 'limit', 'loading', 'as', 'asChild', 'prestoreData', 'fuzzy', 'bone', 'container', 'type'],
+      props: ['dataKey', 'data', 'limit', 'loading', 'as', 'asChild', 'prestoreData', 'fuzzy', 'bone', 'container', 'type'],
     },
   )
 })()

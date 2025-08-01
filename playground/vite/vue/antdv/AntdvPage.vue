@@ -92,17 +92,17 @@ onMounted(() => fetchData())
 
   <a-tabs default-active-key="1">
     <a-tab-pane key="1" tab="Posts">
-      <Gueleton id="posts" v-slot="{ data }" :data="posts" :loading="loading" :fuzzy="fuzzy" :type="type">
+      <Gueleton dataKey="posts" v-slot="{ data }" :data="posts" :loading="loading" :fuzzy="fuzzy" :type="type">
         <a-table :data-source="data" :columns="postsColumns" row-key="id" />
       </Gueleton>
     </a-tab-pane>
     <a-tab-pane key="2" tab="Comments">
-      <Gueleton id="comments" v-slot="{ data }" :data="comments" :loading="loading" :fuzzy="fuzzy" :in-place="inPlace">
+      <Gueleton dataKey="comments" v-slot="{ data }" :data="comments" :loading="loading" :fuzzy="fuzzy" :type="type">
         <a-table :data-source="data" :columns="commentsColumns" row-key="id" />
       </Gueleton>
     </a-tab-pane>
     <a-tab-pane key="3" tab="Users">
-      <Gueleton id="users" v-slot="{ data }" :data="users" :loading="loading" :fuzzy="fuzzy" :in-place="inPlace">
+      <Gueleton dataKey="users" v-slot="{ data }" :data="users" :loading="loading" :fuzzy="fuzzy" :type="type">
         <a-table :data-source="data" :columns="usersColumns" row-key="id" />
       </Gueleton>
     </a-tab-pane>

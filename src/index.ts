@@ -4,15 +4,21 @@ import type { Options } from './types'
 import { existsSync } from 'node:fs'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import process from 'node:process'
+import { fileURLToPath } from 'node:url'
+import c from 'ansis'
 import bodyParser from 'body-parser'
-import { assign, isArray, isNil, trimEnd } from 'lodash-es'
+import { assign, isArray, isNil, trim, trimEnd } from 'lodash-es'
 import { createUnplugin } from 'unplugin'
 
-const PRESTORE_DATA_KEY = '__GUELETON_PRESTORE_DATA__'
+const REPLACE_PRESTORE_DATA_KEY = '__GUELETON_PRESTORE_DATA__'
+const REPLACE_API_PREFIX_KEY = '__GUELETON_API_PREFIX__'
+
+const DEFAULT_API_PREFIX = '/__gueleton'
 
 // eslint-disable-next-line unused-imports/no-unused-vars
 export const unpluginFactory: UnpluginFactory<Options | undefined> = (options) => {
   let unpluginContext: UnpluginContext | null = null
+  let apiPrefix: string = `${trimEnd(DEFAULT_API_PREFIX, '/')}`
 
   const prestoreRoot: string = `${trimEnd(process.cwd(), '/')}/.gueleton`
   const prestoreIndexJsonPath: string = `${prestoreRoot}/index.json`
@@ -81,6 +87,20 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = (options) =
     }
   }
 
+  const allHandler = async (req: IncomingMessage, res: ServerResponse<IncomingMessage>): Promise<void> => {
+    res.statusCode = 200
+    res.setHeader('Content-Type', 'application/json')
+    res.end(JSON.stringify(prestoreData))
+  }
+
+  const panelPagePath: string = fileURLToPath(new URL('./client/panel.html', import.meta.url))
+  const panelPageHandler = async (req: IncomingMessage, res: ServerResponse<IncomingMessage>): Promise<void> => {
+    const page = await readFile(panelPagePath, { encoding: 'utf-8' })
+    res.statusCode = 200
+    res.setHeader('Content-Type', 'text/html')
+    res.end(page.replaceAll(REPLACE_API_PREFIX_KEY, JSON.stringify(apiPrefix)))
+  }
+
   return {
     name: 'unplugin-gueleton',
     async buildStart() {
@@ -88,7 +108,7 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = (options) =
       if (!existsSync(prestoreIndexJsonPath)) {
         try {
           await writeFile(prestoreIndexJsonPath, '{}', { encoding: 'utf-8' })
-          unpluginContext?.warn(`Inited prestore data at ${prestoreIndexJsonPath}`)
+          unpluginContext?.warn(`Initialed prestore data at ${prestoreIndexJsonPath}`)
         }
         catch (err) {
           unpluginContext?.error(`Failed to write prestore data to ${prestoreIndexJsonPath}`)
@@ -109,7 +129,7 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = (options) =
       filter: {
         id: /\.([mc])?([jt])sx?(\S*)$/,
         code: {
-          include: PRESTORE_DATA_KEY,
+          include: [REPLACE_PRESTORE_DATA_KEY, REPLACE_API_PREFIX_KEY],
         },
       },
       handler(code) {
@@ -118,7 +138,9 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = (options) =
           unpluginContext = this
         }
 
-        return code.replace(PRESTORE_DATA_KEY, JSON.stringify(prestoreData))
+        return code
+          .replaceAll(REPLACE_PRESTORE_DATA_KEY, JSON.stringify(prestoreData))
+          .replaceAll(REPLACE_API_PREFIX_KEY, JSON.stringify(`/${trim(apiPrefix, '/')}`))
       },
     },
     vite: {
@@ -130,7 +152,39 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = (options) =
           server.watcher.options.ignored = [server.watcher.options.ignored, prestoreRoot]
         }
 
-        server.middlewares.use('/gueleton-api/storage', handler)
+        const base = server.config.base || '/'
+        apiPrefix = `${trimEnd(base, '/')}/${trim(DEFAULT_API_PREFIX, '/')}`
+
+        server.middlewares.use(`${apiPrefix}/storage/all`, allHandler)
+        server.middlewares.use(`${apiPrefix}/storage`, handler)
+        server.middlewares.use(`${apiPrefix}`, panelPageHandler)
+
+        /**
+         * @see https://github.com/antfu-collective/vite-plugin-inspect/blob/a9128d5234e1377574a687ddc637b1bbc7de511c/src/node/index.ts#L145
+         */
+        const _printUrls = server.printUrls
+        const config = server.config
+        server.printUrls = () => {
+          let host = `${config.server.https ? 'https' : 'http'}://localhost:${config.server.port || '80'}`
+
+          const url = server.resolvedUrls?.local[0]
+
+          if (url) {
+            try {
+              const u = new URL(url)
+              host = `${u.protocol}//${u.host}`
+            }
+            catch (error) {
+              config.logger.warn(`Parse resolved url failed: ${error}`)
+            }
+          }
+
+          _printUrls()
+
+          const colorUrl = (url: string): string => c.green(url.replace(/:(\d+)\//, (_, port) => `:${c.bold(port)}/`))
+
+          config.logger.info(`  ${c.green('➜')}  ${c.bold('Gueleton')}: ${colorUrl(`${host}/${trim(apiPrefix, '/')}/`)}`)
+        }
       },
     },
     webpack(compiler) {
@@ -141,11 +195,23 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = (options) =
 
       options.devServer = {
         setupMiddlewares: (middlewares: any) => {
-          middlewares.push({
-            name: 'gueleton',
-            path: '/gueleton-api/storage',
-            middleware: handler,
-          })
+          middlewares.push(
+            {
+              name: 'gueleton-all',
+              path: `${apiPrefix}/storage/all`,
+              middleware: allHandler,
+            },
+            {
+              name: 'gueleton',
+              path: `${apiPrefix}/storage`,
+              middleware: handler,
+            },
+            {
+              name: 'gueleton-panel',
+              path: `${apiPrefix}`,
+              middleware: panelPageHandler,
+            },
+          )
 
           return middlewares
         },
