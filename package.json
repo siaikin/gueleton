@@ -1,7 +1,7 @@
 {
   "name": "unplugin-gueleton",
   "type": "module",
-  "version": "0.1.15",
+  "version": "0.1.16",
   "description": "",
   "license": "MIT",
   "homepage": "https://github.com/siaikin/unplugin-gueleton#readme",
@@ -63,6 +63,7 @@
     "@farmfe/core": ">=1",
     "@nuxt/kit": "^3",
     "@nuxt/schema": "^3",
+    "h3": "^1",
     "esbuild": "*",
     "rollup": "^3",
     "vite": ">=3",
@@ -77,6 +78,9 @@
       "optional": true
     },
     "@nuxt/schema": {
+      "optional": true
+    },
+    "h3": {
       "optional": true
     },
     "esbuild": {
@@ -113,6 +117,7 @@
     "@types/split2": "^4.2.3",
     "bumpp": "^10.1.1",
     "eslint": "^9.27.0",
+    "h3": "^1.15.4",
     "nodemon": "^3.1.10",
     "rollup": "^4.41.0",
     "tsdown": "^0.12.0",
