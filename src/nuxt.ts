@@ -3,6 +3,7 @@ import type { IncomingMessage, ServerResponse } from 'node:http'
 import type { Options } from './types'
 import process from 'node:process'
 import { addComponent, addDevServerHandler, addVitePlugin, addWebpackPlugin, defineNuxtModule, useLogger } from '@nuxt/kit'
+import { defu } from 'defu'
 import { defineEventHandler } from 'h3'
 import { createVitePlugin, createWebpackPlugin } from 'unplugin'
 import { unpluginFactory } from '.'
@@ -16,6 +17,7 @@ const {
   updateApiPrefix,
   handler,
   prettyUrl,
+  prestoreRootDir,
 } = createGueletonServer(process.cwd())
 
 function handlerAdapter<
@@ -40,6 +42,8 @@ export default defineNuxtModule<ModuleOptions>({
 
     addVitePlugin(() => createVitePlugin(unpluginFactory)(options))
     addWebpackPlugin(() => createWebpackPlugin(unpluginFactory)(options))
+
+    defu(_nuxt.options.ignore, [prestoreRootDir])
 
     const apiPrefix = updateApiPrefix(_nuxt.options.app.baseURL || '/')
 
