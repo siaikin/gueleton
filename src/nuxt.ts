@@ -43,7 +43,35 @@ export default defineNuxtModule<ModuleOptions>({
     addVitePlugin(() => createVitePlugin(unpluginFactory)(options))
     addWebpackPlugin(() => createWebpackPlugin(unpluginFactory)(options))
 
-    defu(_nuxt.options.ignore, [prestoreRootDir])
+    _nuxt.options = defu(_nuxt.options, {
+      vite: {
+        build: {
+          watch: {
+            chokidar: {
+              ignored: [
+                `${prestoreRootDir}/**`,
+              ],
+            },
+            exclude: [`${prestoreRootDir}/**`],
+          },
+        },
+        server: {
+          watch: {
+            ignored: [
+              `${prestoreRootDir}/**`,
+            ],
+          },
+        },
+      },
+      watchers: {
+        chokidar: {
+          ignored: [
+            `${prestoreRootDir}/**`,
+          ],
+        },
+      },
+    })
+    _nuxt.options.ignore = defu(_nuxt.options.ignore, [prestoreRootDir])
 
     const apiPrefix = updateApiPrefix(_nuxt.options.app.baseURL || '/')
 
