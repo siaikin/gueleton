@@ -11,6 +11,8 @@ export const REPLACE_API_PREFIX_KEY = '__GUELETON_API_PREFIX__'
 
 const DEFAULT_API_PREFIX = '/__gueleton'
 
+const prestoreData: Record<string, string> = {}
+
 export function createGueletonServer(projectDir: string): {
   prestoreRootDir: string
   initial: () => Promise<void>
@@ -29,8 +31,6 @@ export function createGueletonServer(projectDir: string): {
 
   const prestoreRootDir: string = `${trimEnd(projectDir, '/')}/.gueleton`
   const prestoreIndexJsonPath: string = `${prestoreRootDir}/index.json`
-
-  const prestoreData: Record<string, string> = {}
 
   const jsonParser = bodyParser.json()
 
