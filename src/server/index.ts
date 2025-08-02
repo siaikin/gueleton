@@ -153,7 +153,7 @@ export function createGueletonServer(projectDir: string): {
 
     const colorUrl = (url: string): string => c.green(url.replace(/:(\d+)\//, (_, port) => `:${c.bold(port)}/`))
 
-    return `  ${c.green('➜')}  ${c.bold('Gueleton')}: ${colorUrl(`${host}/${trim(apiPrefix, '/')}/`)}`
+    return `${c.bold('Gueleton')}: ${colorUrl(`${host}/${trim(apiPrefix, '/')}/`)}`
   }
 
   return {

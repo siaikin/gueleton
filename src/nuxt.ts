@@ -1,6 +1,9 @@
+import type { EventHandlerRequest, H3Event } from 'h3'
+import type { IncomingMessage, ServerResponse } from 'node:http'
 import type { Options } from './types'
 import process from 'node:process'
 import { addComponent, addDevServerHandler, addVitePlugin, addWebpackPlugin, defineNuxtModule, useLogger } from '@nuxt/kit'
+import { defineEventHandler } from 'h3'
 import { createVitePlugin, createWebpackPlugin } from 'unplugin'
 import { unpluginFactory } from '.'
 import { createGueletonServer } from './server'
@@ -12,9 +15,17 @@ export interface ModuleOptions extends Options {
 const {
   updateApiPrefix,
   handler,
-  prestoreRootDir,
   prettyUrl,
 } = createGueletonServer(process.cwd())
+
+function handlerAdapter<
+  Request extends EventHandlerRequest = EventHandlerRequest,
+  // Response = EventHandlerResponse
+>(
+  handler: (req: IncomingMessage, res: ServerResponse<IncomingMessage>) => Promise<void>,
+) {
+  return (event: H3Event<Request>) => handler(event.node.req, event.node.res)
+}
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
@@ -34,15 +45,15 @@ export default defineNuxtModule<ModuleOptions>({
 
     addDevServerHandler({
       route: `${apiPrefix}/storage/all`,
-      handler: handler.allPrestoreDataHandler,
+      handler: defineEventHandler(handlerAdapter(handler.allPrestoreDataHandler)),
     })
     addDevServerHandler({
       route: `${apiPrefix}/storage`,
-      handler: handler.prestoreDataHandler,
+      handler: defineEventHandler(handlerAdapter(handler.prestoreDataHandler)),
     })
     addDevServerHandler({
       route: `${apiPrefix}`,
-      handler: handler.allPrestoreDataHandler,
+      handler: defineEventHandler(handlerAdapter(handler.allPrestoreDataHandler)),
     })
 
     logger.info(prettyUrl(!!_nuxt.options.devServer.https, _nuxt.options.devServer.port))
