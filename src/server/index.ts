@@ -1,0 +1,172 @@
+import type { IncomingMessage, ServerResponse } from 'node:http'
+import { existsSync } from 'node:fs'
+import { mkdir, readFile, writeFile } from 'node:fs/promises'
+import { fileURLToPath } from 'node:url'
+import c from 'ansis'
+import bodyParser from 'body-parser'
+import { assign, isNil, trim, trimEnd } from 'lodash-es'
+
+export const REPLACE_PRESTORE_DATA_KEY = '__GUELETON_PRESTORE_DATA__'
+export const REPLACE_API_PREFIX_KEY = '__GUELETON_API_PREFIX__'
+
+const DEFAULT_API_PREFIX = '/__gueleton'
+
+export function createGueletonServer(projectDir: string): {
+  prestoreRootDir: string
+  initial: () => Promise<void>
+  transformCode: (code: string) => string
+  updateApiPrefix: (base: string) => string
+  getApiPrefix: () => string
+  prettyUrl: (https?: boolean, port?: number | string) => string
+  handler: {
+    prestoreDataHandler: (req: IncomingMessage, res: ServerResponse<IncomingMessage>) => Promise<void>
+    allPrestoreDataHandler: (req: IncomingMessage, res: ServerResponse<IncomingMessage>) => Promise<void>
+    panelPageHandler: (req: IncomingMessage, res: ServerResponse<IncomingMessage>) => Promise<void>
+  }
+} {
+  let apiPrefix: string = `${trimEnd(DEFAULT_API_PREFIX, '/')}`
+
+  const prestoreRootDir: string = `${trimEnd(projectDir, '/')}/.gueleton`
+  const prestoreIndexJsonPath: string = `${prestoreRootDir}/index.json`
+
+  const prestoreData: Record<string, string> = {}
+
+  const jsonParser = bodyParser.json()
+
+  const initial = async (): Promise<void> => {
+    await mkdir(prestoreRootDir, { recursive: true })
+    if (!existsSync(prestoreIndexJsonPath)) {
+      try {
+        await writeFile(prestoreIndexJsonPath, '{}', { encoding: 'utf-8' })
+        console.warn(`Initialed prestore data at ${prestoreIndexJsonPath}`)
+      }
+      catch (err) {
+        console.error(`Failed to write prestore data to ${prestoreIndexJsonPath}`)
+        throw err
+      }
+    }
+
+    try {
+      const _prestoreData = JSON.parse(await readFile(prestoreIndexJsonPath, { encoding: 'utf-8' }) || '{}')
+      assign(prestoreData, _prestoreData)
+    }
+    catch (err) {
+      console.error(`Failed to read prestore data from ${prestoreIndexJsonPath}`)
+      throw err
+    }
+  }
+
+  const transformCode = (code: string): string => {
+    return code
+      .replaceAll(REPLACE_PRESTORE_DATA_KEY, JSON.stringify(prestoreData))
+      .replaceAll(REPLACE_API_PREFIX_KEY, JSON.stringify(`/${trimEnd(apiPrefix, '/')}`))
+  }
+
+  const updateApiPrefix = (base: string): string => {
+    apiPrefix = `${trimEnd(base, '/')}/${trim(DEFAULT_API_PREFIX, '/')}`
+    return apiPrefix
+  }
+  const getApiPrefix = (): string => {
+    return apiPrefix
+  }
+
+  const prestoreDataHandler = async (req: IncomingMessage, res: ServerResponse<IncomingMessage>): Promise<void> => {
+    try {
+      await new Promise<void>((resolve, reject) => jsonParser(req, res, err => isNil(err) ? resolve() : reject(err)))
+    }
+    catch (err) {
+      console.error(`jsonParser error: ${err}`)
+      res.statusCode = 400
+      res.end()
+      throw err
+    }
+
+    switch (req.method?.toUpperCase()) {
+      case 'DELETE':
+      case 'POST':
+      case 'GET':
+        break
+      default:
+        console.error(`Method not allowed ${req.method}`)
+        res.statusCode = 405
+        res.end()
+        return
+    }
+
+    try {
+      if (req.method === 'GET') {
+        const searchParams = new URL(req.url as string, 'http://localhost').searchParams
+        const key = searchParams.get('key')
+
+        res.statusCode = 200
+        res.setHeader('Content-Type', 'text/plain')
+        res.end(isNil(key) ? '' : prestoreData[key] ?? '')
+        return
+      }
+
+      if (req.method === 'POST') {
+        // @ts-expect-error 缺少请求体类型定义
+        const json = req.body
+
+        prestoreData[json.key] = json.value
+      }
+      else if (req.method === 'DELETE') {
+        // @ts-expect-error 缺少请求体类型定义
+        const json = req.body
+        delete prestoreData[json.key]
+      }
+
+      if (prestoreIndexJsonPath) {
+        await writeFile(prestoreIndexJsonPath, JSON.stringify(prestoreData, null, 2), { encoding: 'utf-8' })
+      }
+
+      res.statusCode = 200
+      res.end()
+    }
+    catch (err) {
+      console.error(`Failed to write prestore data to ${prestoreIndexJsonPath}, err: ${err}`)
+      res.statusCode = 500
+      res.end()
+      throw err
+    }
+  }
+
+  const allPrestoreDataHandler = async (req: IncomingMessage, res: ServerResponse<IncomingMessage>): Promise<void> => {
+    res.statusCode = 200
+    res.setHeader('Content-Type', 'application/json')
+    res.end(JSON.stringify(prestoreData))
+  }
+
+  const panelPagePath: string = fileURLToPath(new URL('../client/assets/panel.html', import.meta.url))
+  const panelPageHandler = async (req: IncomingMessage, res: ServerResponse<IncomingMessage>): Promise<void> => {
+    const page = await readFile(panelPagePath, { encoding: 'utf-8' })
+    res.statusCode = 200
+    res.setHeader('Content-Type', 'text/html')
+    res.end(page.replaceAll(REPLACE_API_PREFIX_KEY, JSON.stringify(apiPrefix)))
+  }
+
+  const prettyUrl = (https?: boolean, port?: number | string): string => {
+    /**
+     * @see https://github.com/antfu-collective/vite-plugin-inspect/blob/a9128d5234e1377574a687ddc637b1bbc7de511c/src/node/index.ts#L145
+     */
+    const host = `${https ? 'https' : 'http'}://localhost:${port || '80'}`
+
+    const colorUrl = (url: string): string => c.green(url.replace(/:(\d+)\//, (_, port) => `:${c.bold(port)}/`))
+
+    return `  ${c.green('➜')}  ${c.bold('Gueleton')}: ${colorUrl(`${host}/${trim(apiPrefix, '/')}/`)}`
+  }
+
+  return {
+    initial,
+    transformCode,
+    prestoreRootDir,
+    updateApiPrefix,
+    getApiPrefix,
+    prettyUrl,
+    handler: {
+      prestoreDataHandler,
+      allPrestoreDataHandler,
+      panelPageHandler,
+    },
+  }
+}
