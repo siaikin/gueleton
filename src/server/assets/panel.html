@@ -198,6 +198,17 @@
         </div>
       `
     }).mount('#app')
+
+    // add favico
+  // <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    {
+      const favico = document.createElement('link')
+      favico.rel = 'icon'
+      favico.href = `${apiPrefix}/favicon.svg`
+      favico.type = 'image/svg+xml'
+      // favico.media = '(prefers-color-scheme: light)'
+      document.head.appendChild(favico)
+    }
   </script>
 </body>
 

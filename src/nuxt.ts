@@ -43,6 +43,11 @@ export default defineNuxtModule<ModuleOptions>({
     addVitePlugin(() => createVitePlugin(unpluginFactory)(options))
     addWebpackPlugin(() => createWebpackPlugin(unpluginFactory)(options))
 
+    /**
+     * nuxt 提供的 `watchers.chokidar` 不能正常生效. 使用[临时方案](https://github.com/nuxt/nuxt/issues/30459#issuecomment-2594081828)
+     *
+     * todo 等待 https://github.com/nuxt/nuxt/issues/30756 解决
+     */
     _nuxt.options = defu(_nuxt.options, {
       vite: {
         build: {
@@ -81,6 +86,10 @@ export default defineNuxtModule<ModuleOptions>({
     addDevServerHandler({
       route: `${apiPrefix}/storage`,
       handler: defineEventHandler(handlerAdapter(handler.prestoreDataHandler)),
+    })
+    addDevServerHandler({
+      route: `${apiPrefix}/favicon.svg`,
+      handler: defineEventHandler(handlerAdapter(handler.panelPageFaviconHandler)),
     })
     addDevServerHandler({
       route: `${apiPrefix}`,

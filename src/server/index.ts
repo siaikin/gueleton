@@ -20,6 +20,7 @@ export function createGueletonServer(projectDir: string): {
   prettyUrl: (https?: boolean, port?: number | string) => string
   handler: {
     prestoreDataHandler: (req: IncomingMessage, res: ServerResponse<IncomingMessage>) => Promise<void>
+    panelPageFaviconHandler: (req: IncomingMessage, res: ServerResponse<IncomingMessage>) => Promise<void>
     allPrestoreDataHandler: (req: IncomingMessage, res: ServerResponse<IncomingMessage>) => Promise<void>
     panelPageHandler: (req: IncomingMessage, res: ServerResponse<IncomingMessage>) => Promise<void>
   }
@@ -144,6 +145,13 @@ export function createGueletonServer(projectDir: string): {
     res.setHeader('Content-Type', 'text/html')
     res.end(page.replaceAll(REPLACE_API_PREFIX_KEY, JSON.stringify(apiPrefix)))
   }
+  const panelPageFaviconPath: string = fileURLToPath(new URL('./assets/favicon.svg', import.meta.url))
+  const panelPageFaviconHandler = async (req: IncomingMessage, res: ServerResponse<IncomingMessage>): Promise<void> => {
+    const page = await readFile(panelPageFaviconPath)
+    res.statusCode = 200
+    res.setHeader('Content-Type', 'image/svg+xml')
+    res.end(page)
+  }
 
   const prettyUrl = (https?: boolean, port?: number | string): string => {
     /**
@@ -165,6 +173,7 @@ export function createGueletonServer(projectDir: string): {
     prettyUrl,
     handler: {
       prestoreDataHandler,
+      panelPageFaviconHandler,
       allPrestoreDataHandler,
       panelPageHandler,
     },

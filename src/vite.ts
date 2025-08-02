@@ -30,6 +30,7 @@ export default createVitePlugin<Options, false>((options, meta) => {
 
         server.middlewares.use(`${apiPrefix}/storage/all`, handler.allPrestoreDataHandler)
         server.middlewares.use(`${apiPrefix}/storage`, handler.prestoreDataHandler)
+        server.middlewares.use(`${apiPrefix}/favicon.svg`, handler.panelPageFaviconHandler)
         server.middlewares.use(`${apiPrefix}`, handler.panelPageHandler)
 
         const config = server.config

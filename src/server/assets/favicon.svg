@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+  <!-- 头骨（正方形，颜色为白色） -->
+<!--  <rect x="0" y="0" width="40" height="40" fill="white" />-->
+
+  <!-- 眼窝（圆形，颜色 #7a7374，调整大小） -->
+  <circle cx="10" cy="12" r="8" fill="#7a7374">
+    <animate attributeName="opacity" values="1;0.3;1" dur="3s" repeatCount="indefinite" />
+  </circle>
+  <circle cx="30" cy="12" r="8" fill="#7a7374">
+    <animate attributeName="opacity" values="1;0.3;1" dur="3s" repeatCount="indefinite" />
+  </circle>
+
+  <!-- 鼻孔（三角形朝上，颜色 #ed556a，调整位置） -->
+  <polygon points="18,24 22,24 20,20" fill="#ed556a">
+    <animate attributeName="opacity" values="1;0.3;1" dur="3s" repeatCount="indefinite" />
+  </polygon>
+
+  <!-- 嘴巴（长方形，颜色 #7a7374，调整位置） -->
+  <rect x="10" y="30" width="20" height="6" fill="#7a7374">
+    <animate attributeName="opacity" values="1;0.3;1" dur="3s" repeatCount="indefinite" />
+  </rect>
+</svg>
