@@ -71,7 +71,6 @@ export default defineNuxtModule<ModuleOptions>({
         },
       },
     })
-    _nuxt.options.ignore = defu(_nuxt.options.ignore, [prestoreRootDir])
 
     const apiPrefix = updateApiPrefix(_nuxt.options.app.baseURL || '/')
 
