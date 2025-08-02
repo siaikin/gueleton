@@ -53,7 +53,7 @@ export default defineNuxtModule<ModuleOptions>({
     })
     addDevServerHandler({
       route: `${apiPrefix}`,
-      handler: defineEventHandler(handlerAdapter(handler.allPrestoreDataHandler)),
+      handler: defineEventHandler(handlerAdapter(handler.panelPageHandler)),
     })
 
     logger.info(prettyUrl(!!_nuxt.options.devServer.https, _nuxt.options.devServer.port))

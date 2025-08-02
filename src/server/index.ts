@@ -137,7 +137,7 @@ export function createGueletonServer(projectDir: string): {
     res.end(JSON.stringify(prestoreData))
   }
 
-  const panelPagePath: string = fileURLToPath(new URL('../client/assets/panel.html', import.meta.url))
+  const panelPagePath: string = fileURLToPath(new URL('./assets/panel.html', import.meta.url))
   const panelPageHandler = async (req: IncomingMessage, res: ServerResponse<IncomingMessage>): Promise<void> => {
     const page = await readFile(panelPagePath, { encoding: 'utf-8' })
     res.statusCode = 200
@@ -153,7 +153,7 @@ export function createGueletonServer(projectDir: string): {
 
     const colorUrl = (url: string): string => c.green(url.replace(/:(\d+)\//, (_, port) => `:${c.bold(port)}/`))
 
-    return `${c.bold('Gueleton')}: ${colorUrl(`${host}/${trim(apiPrefix, '/')}/`)}`
+    return `${c.green('➜')}  ${c.bold('Gueleton')}: ${colorUrl(`${host}/${trim(apiPrefix, '/')}/`)}`
   }
 
   return {

@@ -19,6 +19,7 @@ export default defineConfig({
     },
   },
   copy: [
-    { from: 'src/client/assets', to: 'dist/client/assets' },
+    { from: 'src/server/assets', to: 'dist/server/assets' },
   ],
+  unbundle: true,
 })
