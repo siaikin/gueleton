@@ -6,6 +6,10 @@ export default defineConfig({
     'src/*.ts',
     'src/client/vue/index.ts',
   ],
+  outputOptions: {
+    exports: 'named',
+  },
+  format: ['esm', 'cjs'],
   shims: true,
   dts: {
     sourcemap: true,
