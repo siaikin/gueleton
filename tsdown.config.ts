@@ -1,14 +1,11 @@
 import { defineConfig } from 'tsdown'
 
 export default defineConfig({
-  target: 'es2015',
+  target: 'es2020',
   entry: [
     'src/*.ts',
     'src/client/vue/index.ts',
   ],
-  outputOptions: {
-    exports: 'named',
-  },
   format: ['esm', 'cjs'],
   shims: true,
   dts: {
