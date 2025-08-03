@@ -152,7 +152,9 @@
       template: `
         <div class="p-4">
           <table class="table-fixed w-full text-sm">
-            <caption class="text-lg font-medium text-gray-900">Prestore Storage</caption>
+            <caption class="text-lg mb-2 font-semibold text-gray-700">
+              Prestore Data Panel
+            </caption>
             <colgroup>
               <col >
               <col class="w-32">
@@ -195,12 +197,21 @@
               </tr>
             </tbody>
           </table>
+          <p class="flex items-center mt-4 text-xs text-gray-500">
+            <span class="flex-auto" />
+            <span class="mr-1">Powered by</span>
+            <a href="https://github.com/siaikin/unplugin-gueleton" target="_blank" class="inline-flex items-center">
+              <img src="${apiPrefix}/favicon.svg" alt="gleleton logo" class="inline-block size-4 mr-1" />
+              <span class="group">
+                <span class="text-[#7a7374] group-hover:underline">Gu</span>
+                <span class="text-[#ed556a] group-hover:underline">eleton</span>
+              </span>
+            </a>
+          </p>
         </div>
       `
     }).mount('#app')
 
-    // add favico
-  // <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     {
       const favico = document.createElement('link')
       favico.rel = 'icon'
