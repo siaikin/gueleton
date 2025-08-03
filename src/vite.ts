@@ -10,7 +10,7 @@ export default createVitePlugin<Options, false>((options, meta) => {
 
   const {
     updateApiPrefix,
-    handler,
+    getHandlers,
     prestoreRootDir,
     prettyUrl,
   } = createGueletonServer(process.cwd())
@@ -26,12 +26,11 @@ export default createVitePlugin<Options, false>((options, meta) => {
           server.watcher.options.ignored = [server.watcher.options.ignored, prestoreRootDir]
         }
 
-        const apiPrefix = updateApiPrefix(server.config.base || '/')
+        updateApiPrefix(server.config.base || '/')
 
-        server.middlewares.use(`${apiPrefix}/storage/all`, handler.allPrestoreDataHandler)
-        server.middlewares.use(`${apiPrefix}/storage`, handler.prestoreDataHandler)
-        server.middlewares.use(`${apiPrefix}/favicon.svg`, handler.panelPageFaviconHandler)
-        server.middlewares.use(`${apiPrefix}`, handler.panelPageHandler)
+        for (const { route, handler } of getHandlers()) {
+          server.middlewares.use(route, handler)
+        }
 
         const config = server.config
         config.logger.info(prettyUrl(config.server.https as unknown as boolean, config.server.port || '80'))

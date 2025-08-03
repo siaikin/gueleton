@@ -10,43 +10,44 @@ export default createWebpackPlugin<Options, false>((options, meta) => {
 
   const {
     updateApiPrefix,
-    handler,
+    getHandlers,
     prettyUrl,
   } = createGueletonServer(process.cwd())
 
   return {
     ...common,
     webpack(compiler) {
+      const logger = compiler.getInfrastructureLogger(common.name)
+
       const options = compiler.options
       if (isNil(options.devServer) || options.devServer === false) {
         return
       }
 
-      const apiPrefix = updateApiPrefix('')
+      updateApiPrefix('')
 
       options.devServer = {
-        setupMiddlewares: (middlewares: any) => {
-          middlewares.push(
-            {
-              name: 'gueleton-all',
-              path: `${apiPrefix}/storage/all`,
-              middleware: handler.allPrestoreDataHandler,
-            },
-            {
-              name: 'gueleton',
-              path: `${apiPrefix}/storage`,
-              middleware: handler.prestoreDataHandler,
-            },
-            {
-              name: 'gueleton-panel',
-              path: `${apiPrefix}`,
-              middleware: handler.panelPageHandler,
-            },
-          )
+        setupMiddlewares: (middlewares: any, devServer: any) => {
+          if (!devServer) {
+            throw new Error('webpack-dev-server is not defined')
+          }
+
+          for (const { route, handler } of getHandlers()) {
+            middlewares.push({
+              name: route,
+              path: route,
+              middleware: handler,
+            })
+          }
 
           return middlewares
         },
       }
+
+      logger.info(prettyUrl(
+        options.devServer.server === 'https' || options.devServer.server?.type === 'https',
+        options.devServer.port || '80',
+      ))
     },
   }
 })

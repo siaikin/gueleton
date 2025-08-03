@@ -15,14 +15,14 @@ export interface ModuleOptions extends Options {
 
 const {
   updateApiPrefix,
-  handler,
+  getHandlers,
   prettyUrl,
   prestoreRootDir,
 } = createGueletonServer(process.cwd())
 
 function handlerAdapter<
   Request extends EventHandlerRequest = EventHandlerRequest,
-  // Response = EventHandlerResponse
+// Response = EventHandlerResponse
 >(
   handler: (req: IncomingMessage, res: ServerResponse<IncomingMessage>) => Promise<void>,
 ) {
@@ -77,27 +77,20 @@ export default defineNuxtModule<ModuleOptions>({
       },
     })
 
-    const apiPrefix = updateApiPrefix(_nuxt.options.app.baseURL || '/')
+    updateApiPrefix(_nuxt.options.app.baseURL || '/')
 
-    addDevServerHandler({
-      route: `${apiPrefix}/storage/all`,
-      handler: defineEventHandler(handlerAdapter(handler.allPrestoreDataHandler)),
-    })
-    addDevServerHandler({
-      route: `${apiPrefix}/storage`,
-      handler: defineEventHandler(handlerAdapter(handler.prestoreDataHandler)),
-    })
-    addDevServerHandler({
-      route: `${apiPrefix}/favicon.svg`,
-      handler: defineEventHandler(handlerAdapter(handler.panelPageFaviconHandler)),
-    })
-    addDevServerHandler({
-      route: `${apiPrefix}`,
-      handler: defineEventHandler(handlerAdapter(handler.panelPageHandler)),
-    })
+    for (const { route, handler } of getHandlers()) {
+      addDevServerHandler({
+        route,
+        handler: defineEventHandler(handlerAdapter(handler)),
+      })
+    }
 
     logger.info(prettyUrl(!!_nuxt.options.devServer.https, _nuxt.options.devServer.port))
 
+    /**
+     * 自动注册组件
+     */
     {
       const names = [
         'Gueleton',

@@ -20,12 +20,10 @@ export function createGueletonServer(projectDir: string): {
   updateApiPrefix: (base: string) => string
   getApiPrefix: () => string
   prettyUrl: (https?: boolean, port?: number | string) => string
-  handler: {
-    prestoreDataHandler: (req: IncomingMessage, res: ServerResponse<IncomingMessage>) => Promise<void>
-    panelPageFaviconHandler: (req: IncomingMessage, res: ServerResponse<IncomingMessage>) => Promise<void>
-    allPrestoreDataHandler: (req: IncomingMessage, res: ServerResponse<IncomingMessage>) => Promise<void>
-    panelPageHandler: (req: IncomingMessage, res: ServerResponse<IncomingMessage>) => Promise<void>
-  }
+  getHandlers: () => {
+    route: string
+    handler: (req: IncomingMessage, res: ServerResponse<IncomingMessage>) => Promise<void>
+  }[]
 } {
   let apiPrefix: string = `${trimEnd(DEFAULT_API_PREFIX, '/')}`
 
@@ -171,11 +169,16 @@ export function createGueletonServer(projectDir: string): {
     updateApiPrefix,
     getApiPrefix,
     prettyUrl,
-    handler: {
-      prestoreDataHandler,
-      panelPageFaviconHandler,
-      allPrestoreDataHandler,
-      panelPageHandler,
+    getHandlers() {
+      /**
+       * 数组顺序会影响处理程序的优先级, 越靠前优先级越高
+       */
+      return [
+        { route: `${apiPrefix}/storage/all`, handler: allPrestoreDataHandler },
+        { route: `${apiPrefix}/storage`, handler: prestoreDataHandler },
+        { route: `${apiPrefix}/favicon.svg`, handler: panelPageFaviconHandler },
+        { route: `${apiPrefix}`, handler: panelPageHandler },
+      ]
     },
   }
 }
