@@ -92,11 +92,8 @@ export default defineNuxtModule<ModuleOptions>({
      * 自动注册组件
      */
     {
-      const names = [
-        'Gueleton',
-        'GueletonProvider',
-      ]
-      names.forEach(name => addComponent({ name, export: name, filePath: 'unplugin-gueleton/client/vue' }))
+      addComponent({ name: 'Gueleton', export: 'Gueleton', filePath: 'unplugin-gueleton/dist/client/vue/gueleton' })
+      addComponent({ name: 'GueletonProvider', export: 'GueletonProvider', filePath: 'unplugin-gueleton/dist/client/vue/gueleton-provider' })
     }
   },
 })
