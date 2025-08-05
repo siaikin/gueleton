@@ -13,6 +13,9 @@ export default defineConfig({
   },
   exports: {
     customExports: (exports) => {
+      // "./*": "./dist/src/*"
+      exports['./*'] = './dist/*'
+
       exports['./client/vue'] = exports['./client/vue/index']
       delete exports['./client/vue/index']
 

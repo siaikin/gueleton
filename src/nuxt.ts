@@ -91,9 +91,10 @@ export default defineNuxtModule<ModuleOptions>({
     /**
      * 自动注册组件
      */
+    // eslint-disable-next-line no-lone-blocks
     {
-      addComponent({ name: 'Gueleton', export: 'Gueleton', filePath: 'unplugin-gueleton/dist/client/vue/gueleton' })
-      addComponent({ name: 'GueletonProvider', export: 'GueletonProvider', filePath: 'unplugin-gueleton/dist/client/vue/gueleton-provider' })
+      addComponent({ name: 'Gueleton', export: 'Gueleton', filePath: 'unplugin-gueleton/client/vue/gueleton' })
+      addComponent({ name: 'GueletonProvider', export: 'GueletonProvider', filePath: 'unplugin-gueleton/client/vue/gueleton-provider' })
     }
   },
 })
