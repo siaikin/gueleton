@@ -11,11 +11,15 @@ export default defineConfig({
   dts: {
     sourcemap: true,
   },
+  outputOptions: {
+    /**
+     * 同时具有命名导出和默认导出需要设置为 'named'。
+     * @see https://rollupjs.org/configuration-options/#output-exports
+     */
+    exports: 'named',
+  },
   exports: {
     customExports: (exports) => {
-      // "./*": "./dist/src/*"
-      exports['./*'] = './dist/*'
-
       exports['./client/vue'] = exports['./client/vue/index']
       delete exports['./client/vue/index']
 
