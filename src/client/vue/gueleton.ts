@@ -114,7 +114,7 @@ export const Gueleton = /*#__PURE__*/ (<T extends object>() => {
             asChild: props.asChild,
             ref: containerRef,
           },
-          () => slots.default?.({ data: (loading.value && !isEmpty(prestoreData.value)) ? prestoreData.value : data.value })
+          () => slots.default?.({ data: loading.value ? prestoreData.value : data.value })
             /**
              * 只是为了更好的开发体验, 允许默认插槽中存在注释节点, render 时会过滤掉注释节点
              */
