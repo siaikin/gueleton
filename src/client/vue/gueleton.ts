@@ -88,7 +88,7 @@ export const Gueleton = /*#__PURE__*/ (<T extends object>() => {
         await setPrestoreData(_dataKey, prune(_data, _mergedLimit) as T)
         // 保存成功后, 更新 prestoreData
         prestoreData.value = await getPrestoreData(_dataKey)
-      }, { immediate: true })
+      })
 
       const containerRef = ref<Element | ComponentPublicInstance | null>(null)
       watch(
