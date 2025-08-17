@@ -141,11 +141,12 @@ export const Gueleton = /*#__PURE__*/ (<T extends object>() => {
           () => {
             let vnodes: ReturnType<NonNullable<typeof slots.default>> | undefined
 
-            if (isUndefined(_data) || isUndefined(_prestoreData)) {
-              vnodes = _forceRender ? slots.default?.({ data: _loading ? _prestoreData : _data }) : undefined
+            if (_loading) {
+              // 加载中时，使用预存数据，如果没有预存数据则根据 forceRender 决定是否渲染
+              vnodes = (isUndefined(_prestoreData) && !_forceRender) ? undefined : slots.default?.({ data: _prestoreData })
             }
             else {
-              vnodes = slots.default?.({ data: _loading ? _prestoreData : _data })
+              vnodes = slots.default?.({ data: _data })
             }
 
             return (vnodes ?? [])
