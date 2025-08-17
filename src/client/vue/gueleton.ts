@@ -1,9 +1,10 @@
+import type { JsonValue } from 'type-fest'
 import type { ComponentPublicInstance, CSSProperties, SetupContext, SlotsType, VNode } from 'vue'
 import type { SkeletonOptions } from '../../shared'
 import type { PruneOptions } from '../core'
 import type { GueletonProviderKeyType } from './gueleton-provider'
 import type { PrimitiveProps } from './primitive'
-import { isEmpty, isNil, isNumber, merge } from 'lodash-es'
+import { isNil, isNumber, isUndefined, merge } from 'lodash-es'
 import { Comment, computed, defineComponent, h, inject, ref, toRef, toRefs, watch } from 'vue'
 import { prune, skeleton } from '../core'
 import { createContextNotFoundError } from '../core/utils'
@@ -23,9 +24,8 @@ export type GueletonProps<DATA> = {
   data: DATA | null | undefined
   /**
    * 这个参数可以让你直接在代码中设置预存数据, 而不依赖构建时的 vite/webpack 插件.
-   * 当 prestoreData 不为空时, 会直接使用 prestoreData, 而不会根据 data 生成预存数据.
    *
-   * 内部使用 [lodash.isEmpty](https://lodash.com/docs/4.17.15#isEmpty) 判断 prestoreData 是否为空.
+   * 注意: 在这里手动设置的 prestoreData 不会被保存到 devServer.
    */
   prestoreData?: DATA | null | undefined
   /**
@@ -38,6 +38,10 @@ export type GueletonProps<DATA> = {
    * 控制是否显示骨架屏.
    */
   loading?: boolean
+  /**
+   * 强制渲染组件, 即使没有预存数据.
+   */
+  forceRender?: boolean
 } & Partial<SkeletonOptions<CSSProperties>> & PrimitiveProps
 
 export interface GueletonEvents extends Record<string, any[]> {
@@ -48,7 +52,7 @@ export interface GueletonSlots<DATA> {
 }
 
 // eslint-disable-next-line style/spaced-comment
-export const Gueleton = /*#__PURE__*/ (<T extends object>() => {
+export const Gueleton = /*#__PURE__*/ (<T extends JsonValue>() => {
   return defineComponent(
     (props: GueletonProps<T>, { slots, attrs }: SetupContext<GueletonEvents, SlotsType<GueletonSlots<T>>>) => {
       const provider = inject<GueletonProviderKeyType<T>>(GueletonProviderKey)
@@ -72,19 +76,31 @@ export const Gueleton = /*#__PURE__*/ (<T extends object>() => {
       const { dataKey } = toRefs(props)
       const data = computed(() => props.data)
       const loading = computed(() => props.loading)
+      const forceRender = computed(() => props.forceRender)
 
       const prestoreData = ref<T | null | undefined>(null)
+      const prestoreDataResolved = ref(false)
       watch([dataKey, toRef(props, 'prestoreData')], async ([_dataKey, _prestoreData]) => {
-        prestoreData.value = _prestoreData ?? await getPrestoreData(_dataKey)
+        if (isNil(_prestoreData)) {
+          prestoreData.value = await getPrestoreData(_dataKey)
+          /**
+           * 仅当 prestoreData 来自于 getPrestoreData 时才会被标记为 resolved. 这将确保用户手动设置的 prestoreData 不会被保存到 devServer.
+           */
+          prestoreDataResolved.value = true
+        }
+        else {
+          prestoreData.value = _prestoreData
+        }
       }, { immediate: true })
 
       /**
        * 当 prestoreData 为空时, 会根据 data 和 limit 生成预存数据, 并发送到 devServer
        */
-      watch([dataKey, data, mergedLimit], async ([_dataKey, _data, _mergedLimit]) => {
-        if (!isEmpty(prestoreData.value) || isEmpty(_data)) {
+      watch([prestoreDataResolved, dataKey, data, mergedLimit], async ([_resolved, _dataKey, _data, _mergedLimit]) => {
+        if (!_resolved || !isNil(prestoreData.value) || isNil(_data)) {
           return
         }
+
         await setPrestoreData(_dataKey, prune(_data, _mergedLimit) as T)
         // 保存成功后, 更新 prestoreData
         prestoreData.value = await getPrestoreData(_dataKey)
@@ -99,6 +115,10 @@ export const Gueleton = /*#__PURE__*/ (<T extends object>() => {
           }
 
           const _el = _container instanceof Element ? _container : _container.$el
+          if (isNil(_el)) {
+            return
+          }
+
           const unmount = skeleton(_el, { ..._mergedSkeletonOptions })
           onCleanup(() => unmount())
         },
@@ -106,6 +126,11 @@ export const Gueleton = /*#__PURE__*/ (<T extends object>() => {
       )
 
       return () => {
+        const _prestoreData = prestoreData.value
+        const _data = data.value
+        const _loading = loading.value
+        const _forceRender = forceRender.value
+
         return h(
           Primitive,
           {
@@ -114,16 +139,27 @@ export const Gueleton = /*#__PURE__*/ (<T extends object>() => {
             asChild: props.asChild,
             ref: containerRef,
           },
-          () => slots.default?.({ data: loading.value ? prestoreData.value : data.value })
+          () => {
+            let vnodes: ReturnType<NonNullable<typeof slots.default>> | undefined
+
+            if (isUndefined(_data) && isUndefined(_prestoreData)) {
+              vnodes = _forceRender ? slots.default?.({ data: _loading ? _prestoreData : _data }) : undefined
+            }
+            else {
+              vnodes = slots.default?.({ data: _loading ? _prestoreData : _data })
+            }
+
+            return (vnodes ?? [])
             /**
              * 只是为了更好的开发体验, 允许默认插槽中存在注释节点, render 时会过滤掉注释节点
              */
-            ?.filter(node => node.type !== Comment),
+              .filter(node => node.type !== Comment)
+          },
         )
       }
     },
     {
-      props: ['dataKey', 'data', 'limit', 'loading', 'as', 'asChild', 'prestoreData', 'fuzzy', 'bone', 'container', 'type'],
+      props: ['dataKey', 'data', 'limit', 'loading', 'forceRender', 'as', 'asChild', 'prestoreData', 'fuzzy', 'bone', 'container', 'type'],
     },
   )
 })()

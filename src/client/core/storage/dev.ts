@@ -14,7 +14,7 @@ export class DevelopmentStorage implements SkeletonStorage {
   constructor() {
   }
 
-  async getItem(key: string): Promise<string | null> {
+  async getItem(key: string): Promise<string> {
     const url = new URL(`/${trim(apiPrefix, '/')}/storage`, location.href)
     url.searchParams.set('key', key)
     const res = await fetch(url.toString(), { method: 'GET' })

@@ -113,10 +113,10 @@
     "@nuxt/schema": {
       "optional": true
     },
-    "h3": {
+    "esbuild": {
       "optional": true
     },
-    "esbuild": {
+    "h3": {
       "optional": true
     },
     "rollup": {
@@ -139,6 +139,7 @@
     "defu": "^6.1.4",
     "lodash-es": "^4.17.21",
     "split2": "^4.2.0",
+    "type-fest": "^4.41.0",
     "unplugin": "^2.3.4"
   },
   "devDependencies": {

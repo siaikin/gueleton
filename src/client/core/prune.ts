@@ -17,8 +17,8 @@ export type PruneOptions = Partial<Options> | number
 /**
  * 根据 limit 配置裁剪数据
  */
-export function prune<T extends []>(data: T, limit?: PruneOptions): Array<Record<string, any>>
-export function prune<T extends object>(data: T, limit?: PruneOptions): Record<string, any>
+// export function prune<T extends []>(data: T, limit?: PruneOptions): Array<Record<string, any>>
+// export function prune<T extends object>(data: T, limit?: PruneOptions): Record<string, any>
 export function prune<T>(data: T, limit?: PruneOptions): any {
   const pruneOptions: Options = merge({ length: 0, properties: [] }, isNumber(limit) ? { length: limit, properties: [] } : limit)
 
