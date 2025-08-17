@@ -1,4 +1,3 @@
-import type { JsonValue } from 'type-fest'
 import type { CSSProperties, Ref, SetupContext, SlotsType } from 'vue'
 import type { SkeletonOptions } from '../../shared'
 import type { PruneOptions } from '../core'
@@ -8,7 +7,7 @@ import { DefaultSkeletonOptions } from '../../shared'
 import { DevelopmentStorage, ProductionStorage } from '../core/storage'
 
 export const GueletonProviderKey = Symbol('GueletonProviderKey')
-export interface GueletonProviderKeyType<T extends JsonValue = JsonValue> {
+export interface GueletonProviderKeyType<T extends object> {
   options: Ref<SkeletonOptions<CSSProperties>>
   limit: Ref<PruneOptions>
   getPrestoreData: (id: string) => Promise<T | undefined>
@@ -44,7 +43,7 @@ export const GueletonProvider = /*#__PURE__*/ defineComponent(
     // eslint-disable-next-line node/prefer-global/process
     const storage = process.env.NODE_ENV === 'production' ? new ProductionStorage() : new DevelopmentStorage()
 
-    provide<GueletonProviderKeyType>(GueletonProviderKey, {
+    provide<GueletonProviderKeyType<object>>(GueletonProviderKey, {
       options,
       limit,
       getPrestoreData: async (id) => {

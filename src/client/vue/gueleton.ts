@@ -1,4 +1,3 @@
-import type { JsonValue } from 'type-fest'
 import type { ComponentPublicInstance, CSSProperties, SetupContext, SlotsType, VNode } from 'vue'
 import type { SkeletonOptions } from '../../shared'
 import type { PruneOptions } from '../core'
@@ -52,7 +51,7 @@ export interface GueletonSlots<DATA> {
 }
 
 // eslint-disable-next-line style/spaced-comment
-export const Gueleton = /*#__PURE__*/ (<T extends JsonValue>() => {
+export const Gueleton = /*#__PURE__*/ (<T extends object>() => {
   return defineComponent(
     (props: GueletonProps<T>, { slots, attrs }: SetupContext<GueletonEvents, SlotsType<GueletonSlots<T>>>) => {
       const provider = inject<GueletonProviderKeyType<T>>(GueletonProviderKey)
