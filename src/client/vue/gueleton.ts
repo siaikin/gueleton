@@ -141,7 +141,7 @@ export const Gueleton = /*#__PURE__*/ (<T extends object>() => {
           () => {
             let vnodes: ReturnType<NonNullable<typeof slots.default>> | undefined
 
-            if (isUndefined(_data) && isUndefined(_prestoreData)) {
+            if (isUndefined(_data) || isUndefined(_prestoreData)) {
               vnodes = _forceRender ? slots.default?.({ data: _loading ? _prestoreData : _data }) : undefined
             }
             else {
