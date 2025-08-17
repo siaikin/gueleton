@@ -86,7 +86,9 @@ export default defineNuxtModule<ModuleOptions>({
       })
     }
 
-    logger.info(prettyUrl(!!_nuxt.options.devServer.https, _nuxt.options.devServer.port))
+    _nuxt.hooks.hook('vite:serverCreated', () => {
+      logger.info(prettyUrl(!!_nuxt.options.devServer.https, _nuxt.options.devServer.port))
+    })
 
     /**
      * 自动注册组件

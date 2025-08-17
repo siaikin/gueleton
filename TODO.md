@@ -30,5 +30,5 @@ found 0 vulnerabilities
 ℹ ➜ Gueleton: http://localhost:3000/__gueleton/                                                                                                                                                          nuxt-gueleton 12:40:33 AM
 ℹ Nuxt Icon server bundle mode is set to local                                                                                                                                                                         12:40:33 AM
 ✔ Nuxt Icon discovered local-installed 2 collections: lucide, simple-icons                                                                                                                                             12:40:35 AM
-✔ Types generated in .nuxt                      
+✔ Types generated in .nuxt
 ```
