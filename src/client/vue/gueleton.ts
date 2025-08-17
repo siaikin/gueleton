@@ -77,10 +77,10 @@ export const Gueleton = /*#__PURE__*/ (<T extends object>() => {
       const loading = computed(() => props.loading)
       const forceRender = computed(() => props.forceRender)
 
-      const prestoreData = ref<T | null | undefined>(null)
+      const prestoreData = ref<T | null | undefined>(undefined)
       const prestoreDataResolved = ref(false)
       watch([dataKey, toRef(props, 'prestoreData')], async ([_dataKey, _prestoreData]) => {
-        if (isNil(_prestoreData)) {
+        if (isUndefined(_prestoreData)) {
           prestoreData.value = await getPrestoreData(_dataKey)
           /**
            * 仅当 prestoreData 来自于 getPrestoreData 时才会被标记为 resolved. 这将确保用户手动设置的 prestoreData 不会被保存到 devServer.
@@ -96,7 +96,7 @@ export const Gueleton = /*#__PURE__*/ (<T extends object>() => {
        * 当 prestoreData 为空时, 会根据 data 和 limit 生成预存数据, 并发送到 devServer
        */
       watch([prestoreDataResolved, dataKey, data, mergedLimit], async ([_resolved, _dataKey, _data, _mergedLimit]) => {
-        if (!_resolved || !isNil(prestoreData.value) || isNil(_data)) {
+        if (!_resolved || !isUndefined(prestoreData.value) || isUndefined(_data)) {
           return
         }
 
