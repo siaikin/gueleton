@@ -1,16 +1,14 @@
 import type { UnpluginFactory } from 'unplugin'
 import type { Options } from './types'
-import process from 'node:process'
 import { createUnplugin } from 'unplugin'
 import { createGueletonServer, REPLACE_API_PREFIX_KEY, REPLACE_PRESTORE_DATA_KEY } from './server'
 
-const {
-  initial,
-  transformCode,
-} = createGueletonServer(process.cwd())
-
-// eslint-disable-next-line unused-imports/no-unused-vars
 export const unpluginFactory: UnpluginFactory<Options | undefined, false> = (options) => {
+  const {
+    initial,
+    transformCode,
+  } = createGueletonServer(options)
+
   return {
     name: 'unplugin-gueleton',
     enforce: 'post',

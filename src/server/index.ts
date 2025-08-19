@@ -1,33 +1,50 @@
 import type { IncomingMessage, ServerResponse } from 'node:http'
+import type { Options } from '../types'
 import { existsSync } from 'node:fs'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import c from 'ansis'
+import appRootPath from 'app-root-path'
 import bodyParser from 'body-parser'
-import { assign, isNil, trim, trimEnd } from 'lodash-es'
+import chalk from 'chalk'
+import { assign, isNil, merge, trim, trimEnd } from 'lodash-es'
+import { getPortPromise } from 'portfinder'
+import HttpServer from './http-server'
+import type { SimpleHandleFunction } from 'connect'
 
 export const REPLACE_PRESTORE_DATA_KEY = '__GUELETON_PRESTORE_DATA__'
 export const REPLACE_API_PREFIX_KEY = '__GUELETON_API_PREFIX__'
+export const REPLACE_SERVER_PORT_KEY = '__GUELETON_SERVER_PORT__'
+
+export interface GueletonServerOptions extends Options {
+}
 
 const DEFAULT_API_PREFIX = '/__gueleton'
 
 const prestoreData: Record<string, string> = {}
 
-export function createGueletonServer(projectDir: string): {
+const server: HttpServer = new HttpServer(false)
+
+type Handler = (req: IncomingMessage, res: ServerResponse<IncomingMessage>) => Promise<void>
+
+let port = 0
+
+export function createGueletonServer(options: GueletonServerOptions = {}): {
   prestoreRootDir: string
   initial: () => Promise<void>
   transformCode: (code: string) => string
-  updateApiPrefix: (base: string) => string
-  getApiPrefix: () => string
-  prettyUrl: (https?: boolean, port?: number | string) => string
-  getHandlers: () => {
-    route: string
-    handler: (req: IncomingMessage, res: ServerResponse<IncomingMessage>) => Promise<void>
-  }[]
+  startServer: () => Promise<void>
+  stopServer: () => Promise<void>
+  useHandlers: (callback: (handlers: { route: string; handler: Handler }[]) => void) => void
+  prettyServerUrl: (https?: boolean, port?: number | string) => string
 } {
-  let apiPrefix: string = `${trimEnd(DEFAULT_API_PREFIX, '/')}`
+  const _options = merge({ debug: false }, options)
 
-  const prestoreRootDir: string = `${trimEnd(projectDir, '/')}/.gueleton`
+  server.debug = _options.debug
+
+  const apiPrefix = `/${trim(DEFAULT_API_PREFIX, '/')}`
+
+  const prestoreRootDir: string = `${trimEnd(appRootPath.path, '/')}/.gueleton`
   const prestoreIndexJsonPath: string = `${prestoreRootDir}/index.json`
 
   const jsonParser = bodyParser.json()
@@ -53,20 +70,15 @@ export function createGueletonServer(projectDir: string): {
       console.error(`Failed to read prestore data from ${prestoreIndexJsonPath}`)
       throw err
     }
+
+    port = await getPortPromise({ port: 5679 })
   }
 
   const transformCode = (code: string): string => {
     return code
       .replaceAll(REPLACE_PRESTORE_DATA_KEY, JSON.stringify(prestoreData))
       .replaceAll(REPLACE_API_PREFIX_KEY, JSON.stringify(`/${trimEnd(apiPrefix, '/')}`))
-  }
-
-  const updateApiPrefix = (base: string): string => {
-    apiPrefix = `${trimEnd(base, '/')}/${trim(DEFAULT_API_PREFIX, '/')}`
-    return apiPrefix
-  }
-  const getApiPrefix = (): string => {
-    return apiPrefix
+      .replaceAll(REPLACE_SERVER_PORT_KEY, port.toString())
   }
 
   const prestoreDataHandler = async (req: IncomingMessage, res: ServerResponse<IncomingMessage>): Promise<void> => {
@@ -151,34 +163,53 @@ export function createGueletonServer(projectDir: string): {
     res.end(page)
   }
 
-  const prettyUrl = (https?: boolean, port?: number | string): string => {
+  /**
+   * 数组顺序会影响处理程序的优先级, 越靠前优先级越高
+   */
+  const _handlers = [
+    { route: `${apiPrefix}/storage/all`, handler: allPrestoreDataHandler },
+    { route: `${apiPrefix}/storage`, handler: prestoreDataHandler },
+    { route: `${apiPrefix}/favicon.svg`, handler: panelPageFaviconHandler },
+    { route: `${apiPrefix}`, handler: panelPageHandler },
+  ]
+
+  const startServer = async (): Promise<void> => {
+    if (server.listening) {
+      return
+    }
+
+    for (const { route, handler } of _handlers) {
+      server?.use(route, handler)
+    }
+
+    await server?.start(port)
+  }
+  const stopServer = async (): Promise<void> => {
+    await server?.stop()
+  }
+
+  const useHandlers = (callback: (handlers: { route: string; handler: Handler }[]) => void): void => {
+    callback(_handlers)
+  }
+
+  const prettyServerUrl = (https?: boolean, _port: number | string = server.port): string => {
     /**
      * @see https://github.com/antfu-collective/vite-plugin-inspect/blob/a9128d5234e1377574a687ddc637b1bbc7de511c/src/node/index.ts#L145
      */
-    const host = `${https ? 'https' : 'http'}://localhost:${port || '80'}`
+    const host = `${https ? 'https' : 'http'}://localhost:${_port}`
 
-    const colorUrl = (url: string): string => c.green(url.replace(/:(\d+)\//, (_, port) => `:${c.bold(port)}/`))
+    const colorUrl = (url: string): string => chalk.green(url.replace(/:(\d+)\//, (_, port) => `:${chalk.bold(port)}/`))
 
-    return `${c.green('➜')} ${c.bold('Gueleton')}: ${colorUrl(`${host}/${trim(apiPrefix, '/')}/`)}`
+    return `${chalk.green('➜')} ${chalk.bold('Gueleton')}: ${colorUrl(`${host}/${trim(apiPrefix, '/')}/`)}`
   }
 
   return {
     initial,
     transformCode,
     prestoreRootDir,
-    updateApiPrefix,
-    getApiPrefix,
-    prettyUrl,
-    getHandlers() {
-      /**
-       * 数组顺序会影响处理程序的优先级, 越靠前优先级越高
-       */
-      return [
-        { route: `${apiPrefix}/storage/all`, handler: allPrestoreDataHandler },
-        { route: `${apiPrefix}/storage`, handler: prestoreDataHandler },
-        { route: `${apiPrefix}/favicon.svg`, handler: panelPageFaviconHandler },
-        { route: `${apiPrefix}`, handler: panelPageHandler },
-      ]
-    },
+    startServer,
+    stopServer,
+    useHandlers,
+    prettyServerUrl,
   }
 }

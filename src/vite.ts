@@ -1,19 +1,17 @@
 import type { Options } from './types'
-import process from 'node:process'
 import { isArray } from 'lodash-es'
 import { createVitePlugin } from 'unplugin'
 import { unpluginFactory } from '.'
 import { createGueletonServer } from './server'
 
-export default createVitePlugin<Options, false>((options, meta) => {
+export default createVitePlugin<Options | undefined, false>((options, meta) => {
   const common = unpluginFactory(options, meta)
 
   const {
-    updateApiPrefix,
-    getHandlers,
     prestoreRootDir,
-    prettyUrl,
-  } = createGueletonServer(process.cwd())
+    useHandlers,
+    prettyServerUrl,
+  } = createGueletonServer(options)
 
   return {
     ...common,
@@ -26,14 +24,14 @@ export default createVitePlugin<Options, false>((options, meta) => {
           server.watcher.options.ignored = [server.watcher.options.ignored, prestoreRootDir]
         }
 
-        updateApiPrefix(server.config.base || '/')
-
-        for (const { route, handler } of getHandlers()) {
-          server.middlewares.use(route, handler)
-        }
+        useHandlers((handlers) => {
+          for (const { route, handler } of handlers) {
+            server.middlewares.use(route, handler)
+          }
+        })
 
         const config = server.config
-        config.logger.info(prettyUrl(config.server.https as unknown as boolean, config.server.port || '80'))
+        config.logger.info(prettyServerUrl(config.server.https as unknown as boolean, config.server.port || '80'))
       },
     },
   }

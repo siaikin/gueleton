@@ -1,8 +1,7 @@
 import type { EventHandlerRequest, H3Event } from 'h3'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import type { Options } from './types'
-import process from 'node:process'
-import { addComponent, addDevServerHandler, addVitePlugin, addWebpackPlugin, defineNuxtModule, useLogger } from '@nuxt/kit'
+import { addComponent, addDevServerHandler, addVitePlugin, addWebpackPlugin, createResolver, defineNuxtModule, useLogger } from '@nuxt/kit'
 import { defu } from 'defu'
 import { defineEventHandler } from 'h3'
 import { createVitePlugin, createWebpackPlugin } from 'unplugin'
@@ -13,13 +12,6 @@ export interface ModuleOptions extends Options {
 
 }
 
-const {
-  updateApiPrefix,
-  getHandlers,
-  prettyUrl,
-  prestoreRootDir,
-} = createGueletonServer(process.cwd())
-
 function handlerAdapter<
   Request extends EventHandlerRequest = EventHandlerRequest,
 // Response = EventHandlerResponse
@@ -28,6 +20,12 @@ function handlerAdapter<
 ) {
   return (event: H3Event<Request>) => handler(event.node.req, event.node.res)
 }
+
+const {
+  prestoreRootDir,
+  prettyServerUrl,
+  useHandlers,
+} = createGueletonServer()
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
@@ -77,19 +75,24 @@ export default defineNuxtModule<ModuleOptions>({
       },
     })
 
-    updateApiPrefix(_nuxt.options.app.baseURL || '/')
-
-    for (const { route, handler } of getHandlers()) {
-      addDevServerHandler({
-        route,
-        handler: defineEventHandler(handlerAdapter(handler)),
-      })
-    }
-
-    _nuxt.hooks.hook('vite:serverCreated', () => {
-      logger.info(prettyUrl(!!_nuxt.options.devServer.https, _nuxt.options.devServer.port))
+    useHandlers((handlers) => {
+      for (const { route, handler } of handlers) {
+        addDevServerHandler({
+          route,
+          handler: defineEventHandler(handlerAdapter(handler)),
+        })
+      }
     })
 
+    _nuxt.hooks.hook('vite:serverCreated', (_, { isServer }) => {
+      if (!isServer) {
+        return
+      }
+
+      logger.info(prettyServerUrl(!!_nuxt.options.devServer.https, _nuxt.options.devServer.port))
+    })
+
+    const resolver = createResolver(import.meta.url)
     /**
      * 自动注册组件
      */
@@ -98,7 +101,7 @@ export default defineNuxtModule<ModuleOptions>({
         'Gueleton',
         'GueletonProvider',
       ]
-      names.forEach(name => addComponent({ name, export: name, filePath: 'unplugin-gueleton/client/vue' }))
+      names.forEach(name => addComponent({ name, export: name, filePath: resolver.resolve('./client/vue') }))
     }
   },
 })

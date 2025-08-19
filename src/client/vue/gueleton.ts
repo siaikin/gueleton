@@ -3,7 +3,7 @@ import type { SkeletonOptions } from '../../shared'
 import type { PruneOptions } from '../core'
 import type { GueletonProviderKeyType } from './gueleton-provider'
 import type { PrimitiveProps } from './primitive'
-import { isNil, isNumber, isUndefined, merge } from 'lodash-es'
+import { isEmpty, isNil, isNumber, isUndefined, merge } from 'lodash-es'
 import { Comment, computed, defineComponent, h, inject, ref, toRef, toRefs, watch } from 'vue'
 import { prune, skeleton } from '../core'
 import { createContextNotFoundError } from '../core/utils'
@@ -95,8 +95,8 @@ export const Gueleton = /*#__PURE__*/ (<T extends object>() => {
       /**
        * 当 prestoreData 为空时, 会根据 data 和 limit 生成预存数据, 并发送到 devServer
        */
-      watch([prestoreDataResolved, dataKey, data, mergedLimit], async ([_resolved, _dataKey, _data, _mergedLimit]) => {
-        if (!_resolved || !isUndefined(prestoreData.value) || isUndefined(_data)) {
+      watch([prestoreDataResolved, loading, dataKey, data, mergedLimit], async ([_resolved, _loading, _dataKey, _data, _mergedLimit]) => {
+        if (!_resolved || !isUndefined(prestoreData.value) || isUndefined(_data) || _loading) {
           return
         }
 

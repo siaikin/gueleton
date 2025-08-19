@@ -1,7 +1,6 @@
 import { defineConfig } from 'tsdown'
 
 export default defineConfig({
-  target: 'es2020',
   entry: [
     'src/*.ts',
     'src/client/vue/index.ts',
