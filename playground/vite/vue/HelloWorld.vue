@@ -3,7 +3,6 @@ import { onMounted, ref } from 'vue'
 import AntdvBreadcrumb from './antdv/AntdvBreadcrumb.vue'
 import AntdvForm from './antdv/AntdvForm.vue'
 import AntdvMenu from './antdv/AntdvMenu.vue'
-import AntdvPage from './antdv/AntdvPage.vue'
 import AntdvStepper from './antdv/AntdvStepper.vue'
 import AntdvTable from './antdv/AntdvTable.vue'
 import AntdvTree from './antdv/AntdvTree.vue'
@@ -18,6 +17,7 @@ import ShadcnForm from './shadcn/ShadcnForm.vue'
 import ShadcnMenu from './shadcn/ShadcnMenu.vue'
 import ShadcnStepper from './shadcn/ShadcnStepper.vue'
 import ShadcnTable from './shadcn/ShadcnTable.vue'
+import VuePlayground from '../../common/VuePlayground.vue'
 
 const list = ref([])
 const loading = ref(false)
@@ -51,7 +51,7 @@ const fuzzy = ref(1)
     <details open class="p-4">
       <summary>Page</summary>
 
-      <AntdvPage />
+      <VuePlayground />
     </details>
 
     <details open class="p-4">

@@ -1,4 +1,5 @@
 {
+  "name": "vite-playground",
   "type": "module",
   "private": true,
   "scripts": {

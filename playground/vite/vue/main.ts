@@ -1,5 +1,5 @@
 import { createApp } from 'vue'
-import GueletonPlugin from '../../../src/client/vue'
+import GueletonPlugin from 'unplugin-gueleton/client/vue'
 import App from './App.vue'
 import Antdv from 'ant-design-vue'
 import ElementPlus from 'element-plus'

@@ -1,16 +1,19 @@
 <script setup>
-import { Toaster } from '@/components/ui/sonner'
-import HelloWorld from './HelloWorld.vue'
-import 'vue-sonner/style.css'
+// import { Toaster } from '@/components/ui/sonner'
+// import HelloWorld from './HelloWorld.vue'
+// import 'vue-sonner/style.css'
+import VuePlayground from '../../common/VuePlayground.vue'
+
 </script>
 
 <template>
-  <Toaster />
+  <VuePlayground />
+  <!-- <Toaster />
   <GueletonProvider :bone="{ className: 'animate-pulse' }">
     <div>
       <HelloWorld />
     </div>
-  </GueletonProvider>
+  </GueletonProvider> -->
 </template>
 
 <style></style>

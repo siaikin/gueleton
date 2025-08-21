@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite'
 import Vue from 'unplugin-vue/vite'
 import { defineConfig } from 'vite'
 import Inspect from 'vite-plugin-inspect'
-import Unplugin from '../../src/vite'
+import Unplugin from 'unplugin-gueleton/vite'
 import path from 'node:path'
 
 export default defineConfig({
@@ -12,7 +12,7 @@ export default defineConfig({
     tailwindcss(),
     Vue(),
     Inspect(),
-    Unplugin(),
+    Unplugin({}),
   ],
   resolve: {
     alias: {
