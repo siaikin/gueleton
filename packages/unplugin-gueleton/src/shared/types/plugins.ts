@@ -1,4 +1,4 @@
-import type { SkeletonOptions } from './options'
+import type { SkeletonOptions } from '../../client/core/options'
 
 export interface SkeletonPlugin {
   name: string

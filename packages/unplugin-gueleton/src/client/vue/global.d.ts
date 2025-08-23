@@ -1,10 +1,8 @@
 import type { Gueleton } from './gueleton'
-import type { GueletonProvider } from './gueleton-provider'
 
 declare module 'vue' {
   interface GlobalComponents {
     Gueleton: typeof Gueleton
-    GueletonProvider: typeof GueletonProvider
   }
   interface ComponentCustomProps {
     dataGueletonBone?: boolean | string

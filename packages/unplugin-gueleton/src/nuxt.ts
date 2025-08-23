@@ -1,7 +1,7 @@
 import type { EventHandlerRequest, H3Event } from 'h3'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import type { Options } from './types'
-import { addComponent, addDevServerHandler, addVitePlugin, addWebpackPlugin, createResolver, defineNuxtModule, useLogger, extendViteConfig } from '@nuxt/kit'
+import { addComponent, addDevServerHandler, addPluginTemplate, addTypeTemplate, addVitePlugin, addWebpackPlugin, createResolver, defineNuxtModule, extendViteConfig, useLogger } from '@nuxt/kit'
 import { defu } from 'defu'
 import { defineEventHandler } from 'h3'
 import { createVitePlugin, createWebpackPlugin } from 'unplugin'
@@ -83,9 +83,40 @@ export default defineNuxtModule<ModuleOptions>({
     {
       const names = [
         'Gueleton',
-        'GueletonProvider',
       ]
       names.forEach(name => addComponent({ name, export: name, filePath: resolver.resolve('./client/vue') }))
     }
+
+    addPluginTemplate({
+      filename: 'gueleton-provider.js',
+      getContents: () => `
+import { defineNuxtPlugin } from '#app/nuxt'
+import { Provider } from 'unplugin-gueleton/client/core'
+
+export default defineNuxtPlugin({
+  name: 'gueleton-provider-plugin',
+  setup () {
+    const appConfig = useAppConfig()
+    Provider.updateOptions(appConfig.gueleton)
+  }
+})`,
+    })
+
+    addTypeTemplate({
+      filename: 'types/gueleton.d.ts',
+      getContents: () => `
+import type { SkeletonOptions } from 'unplugin-gueleton/client/core'
+
+declare module 'nuxt/schema' {
+  interface AppConfigInput {
+    gueleton?: Partial<SkeletonOptions>
+  }
+
+  interface AppConfig {
+    gueleton: SkeletonOptions
+  }
+}
+`,
+    })
   },
 })

@@ -1,3 +1,3 @@
-export * from './options'
+export * from '../../client/core/options'
 export * from './plugins'
 export * from './skeleton'

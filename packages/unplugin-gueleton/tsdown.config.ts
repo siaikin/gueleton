@@ -4,6 +4,7 @@ export default defineConfig({
   entry: [
     'src/*.ts',
     'src/client/vue/index.ts',
+    'src/client/core/index.ts',
   ],
   format: ['esm', 'cjs'],
   shims: true,
@@ -21,6 +22,9 @@ export default defineConfig({
     customExports: (exports) => {
       exports['./client/vue'] = exports['./client/vue/index']
       delete exports['./client/vue/index']
+
+      exports['./client/core'] = exports['./client/core/index']
+      delete exports['./client/core/index']
 
       return exports
     },

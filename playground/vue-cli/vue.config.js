@@ -4,7 +4,7 @@ module.exports = defineConfig({
   transpileDependencies: true,
   configureWebpack: {
     plugins: [
-      GueletonPlugin.default({})
+      GueletonPlugin.default()
     ]
   }
 })

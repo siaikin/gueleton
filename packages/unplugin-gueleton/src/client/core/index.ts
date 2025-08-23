@@ -1,8 +1,6 @@
 import type { SkeletonOptions, SkeletonPluginFactory } from '../../shared'
 import { preprocessPlugin, skeletonInPlacePlugin, skeletonOverlayPlugin } from './plugins'
 
-export { prune, type PruneOptions } from './prune'
-
 export function skeleton<CSSTYPE>(dom: Node, options: SkeletonOptions<CSSTYPE>): () => void {
   if (!skeletonSourceElementCheck(dom)) {
     // maybe error log
@@ -38,3 +36,8 @@ export function skeleton<CSSTYPE>(dom: Node, options: SkeletonOptions<CSSTYPE>):
 function skeletonSourceElementCheck(node: Node): node is HTMLElement {
   return node.nodeType === Node.ELEMENT_NODE
 }
+
+export * from './component'
+export * from './options'
+export * from './provider'
+export { prune, type PruneOptions } from './prune'

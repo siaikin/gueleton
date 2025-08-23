@@ -9,11 +9,7 @@ const list = ref([])
 async function handleRefresh() {
   try {
     loading.value = true
-    const resp = await fetch('https://api.sampleapis.com/switch/games')
-    const json = await resp.json()
-
-    // await new Promise(resolve => setTimeout(resolve, 100000))
-    list.value = json
+    list.value = (await (await fetch('https://api.sampleapis.com/switch/games')).json()).slice(0, 48)
   }
   finally {
     loading.value = false
@@ -49,7 +45,6 @@ onMounted(handleRefresh)
       </label>
     </div>
 
-    <GueletonProvider :bone="{ className: 'animate-pulse' }" :limit="{ length: 5 }">
       <Gueleton data-key="switchGameList" v-slot="{ data }" :data="list" :loading="loading" :type="type" :fuzzy="fuzzy" as-child>
         <div class="flex-auto overflow-x-auto border">
           <div v-for="item in data" :key="item.id"
@@ -108,7 +103,6 @@ onMounted(handleRefresh)
           </div>
         </div>
       </Gueleton>
-    </GueletonProvider>
   </div>
 </template>
 
