@@ -1,5 +1,5 @@
 import type { Options } from './types'
-import { isArray } from 'lodash-es'
+import { isNil } from 'lodash-es'
 import { createVitePlugin } from 'unplugin'
 import { unpluginFactory } from '.'
 import { createGueletonServer } from './server'
@@ -10,29 +10,39 @@ export default createVitePlugin<Options | undefined, false>((options, meta) => {
   const {
     prestoreRootDir,
     setupHandlers,
+    setupPort,
     prettyServerUrl,
   } = createGueletonServer(options)
 
   return {
     ...common,
     vite: {
-      configureServer(server) {
-        if (isArray(server.watcher.options.ignored)) {
-          server.watcher.options.ignored.push(prestoreRootDir)
+      config() {
+        return {
+          server: {
+            watch: {
+              ignored: [prestoreRootDir],
+            },
+          },
         }
-        else if (server.watcher.options.ignored) {
-          server.watcher.options.ignored = [server.watcher.options.ignored, prestoreRootDir]
+      },
+      async configureServer(server) {
+        if (isNil(server.httpServer)) {
+          server.config.logger.error('Vite dev server httpServer is not available.')
+          return
         }
 
-        const config = server.config
+        setupHandlers((handlers) => handlers.forEach(({ route, handler }) => server.middlewares.use(route, handler)))
 
-        setupHandlers(config.server.port, (handlers) => {
-          for (const { route, handler } of handlers) {
-            server.middlewares.use(route, handler)
-          }
+        server.httpServer?.on('listening', async () => {
+          await server.waitForRequestsIdle()
+
+          const config = server.config
+
+          setupPort(config.server.port)
+
+          config.logger.info(`  ${prettyServerUrl(config.server.https as unknown as boolean, config.server.port)}`)
         })
-
-        config.logger.info(prettyServerUrl(config.server.https as unknown as boolean, config.server.port))
       },
     },
   }

@@ -2,6 +2,7 @@ import type { IncomingMessage, ServerResponse } from 'node:http'
 import type { Options } from '../types'
 import { existsSync } from 'node:fs'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
+import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import appRootPath from 'app-root-path'
 import bodyParser from 'body-parser'
@@ -9,7 +10,6 @@ import chalk from 'chalk'
 import { assign, isNil, merge, trim, trimEnd } from 'lodash-es'
 import { getPortPromise } from 'portfinder'
 import HttpServer from './http-server'
-import { resolve } from 'node:path'
 
 export const REPLACE_PRESTORE_DATA_KEY = '__GUELETON_PRESTORE_DATA__'
 export const REPLACE_API_PREFIX_KEY = '__GUELETON_API_PREFIX__'
@@ -27,13 +27,12 @@ const server: HttpServer = new HttpServer(false)
 type Handler = (req: IncomingMessage, res: ServerResponse<IncomingMessage>) => Promise<void>
 
 let _port: number | null = null
-const resolvePort = async (): Promise<number> => {
+async function resolvePort(): Promise<number> {
   if (_port === null) {
     _port = await getPortPromise({ port: 5679 })
   }
   return _port
 }
-
 
 export function createGueletonServer(options: GueletonServerOptions = {}): {
   prestoreRootDir: string
@@ -41,7 +40,8 @@ export function createGueletonServer(options: GueletonServerOptions = {}): {
   transformCode: (code: string) => Promise<string>
   startServer: () => Promise<void>
   stopServer: () => Promise<void>
-  setupHandlers: (port: number, callback: (handlers: { route: string; handler: Handler }[]) => void) => void
+  setupHandlers: (callback: (handlers: { route: string, handler: Handler }[]) => void) => void
+  setupPort: (port: number) => void
   prettyServerUrl: (https?: boolean, port?: number | string) => string
 } {
   const _options = merge({ debug: false }, options)
@@ -193,9 +193,11 @@ export function createGueletonServer(options: GueletonServerOptions = {}): {
     await server?.stop()
   }
 
-  const setupHandlers = (port: number, callback: (handlers: { route: string; handler: Handler }[]) => void): void => {
-    _port = port
+  const setupHandlers = (callback: (handlers: { route: string, handler: Handler }[]) => void): void => {
     callback(_handlers)
+  }
+  const setupPort = (port: number): void => {
+    _port = port
   }
 
   const prettyServerUrl = (https?: boolean, _port: number | string = server.port): string => {
@@ -206,7 +208,7 @@ export function createGueletonServer(options: GueletonServerOptions = {}): {
 
     const colorUrl = (url: string): string => chalk.green(url.replace(/:(\d+)\//, (_, port) => `:${chalk.bold(port)}/`))
 
-    return `${chalk.green('➜')} ${chalk.bold('Gueleton')}: ${colorUrl(`${host}/${trim(apiPrefix, '/')}/`)}`
+    return `${chalk.green('➜')}  ${chalk.bold('Gueleton')}: ${colorUrl(`${host}/${trim(apiPrefix, '/')}/`)}`
   }
 
   return {
@@ -216,6 +218,7 @@ export function createGueletonServer(options: GueletonServerOptions = {}): {
     startServer,
     stopServer,
     setupHandlers,
+    setupPort,
     prettyServerUrl,
   }
 }

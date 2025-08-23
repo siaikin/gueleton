@@ -1,4 +1,4 @@
-import type { Gueleton } from './gueleton'
+import type Gueleton from './gueleton.vue'
 
 declare module 'vue' {
   interface GlobalComponents {

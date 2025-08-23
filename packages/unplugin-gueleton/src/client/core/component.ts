@@ -1,4 +1,4 @@
-import { SkeletonOptions } from "./options"
+import type { SkeletonOptions } from './options'
 
 export type ComponentProps<DATA, CSSTYPE> = {
   /**

@@ -34,6 +34,7 @@ export default defineNuxtModule<ModuleOptions>({
       prestoreRootDir,
       prettyServerUrl,
       setupHandlers,
+      setupPort,
     } = createGueletonServer(options)
 
     const logger = useLogger('nuxt-gueleton')
@@ -59,7 +60,8 @@ export default defineNuxtModule<ModuleOptions>({
       })
     })
 
-    setupHandlers(_nuxt.options.devServer.port, (handlers) => {
+    setupPort(_nuxt.options.devServer.port)
+    setupHandlers((handlers) => {
       for (const { route, handler } of handlers) {
         addDevServerHandler({
           route,

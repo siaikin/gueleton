@@ -1,4 +1,5 @@
 import { defineConfig } from 'tsdown'
+import Vue from 'unplugin-vue/rolldown'
 
 export default defineConfig({
   entry: [
@@ -7,9 +8,11 @@ export default defineConfig({
     'src/client/core/index.ts',
   ],
   format: ['esm', 'cjs'],
+  plugins: [Vue({ isProduction: true })],
   shims: true,
   dts: {
     sourcemap: true,
+    vue: true,
   },
   outputOptions: {
     /**
