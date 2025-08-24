@@ -4,8 +4,9 @@ import Vue from 'unplugin-vue/rolldown'
 export default defineConfig({
   entry: [
     'src/*.ts',
-    'src/client/vue/index.ts',
     'src/client/core/index.ts',
+    'src/client/vue/index.ts',
+    'src/client/react/index.ts',
   ],
   format: ['esm', 'cjs'],
   plugins: [Vue({ isProduction: true })],
@@ -23,11 +24,14 @@ export default defineConfig({
   },
   exports: {
     customExports: (exports) => {
+      exports['./client/core'] = exports['./client/core/index']
+      delete exports['./client/core/index']
+
       exports['./client/vue'] = exports['./client/vue/index']
       delete exports['./client/vue/index']
 
-      exports['./client/core'] = exports['./client/core/index']
-      delete exports['./client/core/index']
+      exports['./client/react'] = exports['./client/react/index']
+      delete exports['./client/react/index']
 
       return exports
     },

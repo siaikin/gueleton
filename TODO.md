@@ -9,6 +9,8 @@
 - [] in-place 模式下，fuzzy 为 0 时, 将标签内部插入元素。但自闭合标签内部不允许存在子节点.
 - [] 通过 proxy 记录被访问过的属性，以实现数据裁剪
 
+- [] 测试 vite watch.ignored
+
 ## 用户安装其他依赖时，控制台会打印 ➜ Gueleton: http://localhost:3000/__gueleton/
 ```shell
 siaikin@MacBook-Air natty-ui-v2 % npx nuxt@latest module add mdc

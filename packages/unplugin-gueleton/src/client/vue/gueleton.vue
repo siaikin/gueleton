@@ -1,14 +1,13 @@
 <script lang="ts" setup generic="T">
-import type { ComponentPublicInstance, CSSProperties } from 'vue'
+import type { ComponentPublicInstance, CSSProperties, Ref } from 'vue'
 import type { ComponentProps } from '../core'
-import type { PrimitiveProps } from './primitive'
 import { isNil, isUndefined, merge } from 'lodash-es'
 import { computed, ref, watch } from 'vue'
 import { Provider, prune, skeleton } from '../core'
-import { Primitive } from './primitive'
+import { Slot } from './primitive/slot'
 import { useMounted } from './utils'
 
-type GueletonProps<DATA> = ComponentProps<DATA, CSSProperties> & PrimitiveProps
+type GueletonProps<DATA> = ComponentProps<DATA, CSSProperties>
 
 const props = defineProps<GueletonProps<T>>()
 
@@ -22,11 +21,11 @@ const dataKey = computed(() => props.dataKey)
 const loading = computed(() => props.loading ?? false)
 const forceRender = computed(() => props.forceRender ?? false)
 
-const prestoreData = ref<any | null | undefined>(undefined)
+const prestoreData = ref(undefined) as Ref<T | null | undefined>
 const prestoreDataResolved = ref(false)
 watch([dataKey, () => props.prestoreData], async ([_dataKey, _prestoreData]) => {
   if (isUndefined(_prestoreData)) {
-    prestoreData.value = await Provider.getPrestoreData(_dataKey)
+    prestoreData.value = await Provider.getPrestoreData<T>(_dataKey)
     prestoreDataResolved.value = true
   }
   else {
@@ -61,16 +60,12 @@ watch(
 </script>
 
 <template>
-  <Primitive
-    ref="containerRef"
-    :as="as"
-    :as-child="asChild"
-  >
+  <Slot ref="containerRef">
     <template v-if="loading">
       <slot v-if="!isUndefined(prestoreData) || forceRender" :data="prestoreData" />
     </template>
     <template v-else>
       <slot :data="data" />
     </template>
-  </Primitive>
+  </Slot>
 </template>
