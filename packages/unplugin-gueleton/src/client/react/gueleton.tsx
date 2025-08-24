@@ -31,7 +31,6 @@ export function Gueleton<T>(props: GueletonProps<T>) {
 
   const options = useMemo(() => merge({}, Provider.options, props), [props])
 
-  // 处理 prestore data
   useEffect(() => {
     const loadPrestoreData = async (): Promise<void> => {
       if (isUndefined(prestoreDataProp)) {
@@ -47,7 +46,6 @@ export function Gueleton<T>(props: GueletonProps<T>) {
     loadPrestoreData()
   }, [dataKey, prestoreDataProp])
 
-  // 保存数据到 prestore
   useEffect(() => {
     if (!prestoreDataResolved || !isUndefined(prestoreData) || isUndefined(data) || loading) {
       return

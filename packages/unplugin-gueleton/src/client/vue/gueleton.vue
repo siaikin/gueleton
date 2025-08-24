@@ -26,6 +26,9 @@ const prestoreDataResolved = ref(false)
 watch([dataKey, () => props.prestoreData], async ([_dataKey, _prestoreData]) => {
   if (isUndefined(_prestoreData)) {
     prestoreData.value = await Provider.getPrestoreData<T>(_dataKey)
+    /**
+     * 仅当 prestoreData 来自于 getPrestoreData 时才会被标记为 resolved. 这将确保用户手动设置的 prestoreData 不会被保存到 devServer.
+     */
     prestoreDataResolved.value = true
   }
   else {
@@ -33,11 +36,15 @@ watch([dataKey, () => props.prestoreData], async ([_dataKey, _prestoreData]) => 
   }
 }, { immediate: true })
 
+/**
+ * 当 prestoreData 为空时, 会根据 data 和 limit 生成预存数据, 并发送到 devServer
+ */
 watch([prestoreDataResolved, loading, dataKey, data] as const, async ([_resolved, _loading, _dataKey, _data]) => {
   if (!_resolved || !isUndefined(prestoreData.value) || isUndefined(_data) || _loading) {
     return
   }
   await Provider.setPrestoreData(_dataKey, prune(_data, options.value.limit))
+  // 保存成功后, 更新 prestoreData
   prestoreData.value = await Provider.getPrestoreData(_dataKey)
 })
 
@@ -62,6 +69,7 @@ watch(
 <template>
   <Slot ref="containerRef">
     <template v-if="loading">
+      <!-- 加载中时，使用预存数据，如果没有预存数据则根据 forceRender 决定是否渲染 -->
       <slot v-if="!isUndefined(prestoreData) || forceRender" :data="prestoreData" />
     </template>
     <template v-else>
