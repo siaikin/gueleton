@@ -2,7 +2,7 @@ import type { StandardProperties } from 'csstype'
 import type { SkeletonOptions } from './options'
 import { isNil, merge } from 'lodash-es'
 import { DefaultSkeletonOptions } from '../../shared'
-import { DevelopmentStorage, ProductionStorage } from '../core/storage'
+import { DevelopmentStorage, ProductionStorage } from './storage'
 
 class _Provider<CSSTYPE = StandardProperties> {
   options: SkeletonOptions<CSSTYPE>
@@ -47,6 +47,6 @@ class _Provider<CSSTYPE = StandardProperties> {
   }
 }
 
-const Provider = new _Provider({})
+const GueletonProvider = new _Provider({})
 
-export { Provider }
+export { GueletonProvider }

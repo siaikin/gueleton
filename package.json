@@ -11,10 +11,7 @@
     "url": "https://github.com/siaikin/unplugin-gueleton/issues"
   },
   "workspaces": [
-    "playground/nuxt",
-    "playground/react-vite",
-    "playground/vite",
-    "playground/vue-cli",
+    "playground/*",
     "packages/unplugin-gueleton"
   ]
 }

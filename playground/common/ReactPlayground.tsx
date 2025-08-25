@@ -1,28 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react'
-
-// 在真实项目中，你应该这样导入 Gueleton：
+import React, { useState, useEffect } from 'react'
 import { Gueleton } from 'unplugin-gueleton/client/react'
-
-// // 临时的 Gueleton 组件类型定义和模拟实现（仅用于演示）
-// interface GueletonProps<T> {
-//   dataKey: string
-//   data: T
-//   loading: boolean
-//   type: 'overlay' | 'inPlace'
-//   fuzzy: number
-//   asChild?: boolean
-//   children?: (params: { data: T | null | undefined }) => React.ReactNode
-// }
-
-// // 模拟的 Gueleton 组件，用于演示结构
-// // 在真实项目中，这个组件会从 unplugin-gueleton 包导入
-// function Gueleton<T>({ children, data, loading }: GueletonProps<T>) {
-//   return (
-//     <>
-//       {children?.({ data: loading ? null : data })}
-//     </>
-//   )
-// }
 
 interface Game {
   id: number
@@ -37,22 +14,32 @@ const ReactPlayground: React.FC = () => {
   const [loading, setLoading] = useState(false)
   const [type, setType] = useState<'overlay' | 'inPlace'>('overlay')
   const [fuzzy, setFuzzy] = useState(1)
+
+  const [fetchDelay, setFetchDelay] = useState(
+    localStorage.getItem('fetchDelay') ? Number(localStorage.getItem('fetchDelay')) : 0
+  )
+  useEffect(() => localStorage.setItem('fetchDelay', String(fetchDelay)), [fetchDelay])
+
   const [list, setList] = useState<Game[]>([])
 
-  const handleRefresh = useCallback(async () => {
+  const handleRefresh = async () => {
     try {
       setLoading(true)
       const response = await fetch('https://api.sampleapis.com/switch/games')
       const data = await response.json()
       setList(data.slice(0, 48))
+
+      if (fetchDelay) {
+        await new Promise((resolve) => setTimeout(resolve, fetchDelay * 1000))
+      }
     } finally {
       setLoading(false)
     }
-  }, [])
+  }
 
   useEffect(() => {
     handleRefresh()
-  }, [handleRefresh])
+  }, [])
 
   return (
     <div className="h-screen flex flex-col gap-2 p-2">
@@ -99,13 +86,26 @@ const ReactPlayground: React.FC = () => {
         </label>
       </div>
 
+      <div className="flex gap-2">
+        <label className="border border-slate-600 px-2 py-1 flex items-center gap-1">
+          Fetch Delay
+          <input 
+            type="range" 
+            min="0" 
+            max="12"
+            value={fetchDelay}
+            onChange={(e) => setFetchDelay(Number(e.target.value))}
+          />
+          <span>({fetchDelay}s)</span>
+        </label>
+      </div>
+
       <Gueleton 
         dataKey="switchGameList" 
         data={list} 
         loading={loading} 
         type={type} 
         fuzzy={fuzzy} 
-        asChild
       >
         {({ data }) => (
           <div className="flex-auto overflow-x-auto border">

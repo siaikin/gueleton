@@ -1,15 +1,21 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 
 const loading = ref(false)
 const type = ref('overlay')
 const fuzzy = ref(1)
+const fetchDelay = ref(localStorage.getItem('fetchDelay') ? Number(localStorage.getItem('fetchDelay')) : 0)
+watch(fetchDelay, (v) => localStorage.setItem('fetchDelay', String(v)))
 
 const list = ref([])
 async function handleRefresh() {
   try {
     loading.value = true
     list.value = (await (await fetch('https://api.sampleapis.com/switch/games')).json()).slice(0, 48)
+
+    if (fetchDelay.value) {
+      await new Promise((resolve) => setTimeout(resolve, fetchDelay.value * 1000))
+    }
   }
   finally {
     loading.value = false
@@ -42,6 +48,14 @@ onMounted(handleRefresh)
           <option value="overlay">Overlay</option>
           <option value="inPlace">In-place</option>
         </select>
+      </label>
+    </div>
+
+    <div class="flex gap-2">
+      <label class="border border-slate-600 px-2 py-1 flex items-center gap-1">
+        Fetch Delay
+        <input v-model.number="fetchDelay" type="range" :min="0" :max="12">
+        <span>({{ fetchDelay }}s)</span>
       </label>
     </div>
 
