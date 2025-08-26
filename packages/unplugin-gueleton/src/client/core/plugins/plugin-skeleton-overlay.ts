@@ -68,11 +68,11 @@ export function skeletonOverlayPlugin<CSSTYPE>(root: HTMLElement, options: Skele
     name: 'skeleton-overlay',
     mount() {
       setupMountPoint(root)
-      root.appendChild(tree)
+      root.append(tree)
     },
     unmount() {
-      root.removeChild(tree)
       resetMountPoint(root)
+      tree.remove()
     },
   }
 }
