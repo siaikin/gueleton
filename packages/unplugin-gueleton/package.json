@@ -109,6 +109,7 @@
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
     "rollup": "^3",
+    "solid-js": "^1.6.12",
     "vite": ">=3",
     "vue": "^3",
     "webpack": "^4 || ^5"
@@ -129,7 +130,16 @@
     "h3": {
       "optional": true
     },
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    },
     "rollup": {
+      "optional": true
+    },
+    "solid-js": {
       "optional": true
     },
     "vite": {
@@ -139,12 +149,6 @@
       "optional": true
     },
     "webpack": {
-      "optional": true
-    },
-    "react": {
-      "optional": true
-    },
-    "react-dom": {
       "optional": true
     }
   },

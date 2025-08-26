@@ -13,6 +13,7 @@ import HttpServer from './http-server'
 export const REPLACE_PRESTORE_DATA_KEY = '__GUELETON_PRESTORE_DATA__'
 export const REPLACE_API_PREFIX_KEY = '__GUELETON_API_PREFIX__'
 export const REPLACE_SERVER_PORT_KEY = '__GUELETON_SERVER_PORT__'
+export const REPLACE_BUILD_MODE_KEY = '__GUELETON_BUILD_MODE__'
 
 export interface GueletonServerOptions extends Options {
 }
@@ -79,10 +80,13 @@ export function createGueletonServer(options: GueletonServerOptions = {}): {
 
   const transformCode = async (code: string): Promise<string> => {
     const port = await resolvePort()
+
     return code
       .replaceAll(REPLACE_PRESTORE_DATA_KEY, JSON.stringify(prestoreData))
       .replaceAll(REPLACE_API_PREFIX_KEY, JSON.stringify(`/${trimEnd(apiPrefix, '/')}`))
       .replaceAll(REPLACE_SERVER_PORT_KEY, port.toString())
+      // eslint-disable-next-line node/prefer-global/process
+      .replaceAll(REPLACE_BUILD_MODE_KEY, JSON.stringify(process.env.NODE_ENV === 'production' ? 'production' : 'development'))
   }
 
   const prestoreDataHandler = async (req: IncomingMessage, res: ServerResponse<IncomingMessage>): Promise<void> => {

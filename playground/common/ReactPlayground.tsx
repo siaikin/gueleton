@@ -196,15 +196,3 @@ const ReactPlayground: React.FC = () => {
 }
 
 export default ReactPlayground
-
-// 使用说明：
-// 1. 这个组件展示了如何在 React + TypeScript 项目中使用 Gueleton
-// 2. 主要功能包括：
-//    - 加载状态管理
-//    - 数据获取和展示
-//    - 骨架屏效果配置（type 和 fuzzy 参数）
-// 3. 在真实项目中使用时，需要：
-//    - 安装 unplugin-gueleton 包
-//    - 在构建工具中配置 unplugin-gueleton 插件
-//    - 从 'unplugin-gueleton/react' 导入 Gueleton 组件
-// 4. data-gueleton-bone 属性用于标记骨架屏元素

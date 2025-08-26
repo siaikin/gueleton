@@ -1,3 +1,2 @@
 export type * from './global'
 export { Gueleton } from './gueleton'
-export * from './use-gueleton'

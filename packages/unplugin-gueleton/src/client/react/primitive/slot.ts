@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { jsx } from 'react/jsx-runtime'
 import { composeRefs } from './compose-refs'
 
 /* -------------------------------------------------------------------------------------------------
@@ -36,20 +37,18 @@ interface SlotProps extends React.HTMLAttributes<HTMLElement> {
         }
       })
 
-      return (
-        <SlotClone {...slotProps} ref={forwardedRef}>
-          {React.isValidElement(newElement)
-            ? React.cloneElement(newElement, undefined, newChildren)
-            : null}
-        </SlotClone>
-      )
+      return /* @__PURE__ */jsx(SlotClone, {
+        ...slotProps,
+        ref: forwardedRef,
+        children: React.isValidElement(newElement) ? React.cloneElement(newElement, undefined, newChildren) : null,
+      })
     }
 
-    return (
-      <SlotClone {...slotProps} ref={forwardedRef}>
-        {children}
-      </SlotClone>
-    )
+    return /* @__PURE__ */ jsx(SlotClone, {
+      ...slotProps,
+      ref: forwardedRef,
+      children,
+    })
   })
 
   Slot.displayName = `${ownerName}.Slot`
@@ -105,7 +104,7 @@ interface SlottableComponent extends React.FC<SlottableProps> {
 // eslint-disable-next-line ts/explicit-function-return-type
 /* @__NO_SIDE_EFFECTS__ */ export function createSlottable(ownerName: string) {
   const Slottable: SlottableComponent = ({ children }) => {
-    return <>{children}</>
+    return jsx(React.Fragment, { children })
   }
   Slottable.displayName = `${ownerName}.Slottable`
   Slottable.__radixId = SLOTTABLE_IDENTIFIER

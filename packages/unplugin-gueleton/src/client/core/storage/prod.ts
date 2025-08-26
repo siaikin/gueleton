@@ -1,14 +1,13 @@
-import { DevelopmentStorage } from './dev'
+import type { SkeletonStorage } from '.'
 
 // eslint-disable-next-line ts/ban-ts-comment
 // @ts-expect-error
 const prestoreData = __GUELETON_PRESTORE_DATA__ as Record<string, any>
 
-export class ProductionStorage extends DevelopmentStorage {
+export class ProductionStorage implements SkeletonStorage {
   protected storage: Map<string, string> = new Map()
 
   constructor() {
-    super()
     for (const key in prestoreData) {
       this.storage.set(key, prestoreData[key])
     }

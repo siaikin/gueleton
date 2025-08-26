@@ -1,7 +1,7 @@
 import type { UnpluginFactory } from 'unplugin'
 import type { Options } from './types'
 import { createUnplugin } from 'unplugin'
-import { createGueletonServer, REPLACE_API_PREFIX_KEY, REPLACE_PRESTORE_DATA_KEY } from './server'
+import { createGueletonServer, REPLACE_API_PREFIX_KEY, REPLACE_PRESTORE_DATA_KEY, REPLACE_BUILD_MODE_KEY, REPLACE_SERVER_PORT_KEY } from './server'
 
 export const unpluginFactory: UnpluginFactory<Options | undefined, false> = (options) => {
   const {
@@ -19,7 +19,12 @@ export const unpluginFactory: UnpluginFactory<Options | undefined, false> = (opt
       filter: {
         id: /\.([mc])?([jt])sx?(\S*)$/,
         code: {
-          include: [REPLACE_PRESTORE_DATA_KEY, REPLACE_API_PREFIX_KEY],
+          include: [
+            REPLACE_PRESTORE_DATA_KEY,
+            REPLACE_API_PREFIX_KEY,
+            REPLACE_SERVER_PORT_KEY,
+            REPLACE_BUILD_MODE_KEY,
+          ],
         },
       },
       handler(code) {

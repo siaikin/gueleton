@@ -59,7 +59,7 @@ export class Gueleton<DATA, CSSTYPE> {
 
   prestoreDataResolved: boolean = false
 
-  skeletonTarget?: HTMLElement | null | undefined
+  skeletonTarget?: Element | null | undefined
 
   get shouldRender(): boolean {
     const result = (() => {
@@ -93,7 +93,7 @@ export class Gueleton<DATA, CSSTYPE> {
 
   public updateOptions(
     options: Partial<InternalGueletonOptions<DATA, CSSTYPE>>,
-    targetElement?: () => HTMLElement | null | undefined,
+    targetElement?: () => Element | null | undefined,
   ): void {
     const _options = merge({}, this.options, omit(options, 'data'))
     // 考虑到 data 可能是个大对象, 使用 assign 进行浅拷贝

@@ -1,20 +1,20 @@
 import type { StandardProperties } from 'csstype'
 import type { SkeletonOptions } from './options'
+import type { SkeletonStorage } from './storage'
 import { isNil, merge } from 'lodash-es'
 import { DefaultSkeletonOptions } from '../../shared'
-import { DevelopmentStorage, ProductionStorage } from './storage'
+import { PrestoreDataStorage } from './storage'
 
 class _Provider<CSSTYPE = StandardProperties> {
   options: SkeletonOptions<CSSTYPE>
-  storage: DevelopmentStorage | ProductionStorage
+  storage: SkeletonStorage
 
   constructor(
     options: Partial<SkeletonOptions<CSSTYPE>>,
   ) {
     this.options = merge({}, DefaultSkeletonOptions, options)
 
-    // eslint-disable-next-line node/prefer-global/process
-    this.storage = process.env.NODE_ENV === 'production' ? new ProductionStorage() : new DevelopmentStorage()
+    this.storage = PrestoreDataStorage
   }
 
   updateOptions(options: Partial<SkeletonOptions<CSSTYPE>>): void {

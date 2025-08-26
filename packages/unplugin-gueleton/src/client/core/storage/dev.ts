@@ -17,7 +17,7 @@ export class DevelopmentStorage implements SkeletonStorage {
   private apiPrefix: string
 
   constructor() {
-    const { port, protocol, hostname} = location ?? { port: 80, protocol: 'http:', hostname: 'localhost' }
+    const { port, protocol, hostname } = location ?? { port: 80, protocol: 'http:', hostname: 'localhost' }
 
     /**
      * serverPort 默认为 0, 未设置时默认使用所在页面的 port.

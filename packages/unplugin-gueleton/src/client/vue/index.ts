@@ -8,6 +8,7 @@ export const GueletonPlugin: Plugin = {
 }
 
 export type * from './global'
+export * from './use-gueleton'
 export { Gueleton }
 
 export default GueletonPlugin

@@ -7,6 +7,7 @@ export default defineConfig({
     'src/client/core/index.ts',
     'src/client/vue/index.ts',
     'src/client/react/index.ts',
+    // 'src/client/solid-js/index.ts',
   ],
   format: ['esm', 'cjs'],
   plugins: [Vue({ isProduction: true })],
@@ -24,14 +25,19 @@ export default defineConfig({
   },
   exports: {
     customExports: (exports) => {
-      exports['./client/core'] = exports['./client/core/index']
-      delete exports['./client/core/index']
+      [
+        { from: './client/core/index', to: './client/core' },
+        { from: './client/vue/index', to: './client/vue' },
+        { from: './client/react/index', to: './client/react' },
+        { from: './client/solid-js/index', to: './client/solid-js' },
+      ]
+        .forEach(({ from, to }) => {
+          if (!exports[from])
+            return
 
-      exports['./client/vue'] = exports['./client/vue/index']
-      delete exports['./client/vue/index']
-
-      exports['./client/react'] = exports['./client/react/index']
-      delete exports['./client/react/index']
+          exports[to] = exports[from]
+          delete exports[from]
+        })
 
       return exports
     },
