@@ -93,13 +93,13 @@ export default defineNuxtModule<ModuleOptions>({
       filename: 'gueleton-provider.js',
       getContents: () => `
 import { defineNuxtPlugin } from '#app/nuxt'
-import { Provider } from 'unplugin-gueleton/client/core'
+import { GueletonProvider } from 'unplugin-gueleton/client/core'
 
 export default defineNuxtPlugin({
   name: 'gueleton-provider-plugin',
   setup () {
     const appConfig = useAppConfig()
-    Provider.updateOptions(appConfig.gueleton)
+    GueletonProvider.updateOptions(appConfig.gueleton)
   }
 })`,
     })
