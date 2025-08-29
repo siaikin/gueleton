@@ -7,7 +7,7 @@ import { useGueleton } from './use-gueleton'
 
 const props = defineProps<PublicGueletonOptions<T>>()
 defineSlots<{
-  default: (params: { data: T | null | undefined }) => any
+  default: (params: { data: T }) => any
 }>()
 
 const { dataKey, ...restProps } = toRefs(props)
