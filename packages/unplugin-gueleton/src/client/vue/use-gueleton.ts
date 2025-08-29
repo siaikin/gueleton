@@ -38,13 +38,14 @@ export function useGueleton<T>(
       () => gueleton.prestoreData,
       () => toValue(loading),
       () => toValue(data),
+      () => toValue(limit),
     ] as const,
-    async ([_dataKey, _resolved, _prestoreData, _loading, _data]) => {
+    async ([_dataKey, _resolved, _prestoreData, _loading, _data, _limit]) => {
       if (!_resolved || !isNil(_prestoreData) || isNil(_data) || _loading) {
         return
       }
 
-      await gueleton.setupPrestoreData(_data, toValue(limit))
+      await gueleton.setupPrestoreData(_data, _limit)
     },
   )
 

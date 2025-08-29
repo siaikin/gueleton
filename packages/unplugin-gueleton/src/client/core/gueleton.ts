@@ -1,5 +1,5 @@
 import type { InternalGueletonOptions, SkeletonOptions } from './options'
-import { isNil, merge } from 'lodash-es'
+import { isNil, isNumber, merge } from 'lodash-es'
 import { GueletonProvider } from './gueleton-provider'
 import { prune } from './prune'
 import { skeleton } from './skeleton'
@@ -33,9 +33,14 @@ export class Gueleton<DATA> {
     }
   }
 
+  public async setupPrestoreData(data: InternalGueletonOptions<DATA>['data'], limit: InternalGueletonOptions<DATA>['limit'] = {}): Promise<void> {
+    const _limit = merge(
+      {},
+      isNumber(GueletonProvider.options.limit) ? { length: GueletonProvider.options.limit } : GueletonProvider.options.limit,
+      isNumber(limit) ? { length: limit } : limit,
+    )
 
-  public async setupPrestoreData(data: InternalGueletonOptions<DATA>['data'], limit?: InternalGueletonOptions<DATA>['limit']): Promise<void> {
-    await GueletonProvider.setPrestoreData(this.dataKey, prune(data, limit))
+    await GueletonProvider.setPrestoreData(this.dataKey, prune(data, _limit))
     // 保存成功后, 更新 prestoreData
     this.prestoreData = await GueletonProvider.getPrestoreData(this.dataKey)
   }
