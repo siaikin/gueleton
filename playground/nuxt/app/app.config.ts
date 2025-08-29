@@ -1,5 +1,7 @@
 export default defineAppConfig({
   gueleton: {
-    bone: { className: 'animate-pulse' },
+    skeleton: {
+      bone: { className: 'animate-pulse' },
+    }
   }
 })

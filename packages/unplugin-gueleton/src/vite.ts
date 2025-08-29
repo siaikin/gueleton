@@ -10,7 +10,6 @@ export default createVitePlugin<Options | undefined, false>((options, meta) => {
   const {
     prestoreRootDir,
     setupHandlers,
-    setupPort,
     prettyServerUrl,
   } = createGueletonServer(options)
 
@@ -38,8 +37,6 @@ export default createVitePlugin<Options | undefined, false>((options, meta) => {
           await server.waitForRequestsIdle()
 
           const config = server.config
-
-          setupPort(config.server.port)
 
           config.logger.info(`  ${prettyServerUrl(config.server.https as unknown as boolean, config.server.port)}`)
         })

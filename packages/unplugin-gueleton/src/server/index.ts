@@ -26,9 +26,9 @@ const server: HttpServer = new HttpServer(false)
 
 type Handler = (req: IncomingMessage, res: ServerResponse<IncomingMessage>) => Promise<void>
 
-let _port: number | null = null
+let _port: number = 0
 async function resolvePort(): Promise<number> {
-  if (_port === null) {
+  if (_port <= 0) {
     _port = await getPortPromise({ port: 5679 })
   }
   return _port
@@ -41,7 +41,6 @@ export function createGueletonServer(options: GueletonServerOptions = {}): {
   startServer: () => Promise<void>
   stopServer: () => Promise<void>
   setupHandlers: (callback: (handlers: { route: string, handler: Handler }[]) => void) => void
-  setupPort: (port: number) => void
   prettyServerUrl: (https?: boolean, port?: number | string) => string
 } {
   const _options = merge({ debug: false }, options)
@@ -79,12 +78,10 @@ export function createGueletonServer(options: GueletonServerOptions = {}): {
   }
 
   const transformCode = async (code: string): Promise<string> => {
-    const port = await resolvePort()
-
     return code
       .replaceAll(REPLACE_PRESTORE_DATA_KEY, JSON.stringify(prestoreData))
       .replaceAll(REPLACE_API_PREFIX_KEY, JSON.stringify(`/${trimEnd(apiPrefix, '/')}`))
-      .replaceAll(REPLACE_SERVER_PORT_KEY, port.toString())
+      .replaceAll(REPLACE_SERVER_PORT_KEY, _port.toString())
       // eslint-disable-next-line node/prefer-global/process
       .replaceAll(REPLACE_BUILD_MODE_KEY, JSON.stringify(process.env.NODE_ENV === 'production' ? 'production' : 'development'))
   }
@@ -199,9 +196,6 @@ export function createGueletonServer(options: GueletonServerOptions = {}): {
   const setupHandlers = (callback: (handlers: { route: string, handler: Handler }[]) => void): void => {
     callback(_handlers)
   }
-  const setupPort = (port: number): void => {
-    _port = port
-  }
 
   const prettyServerUrl = (https?: boolean, _port: number | string = server.port): string => {
     /**
@@ -221,7 +215,6 @@ export function createGueletonServer(options: GueletonServerOptions = {}): {
     startServer,
     stopServer,
     setupHandlers,
-    setupPort,
     prettyServerUrl,
   }
 }

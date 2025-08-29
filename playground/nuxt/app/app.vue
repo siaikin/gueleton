@@ -1,8 +1,8 @@
 <template>
-  <UApp>
+  <div>
     <NuxtRouteAnnouncer />
     <VuePlayground />
-  </UApp>
+  </div>
 </template>
 
 <script setup lang="ts">

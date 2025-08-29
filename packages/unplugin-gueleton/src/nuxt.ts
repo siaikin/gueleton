@@ -34,7 +34,6 @@ export default defineNuxtModule<ModuleOptions>({
       prestoreRootDir,
       prettyServerUrl,
       setupHandlers,
-      setupPort,
     } = createGueletonServer(options)
 
     const logger = useLogger('nuxt-gueleton')
@@ -60,7 +59,6 @@ export default defineNuxtModule<ModuleOptions>({
       })
     })
 
-    setupPort(_nuxt.options.devServer.port)
     setupHandlers((handlers) => {
       for (const { route, handler } of handlers) {
         addDevServerHandler({
@@ -90,7 +88,7 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     addPluginTemplate({
-      filename: 'gueleton-provider.js',
+      filename: 'gueleton-provider.plugin.js',
       getContents: () => `
 import { defineNuxtPlugin } from '#app/nuxt'
 import { GueletonProvider } from 'unplugin-gueleton/client/core'

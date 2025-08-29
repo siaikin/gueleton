@@ -18,6 +18,6 @@ export default createWebpackPlugin<Options | undefined, false>((options, meta) =
       await common.buildEnd?.apply(this)
 
       setTimeout(() => console.log(prettyServerUrl()), 1000)
-    }
+    },
   }
 })
