@@ -41,6 +41,7 @@ export function createGueletonServer(options: GueletonServerOptions = {}): {
   startServer: () => Promise<void>
   stopServer: () => Promise<void>
   setupHandlers: (callback: (handlers: { route: string, handler: Handler }[]) => void) => void
+  setupPort: (port: number) => void
   prettyServerUrl: (https?: boolean, port?: number | string) => string
 } {
   const _options = merge({ debug: false }, options)
@@ -196,6 +197,9 @@ export function createGueletonServer(options: GueletonServerOptions = {}): {
   const setupHandlers = (callback: (handlers: { route: string, handler: Handler }[]) => void): void => {
     callback(_handlers)
   }
+  const setupPort = (port: number): void => {
+    _port = port
+  }
 
   const prettyServerUrl = (https?: boolean, _port: number | string = server.port): string => {
     /**
@@ -215,6 +219,7 @@ export function createGueletonServer(options: GueletonServerOptions = {}): {
     startServer,
     stopServer,
     setupHandlers,
+    setupPort,
     prettyServerUrl,
   }
 }

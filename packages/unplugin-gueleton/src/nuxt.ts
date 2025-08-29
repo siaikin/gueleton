@@ -34,6 +34,7 @@ export default defineNuxtModule<ModuleOptions>({
       prestoreRootDir,
       prettyServerUrl,
       setupHandlers,
+      setupPort,
     } = createGueletonServer(options)
 
     const logger = useLogger('nuxt-gueleton')
@@ -73,6 +74,7 @@ export default defineNuxtModule<ModuleOptions>({
         return
       }
 
+      setupPort(_nuxt.options.devServer.port)
       logger.info(prettyServerUrl(!!_nuxt.options.devServer.https, _nuxt.options.devServer.port))
     })
 
@@ -92,12 +94,15 @@ export default defineNuxtModule<ModuleOptions>({
       getContents: () => `
 import { defineNuxtPlugin } from '#app/nuxt'
 import { GueletonProvider } from 'unplugin-gueleton/client/core'
+import { GueletonInjectionKey } from 'unplugin-gueleton/client/vue'
 
 export default defineNuxtPlugin({
   name: 'gueleton-provider-plugin',
-  setup () {
+  setup (nuxtApp) {
     const appConfig = useAppConfig()
     GueletonProvider.updateOptions(appConfig.gueleton)
+
+    nuxtApp.vueApp.provide(GueletonInjectionKey, { provider: GueletonProvider })
   }
 })`,
     })

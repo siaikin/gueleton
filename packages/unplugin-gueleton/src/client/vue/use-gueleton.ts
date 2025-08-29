@@ -2,14 +2,17 @@ import type {
   ComponentPublicInstance,
   ComputedRef,
   DeepReadonly,
+  InjectionKey,
   MaybeRefOrGetter,
   Ref,
 } from 'vue'
 import type { GueletonOptions, PublicGueletonOptions } from '../core'
 import type { ToMaybeRefOrGetter } from './utils'
 import { isNil } from 'lodash-es'
-import { computed, onMounted, readonly, ref, shallowReactive, toValue, watch } from 'vue'
+import { computed, inject, onMounted, readonly, ref, shallowReactive, toValue, watch } from 'vue'
 import { Gueleton, GueletonProvider } from '../core'
+
+export const GueletonInjectionKey = Symbol('gueleton-injection-key') as InjectionKey<{ provider: typeof GueletonProvider }>
 
 export function useGueleton<T>(
   dataKey: MaybeRefOrGetter<PublicGueletonOptions<T>['dataKey']>,
@@ -19,10 +22,12 @@ export function useGueleton<T>(
   render: ComputedRef<boolean>
   data: ComputedRef<GueletonOptions<T>['data']>
 } {
+  const { provider } = inject(GueletonInjectionKey, { provider: GueletonProvider })
+
   let gueleton: Gueleton<T>
   watch(() => toValue(dataKey), async (_dataKey) => {
     // reactive 仅对外部的嗲用 实现相应时
-    gueleton = shallowReactive(new Gueleton<T>(_dataKey, toValue(options.prestoreData)))
+    gueleton = shallowReactive(new Gueleton<T>(_dataKey, toValue(options.prestoreData), provider))
     await gueleton.resolvePrestoreData()
   }, { immediate: true })
 
