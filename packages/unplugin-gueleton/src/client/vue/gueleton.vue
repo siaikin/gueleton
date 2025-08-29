@@ -5,7 +5,9 @@ import { ref, toRefs } from 'vue'
 import { Slot } from './primitive/slot'
 import { useGueleton } from './use-gueleton'
 
-const props = defineProps<GueletonOptions<T>>()
+type Props = Partial<Omit<GueletonOptions<T>, 'dataKey'>> & Pick<GueletonOptions<T>, 'dataKey'>
+
+const props = defineProps<Props>()
 defineSlots<{
   default: (params: { data: T | null | undefined }) => any
 }>()
