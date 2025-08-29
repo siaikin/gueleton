@@ -6,7 +6,7 @@ export default defineConfig({
     'src/*.ts',
     'src/client/core/index.ts',
     'src/client/vue/index.ts',
-    'src/client/react/index.ts',
+    // 'src/client/react/index.ts',
     // 'src/client/solid-js/index.ts',
   ],
   format: ['esm', 'cjs'],

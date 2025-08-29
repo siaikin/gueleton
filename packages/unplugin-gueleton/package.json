@@ -69,10 +69,6 @@
     "./client/vue": {
       "import": "./dist/client/vue/index.js",
       "require": "./dist/client/vue/index.cjs"
-    },
-    "./client/react": {
-      "import": "./dist/client/react/index.js",
-      "require": "./dist/client/react/index.cjs"
     }
   },
   "main": "./dist/index.cjs",

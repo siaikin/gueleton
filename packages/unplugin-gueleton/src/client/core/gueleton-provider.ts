@@ -1,23 +1,25 @@
-import type { StandardProperties } from 'csstype'
-import type { SkeletonOptions } from './options'
+import type { PartialDeep } from 'type-fest'
+import type { GueletonOptions } from './options'
 import type { SkeletonStorage } from './storage'
 import { isNil, merge } from 'lodash-es'
-import { DefaultSkeletonOptions } from '../../shared'
+import { DefaultGueletonOptions } from './options'
 import { PrestoreDataStorage } from './storage'
 
-class _Provider<CSSTYPE = StandardProperties> {
-  options: SkeletonOptions<CSSTYPE>
+export type GueletonProviderOptions = Omit<GueletonOptions<any>, 'dataKey' | 'data' | 'prestoreData' | 'loading'>
+
+class _Provider {
+  options: GueletonProviderOptions
   storage: SkeletonStorage
 
   constructor(
-    options: Partial<SkeletonOptions<CSSTYPE>>,
+    options: PartialDeep<GueletonProviderOptions>,
   ) {
-    this.options = merge({}, DefaultSkeletonOptions, options)
+    this.options = merge({}, { ...DefaultGueletonOptions }, options)
 
     this.storage = PrestoreDataStorage
   }
 
-  updateOptions(options: Partial<SkeletonOptions<CSSTYPE>>): void {
+  updateOptions(options: PartialDeep<GueletonProviderOptions>): void {
     this.options = merge({}, this.options, options)
   }
 

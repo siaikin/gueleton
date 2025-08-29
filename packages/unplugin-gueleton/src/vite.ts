@@ -32,7 +32,7 @@ export default createVitePlugin<Options | undefined, false>((options, meta) => {
           return
         }
 
-        setupHandlers((handlers) => handlers.forEach(({ route, handler }) => server.middlewares.use(route, handler)))
+        setupHandlers(handlers => handlers.forEach(({ route, handler }) => server.middlewares.use(route, handler)))
 
         server.httpServer?.on('listening', async () => {
           await server.waitForRequestsIdle()

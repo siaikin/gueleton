@@ -1,2 +1,4 @@
 @import "tailwindcss";
-@source "../../../../common/"
+@import "@nuxt/ui";
+
+@source "../../../../common/";

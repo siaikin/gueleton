@@ -1,50 +1,96 @@
-import type { ComponentPublicInstance, ComputedRef, CSSProperties, MaybeRefOrGetter } from 'vue'
+import type {
+  ComponentPublicInstance,
+  ComputedRef,
+  DeepReadonly,
+  MaybeRefOrGetter,
+  Ref,
+} from 'vue'
 import type { GueletonOptions } from '../core'
 import type { ToMaybeRefOrGetter } from './utils'
-import { readonly, ref, shallowReactive, toValue, watch } from 'vue'
-import { Gueleton } from '../core'
-import { refOrGetterMapToRaw } from './utils'
 import { isNil } from 'lodash-es'
+import { computed, onMounted, readonly, ref, shallowReactive, toValue, watch } from 'vue'
+import { Gueleton, GueletonProvider } from '../core'
 
 export function useGueleton<T>(
-  dataKey: MaybeRefOrGetter<GueletonOptions<T, CSSProperties>['dataKey']>,
-  container: MaybeRefOrGetter<Element | ComponentPublicInstance | null | undefined>,
-  options: ToMaybeRefOrGetter<Omit<GueletonOptions<T, CSSProperties>, 'dataKey'>> = {},
+  dataKey: MaybeRefOrGetter<GueletonOptions<T>['dataKey']>,
+  container: MaybeRefOrGetter<Element | ComponentPublicInstance | undefined>,
+  options: ToMaybeRefOrGetter<Partial<Omit<GueletonOptions<T>, 'dataKey'>>> = {},
 ): {
-  shouldRender: ComputedRef<boolean>
-  renderData: ComputedRef<GueletonOptions<T, CSSProperties>['data']>
+  render: ComputedRef<boolean>
+  data: ComputedRef<GueletonOptions<T>['data']>
 } {
-  const shouldRender = ref(false)
-  const renderData = ref<GueletonOptions<T, CSSProperties>['data']>(undefined)
+  let gueleton: Gueleton<T>
+  watch(() => toValue(dataKey), async (_dataKey) => {
+    // reactive 仅对外部的嗲用 实现相应时
+    gueleton = shallowReactive(new Gueleton<T>(_dataKey, toValue(options.prestoreData)))
+    await gueleton.resolvePrestoreData()
+  }, { immediate: true })
 
-  let gueleton: Gueleton<T, CSSProperties>
-  watch(() => toValue(dataKey), (_dataKey) => {
-    gueleton = shallowReactive(new Gueleton(_dataKey, refOrGetterMapToRaw(options)))
-    gueleton.onOptionsUpdate = () => {
-      shouldRender.value = gueleton.shouldRender
-      renderData.value = gueleton.renderData
+  const { loading, data, limit, skeleton } = options
+
+  /**
+   * 当 prestoreData 为空时, 会根据 data 和 limit 生成预存数据, 并发送到 devServer
+   */
+  watch(
+    [
+      () => toValue(dataKey),
+      () => gueleton.prestoreDataResolved,
+      () => gueleton.prestoreData,
+      () => toValue(loading),
+      () => toValue(data),
+    ] as const,
+    async ([_dataKey, _resolved, _prestoreData, _loading, _data]) => {
+      if (!_resolved || !isNil(_prestoreData) || isNil(_data) || _loading) {
+        return
+      }
+
+      await gueleton.setupPrestoreData(_data, toValue(limit))
+    },
+  )
+
+  watch(
+    [
+      () => toValue(container),
+      useMounted(),
+      () => toValue(loading),
+      () => toValue(skeleton),
+      () => gueleton.prestoreData,
+    ] as const,
+    async ([_container, _isMounted, _loading, _options, _prestoreData], _, onCleanup) => {
+      if (isNil(_container) || !_isMounted || !_loading) {
+        return
+      }
+
+      const _el = _container instanceof Element ? _container : _container.$el
+      if (isNil(_el)) {
+        return
+      }
+
+      gueleton.mount(_el, _options)
+      onCleanup(() => gueleton.unmount())
+    },
+    { immediate: true, flush: 'post' },
+  )
+
+  const forceRender = computed(() => toValue(options.forceRender) ?? GueletonProvider.options.forceRender)
+  const shouldRender = computed(() => {
+    if (toValue(loading)) {
+      return !isNil(gueleton.prestoreData) || toValue(forceRender)
     }
-  }, { immediate: true })
-
-  const propRefs = Object.values(options)
-
-  watch([...propRefs, () => toValue(container)], () => {
-    gueleton.updateOptions(
-      refOrGetterMapToRaw(options),
-      () => {
-        const _container = toValue(container)
-
-        if (isNil(_container)) {
-          return null
-        }
-
-        return _container instanceof Element ? _container : _container?.$el
-      },
-    )
-  }, { immediate: true })
+    return true
+  })
+  const renderData = computed(() => {
+    return toValue(loading) ? gueleton.prestoreData : toValue(options.data)
+  })
 
   return {
-    shouldRender: readonly(shouldRender),
-    renderData: readonly(renderData),
+    render: shouldRender,
+    data: renderData,
   }
+}
+
+function useMounted(): DeepReadonly<Ref<boolean>> {
+  const isMounted = ref(false)
+  onMounted(() => isMounted.value = true)
+  return readonly(isMounted)
 }

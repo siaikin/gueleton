@@ -107,15 +107,16 @@ export default defineNuxtPlugin({
     addTypeTemplate({
       filename: 'types/gueleton.d.ts',
       getContents: () => `
-import type { SkeletonOptions } from 'unplugin-gueleton/client/core'
+import type { PartialDeep } from 'type-fest'
+import type { GueletonProviderOptions } from 'unplugin-gueleton/client/core'
 
 declare module 'nuxt/schema' {
   interface AppConfigInput {
-    gueleton?: Partial<SkeletonOptions>
+    gueleton?: PartialDeep<GueletonProviderOptions>
   }
 
   interface AppConfig {
-    gueleton: SkeletonOptions
+    gueleton: GueletonProviderOptions
   }
 }
 `,
