@@ -5,16 +5,16 @@ import type {
   MaybeRefOrGetter,
   Ref,
 } from 'vue'
-import type { GueletonOptions } from '../core'
+import type { GueletonOptions, PublicGueletonOptions } from '../core'
 import type { ToMaybeRefOrGetter } from './utils'
 import { isNil } from 'lodash-es'
 import { computed, onMounted, readonly, ref, shallowReactive, toValue, watch } from 'vue'
 import { Gueleton, GueletonProvider } from '../core'
 
 export function useGueleton<T>(
-  dataKey: MaybeRefOrGetter<GueletonOptions<T>['dataKey']>,
+  dataKey: MaybeRefOrGetter<PublicGueletonOptions<T>['dataKey']>,
   container: MaybeRefOrGetter<Element | ComponentPublicInstance | undefined>,
-  options: ToMaybeRefOrGetter<Partial<Omit<GueletonOptions<T>, 'dataKey'>>> = {},
+  options: ToMaybeRefOrGetter<Omit<PublicGueletonOptions<T>, 'dataKey'>> = {},
 ): {
   render: ComputedRef<boolean>
   data: ComputedRef<GueletonOptions<T>['data']>

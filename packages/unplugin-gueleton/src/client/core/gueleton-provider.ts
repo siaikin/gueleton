@@ -19,7 +19,7 @@ class _Provider {
     this.storage = PrestoreDataStorage
   }
 
-  updateOptions(options: PartialDeep<GueletonProviderOptions>): void {
+  updateOptions(options: Partial<GueletonProviderOptions>): void {
     this.options = merge({}, this.options, options)
   }
 

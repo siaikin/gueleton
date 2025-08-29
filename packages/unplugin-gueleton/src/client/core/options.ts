@@ -4,18 +4,18 @@ import type { PruneOptions } from './prune'
 export interface SkeletonOptions<CSSTYPE = CSS.StandardProperties> {
   fuzzy: number
   type: 'overlay' | 'inPlace'
-  bone: SkeletonBoneOptions<CSSTYPE>
-  container: SkeletonContainerOptions<CSSTYPE>
+  bone: Partial<SkeletonBoneOptions<CSSTYPE>>
+  container: Partial<SkeletonContainerOptions<CSSTYPE>>
 }
 
 export interface SkeletonBoneOptions<CSSTYPE> {
-  style?: CSSTYPE
-  className?: string | string[]
+  style: CSSTYPE
+  className: string | string[]
 }
 
 export interface SkeletonContainerOptions<CSSTYPE> {
-  style?: CSSTYPE
-  className?: string | string[]
+  style: CSSTYPE
+  className: string | string[]
 }
 
 export const DefaultSkeletonOptions: SkeletonOptions = {
@@ -73,6 +73,10 @@ export interface InternalGueletonOptions<DATA> {
 
 export interface GueletonOptions<DATA> extends InternalGueletonOptions<DATA>, InternalRequiredGueletonOptions {
   skeleton: SkeletonOptions
+}
+
+export type PublicGueletonOptions<DATA> = Partial<Omit<GueletonOptions<DATA>, 'dataKey' | 'skeleton'>> & Pick<GueletonOptions<DATA>, 'dataKey'> & {
+  skeleton?: Partial<SkeletonOptions>
 }
 
 export const DefaultGueletonOptions: Omit<GueletonOptions<any>, 'dataKey'> = {

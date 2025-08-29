@@ -1,13 +1,11 @@
 <script lang="ts" setup generic="T">
 import type { ComponentPublicInstance } from 'vue'
-import type { GueletonOptions } from '../core'
+import type { PublicGueletonOptions } from '../core'
 import { ref, toRefs } from 'vue'
 import { Slot } from './primitive/slot'
 import { useGueleton } from './use-gueleton'
 
-type Props = Partial<Omit<GueletonOptions<T>, 'dataKey'>> & Pick<GueletonOptions<T>, 'dataKey'>
-
-const props = defineProps<Props>()
+const props = defineProps<PublicGueletonOptions<T>>()
 defineSlots<{
   default: (params: { data: T | null | undefined }) => any
 }>()
