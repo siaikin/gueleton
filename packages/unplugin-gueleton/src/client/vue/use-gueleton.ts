@@ -12,7 +12,11 @@ import { isNil } from 'lodash-es'
 import { computed, inject, onMounted, readonly, ref, shallowReactive, toValue, watch } from 'vue'
 import { Gueleton, GueletonProvider } from '../core'
 
-export const GueletonInjectionKey = Symbol('gueleton-injection-key') as InjectionKey<{ provider: typeof GueletonProvider }>
+/**
+ * nuxt 将同一份代码执行两次, 如果使用 Symbol, 将创建两个不同的 key. 因此我们使用字符串作为 key.
+ */
+// export const GueletonInjectionKey = Symbol('gueleton-injection-key') as InjectionKey<{ provider: typeof GueletonProvider }>
+export const GueletonInjectionKey = 'gueleton-injection-key' as unknown as InjectionKey<{ provider: typeof GueletonProvider }>
 
 export function useGueleton<T>(
   dataKey: MaybeRefOrGetter<PublicGueletonOptions<T>['dataKey']>,
