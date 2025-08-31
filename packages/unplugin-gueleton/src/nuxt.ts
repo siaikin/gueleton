@@ -48,6 +48,17 @@ export default defineNuxtModule<ModuleOptions>({
      * todo 等待 https://github.com/nuxt/nuxt/issues/30756 解决
      */
     extendViteConfig((config) => {
+      /**
+       * nuxt build 时添加 watch 属性会导致下列报错. 在 production 环境下不添加 watch 属性
+       * ```
+       * Nuxt Build Error: ENOENT: no such file or directory, open 'xxx/node_modules/.cache/nuxt/.nuxt/dist/client/manifest.json'
+       * ```
+       */
+      // eslint-disable-next-line node/prefer-global/process
+      if (process.env.NODE_ENV === 'production') {
+        return
+      }
+
       config.build = defu(config.build, {
         watch: {
           chokidar: {
