@@ -1,11 +1,11 @@
 <script setup>
-import VuePlayground from '../../common/VuePlayground.vue'
+import NuxtUIPlayground from '../../common/NuxtUIPlayground.vue'
 
 </script>
 
 <template>
   <UApp>
-    <VuePlayground />
+    <NuxtUIPlayground />
   </UApp>
 </template>
 

@@ -12,10 +12,20 @@ export default createWebpackPlugin<Options | undefined, false>((options, meta) =
     async buildStart() {
       await common.buildStart?.apply(this)
 
+      // eslint-disable-next-line node/prefer-global/process
+      if (process.env.NODE_ENV === 'production') {
+        return
+      }
+
       await startServer()
     },
     async buildEnd() {
       await common.buildEnd?.apply(this)
+
+      // eslint-disable-next-line node/prefer-global/process
+      if (process.env.NODE_ENV === 'production') {
+        return
+      }
 
       setTimeout(() => console.log(prettyServerUrl()), 1000)
     },

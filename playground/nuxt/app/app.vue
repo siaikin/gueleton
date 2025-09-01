@@ -1,10 +1,10 @@
 <template>
   <div>
     <NuxtRouteAnnouncer />
-    <VuePlayground />
+    <NuxtUIPlayground />
   </div>
 </template>
 
 <script setup lang="ts">
-import VuePlayground from '../../common/VuePlayground.vue'
+import NuxtUIPlayground from '../../common/NuxtUIPlayground.vue'
 </script>

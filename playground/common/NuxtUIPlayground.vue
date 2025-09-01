@@ -1,5 +1,6 @@
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue'
+import UCard from '@nuxt/ui/components/Card.vue'
 
 const loading = ref(false)
 const type = ref('overlay')
@@ -23,6 +24,19 @@ async function handleRefresh() {
   }
 }
 onMounted(handleRefresh)
+
+const componentType = ref()
+onMounted(() => componentType.value = localStorage.getItem('componentType') ? localStorage.getItem('componentType') : 'div')
+watch(componentType, (v) => localStorage.setItem('componentType', String(v)))
+
+const dynamicComponent = computed(() => {
+  switch (componentType.value) {
+    case 'UCard':
+      return UCard
+    default:
+      return 'div'
+  }
+})
 </script>
 
 <template>
@@ -70,7 +84,7 @@ onMounted(handleRefresh)
     </div>
 
     <Gueleton data-key="switchGameList" v-slot="{ data }" :data="list" :loading="loading" :skeleton="{ type, fuzzy }">
-      <div class="flex-auto overflow-x-auto border">
+      <component :is="dynamicComponent" class="flex-auto overflow-x-auto border">
         <div v-for="item in data" :key="item.id"
           class="p-4 border-b border-slate-200 hover:bg-slate-50 transition-all duration-200 hover:shadow-sm">
           <div class="flex items-start gap-4">
@@ -125,7 +139,7 @@ onMounted(handleRefresh)
             </div>
           </div>
         </div>
-      </div>
+      </component>
     </Gueleton>
   </div>
 </template>
