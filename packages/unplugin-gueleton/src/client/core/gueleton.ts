@@ -49,9 +49,23 @@ export class Gueleton<DATA> {
   }
 
   public mount(target: Node, styleOptions?: Partial<SkeletonOptions>): void {
+    /**
+     * target 不是 Element 时, 寻找下一个兄弟节点, 直到找到 Element 节点为止.
+     *
+     * 目前, 这仅用与处理 Vue template ref 中的边界情况.
+     */
+    let _target: Node | null = target
+    while (!isNil(_target) && _target.nodeType !== Node.ELEMENT_NODE) {
+      _target = _target.nextSibling
+    }
+
+    if (isNil(_target)) {
+      return
+    }
+
     this.unmount()
 
-    this._unmountSkeleton = skeleton(target, merge({}, this.provider.options.skeleton, styleOptions))
+    this._unmountSkeleton = skeleton(_target, merge({}, this.provider.options.skeleton, styleOptions))
   }
 
   public unmount(): void {

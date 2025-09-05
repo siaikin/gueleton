@@ -20,7 +20,7 @@ export const GueletonInjectionKey = 'gueleton-injection-key' as unknown as Injec
 
 export function useGueleton<T>(
   dataKey: MaybeRefOrGetter<PublicGueletonOptions<T>['dataKey']>,
-  container: MaybeRefOrGetter<Element | ComponentPublicInstance | undefined>,
+  container: MaybeRefOrGetter<Element | ComponentPublicInstance | null | undefined>,
   options: ToMaybeRefOrGetter<Omit<PublicGueletonOptions<T>, 'dataKey'>> = {},
 ): {
   render: ComputedRef<boolean>

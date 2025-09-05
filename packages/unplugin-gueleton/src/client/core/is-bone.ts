@@ -5,9 +5,8 @@ import { EarlyReturn, getChildNodes, isEmptyTextNode, walk } from './utils'
  * 判断节点是否可作为骨骼节点. 在骨架中, 骨骼节点将具有宽高和背景颜色.
  *
  * 骨骼节点是满足下列任意条件的 DOM 元素:
- * - 自身是 {@link inlineTags} 或 {@link boneableTags} 中列出的元素, 且面积大于等于 32
+ * - 自身是 {@link Tags.Boneable} 中列出的元素, 且面积大于等于 16
  * - 子节点中包含非空文本节点
- * - 子节点中包含 {@link inlineTags} 或 {@link boneableTags} 中列出的元素, 且面积大于等于 32
  * - 自身存在 `data-gueleton-bone` 属性
  *
  * 自身存在 `data-gueleton-bone-skip` 属性时, 将跳过该节点以及子节点.
@@ -75,7 +74,7 @@ function checkElementBonable(node: Node, tags: string[]): boolean {
 
   const tagName = node.tagName.toLowerCase()
   const bbox = node.getBoundingClientRect()
-  const isHaveSize = bbox.width * bbox.height >= 32
+  const isHaveSize = bbox.width * bbox.height >= 16
   const isVisible = node.checkVisibility({ contentVisibilityAuto: true, opacityProperty: true, visibilityProperty: true })
 
   return tags.includes(tagName) && isHaveSize && isVisible

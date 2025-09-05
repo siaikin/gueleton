@@ -1,6 +1,7 @@
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue'
 import UCard from '@nuxt/ui/components/Card.vue'
+import UTree from './NuxtUITree.vue'
 
 const loading = ref(false)
 const type = ref('overlay')
@@ -33,6 +34,8 @@ const dynamicComponent = computed(() => {
   switch (componentType.value) {
     case 'UCard':
       return UCard
+    case 'UTree':
+      return UTree
     default:
       return 'div'
   }
@@ -79,6 +82,7 @@ const dynamicComponent = computed(() => {
         <select v-model="componentType">
           <option value="div">div</option>
           <option value="UCard">Nuxt UI (UCard)</option>
+          <option value="UTree">Nuxt UI (UTree)</option>
         </select>
       </label>
     </div>
