@@ -1,0 +1,229 @@
+<template>
+  <label class="not-content" :class="wrapperClasses">
+    <span v-if="selectedFramework.logo" :class="`ci ci-${selectedFramework.logo} decorator-left`"></span>
+    
+    <span class="trigger-text">
+      {{ triggerText }}
+    </span>
+    
+    <select 
+      :value="$displayedFramework"
+      :class="selectClasses"
+      :disabled="disabled"
+      @change="handleChange"
+      @focus="handleFocus"
+      @blur="handleBlur"
+    >
+      <option 
+        v-for="framework in $availableFrameworks" 
+        :key="framework.key" 
+        :value="framework.key"
+      >
+        {{ framework.displayName }}
+      </option>
+    </select>
+    
+    <span v-if="decoratorRight" class="decorator-right">
+      <slot name="decorator-right">{{ decoratorRight }}</slot>
+    </span>
+    
+    <svg class="indicator-dropdown" viewBox="0 0 16 16" fill="currentColor">
+      <path d="M4.5 6.5L8 10l3.5-3.5H4.5z"/>
+    </svg>
+  </label>
+</template>
+
+<script setup lang="ts">
+import { computed, onMounted, ref } from 'vue';
+import { useStore } from '@nanostores/vue';
+import { 
+  displayedFramework, 
+  availableFrameworks, 
+  setDisplayedFramework,
+  initializeFramework 
+} from '../store/frameworks';
+import type { FrameworkKey } from '../content.config';
+import { getFramework } from '../lib/frameworks';
+import type { StarlightRouteData } from "@astrojs/starlight/route-data";
+
+type Color = 'primary' | 'secondary' | 'accent' | 'neutral';
+type Size = 'sm' | 'md' | 'lg';
+
+interface Props {
+  className?: string;
+  appearance?: 'discreet' | 'default';
+  level?: Color;
+  size?: Size;
+  decoratorLeft?: string;
+  decoratorRight?: string;
+  disabled?: boolean;
+  astroEntry: StarlightRouteData["entry"];
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  className: '',
+  appearance: 'default',
+  level: 'primary',
+  size: 'md',
+  decoratorLeft: undefined,
+  decoratorRight: undefined,
+  disabled: false
+});
+
+const $displayedFramework = useStore(displayedFramework);
+const $availableFrameworks = computed(() => (props.astroEntry?.data?.frameworks || []).map((f) => getFramework(f)));
+const mounted = ref(false);
+const focus = ref(false);
+
+const selectedFramework = computed(() => getFramework($displayedFramework.value));
+
+const triggerText = computed(() => {
+  const framework = $availableFrameworks.value.find(f => f.key === $displayedFramework.value);
+  return framework ? framework.displayName : '';
+});
+
+const sizeClasses = {
+  sm: 'text-sm px-2 py-1',
+  md: 'text-base px-3 py-2', 
+  lg: 'text-lg px-4 py-3'
+};
+
+const wrapperClasses = computed(() => {
+  const classes = ['select-wrapper'];
+  
+  if (props.className) classes.push(props.className);
+  if (props.appearance) classes.push(`appearance-${props.appearance}`);
+  if (props.level) classes.push(`level-${props.level}`);
+  if (focus.value) classes.push('focus');
+  if (props.size) classes.push(sizeClasses[props.size]);
+  if (props.disabled) classes.push('disabled');
+  
+  return classes.join(' ');
+});
+
+const selectClasses = computed(() => {
+  const classes = ['select'];
+  return classes.join(' ');
+});
+
+const handleChange = (event: Event) => {
+  const target = event.target as HTMLSelectElement;
+  const framework = target.value as FrameworkKey;
+  setDisplayedFramework(framework);
+};
+
+const handleFocus = (event: FocusEvent) => {
+  focus.value = true;
+};
+
+const handleBlur = (event: FocusEvent) => {
+  focus.value = false;
+};
+
+onMounted(() => {
+  initializeFramework();
+  mounted.value = true;
+});
+</script>
+
+<style scoped>
+.select-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 0.375rem;
+  border: 1px solid var(--sl-color-gray-5);
+  background-color: var(--sl-color-bg);
+  transition: all 0.2s ease-in-out;
+}
+
+.select-wrapper:hover {
+  border-color: var(--sl-color-accent);
+}
+
+.select-wrapper.focus {
+  border-color: var(--sl-color-accent);
+  box-shadow: 0 0 0 2px var(--sl-color-accent-low);
+}
+
+.select-wrapper.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Appearance variants */
+.select-wrapper.appearance-default {
+  background-color: var(--sl-color-bg);
+  border: 1px solid var(--sl-color-gray-5);
+}
+
+.select-wrapper.appearance-discreet {
+  background-color: transparent;
+  border: none;
+}
+
+/* Level variants */
+.select-wrapper.level-primary {
+  --accent-color: var(--sl-color-accent);
+}
+
+.select-wrapper.level-secondary {
+  --accent-color: var(--sl-color-gray-6);
+}
+
+.decorator-left,
+.decorator-right {
+  display: flex;
+  align-items: center;
+  color: var(--sl-color-text-accent);
+}
+
+.decorator-left {
+  margin-right: 0.5rem;
+}
+
+.decorator-right {
+  margin-left: 0.5rem;
+}
+
+.trigger-text {
+  flex: 1;
+  color: var(--sl-color-text);
+  pointer-events: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.select {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  outline: none;
+}
+
+.select:disabled {
+  cursor: not-allowed;
+}
+
+.indicator-dropdown {
+  width: 1rem;
+  height: 1rem;
+  color: var(--sl-color-text-accent);
+  pointer-events: none;
+  margin-left: 0.5rem;
+  transition: transform 0.2s ease-in-out;
+}
+
+.select-wrapper.focus .indicator-dropdown {
+  transform: rotate(180deg);
+}
+</style>

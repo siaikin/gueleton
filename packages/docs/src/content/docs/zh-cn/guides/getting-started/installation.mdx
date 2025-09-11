@@ -1,0 +1,93 @@
+---
+title: 安装
+description: 在不同的构建工具和框架中安装 Gueleton
+frameworks:
+  - vue
+  - react
+  - angular
+  - vanilla
+---
+
+import { Aside, Tabs, TabItem , Code, Steps } from '@astrojs/starlight/components';
+import FrameworkSlots from '@components/FrameworkSlots.astro';
+import BoundlerSlots from '@components/BoundlerSlots.astro';
+import GueletonLogo from '@components/GueletonLogo.astro';
+
+
+import PluginSetupNuxt from '@snippets/guides/getting-started/nuxt/nuxt.config.ts?raw';
+import PluginSetupVite from '@snippets/guides/getting-started/vite/vite.config.ts?raw';
+import PluginSetupWebpack from '@snippets/guides/getting-started/webpack/webpack.config.js?raw';
+import PluginSetupVueCli from '@snippets/guides/getting-started/vue-cli/vue.config.js?raw';
+
+import RegisterComponentsVite from '@snippets/guides/getting-started/vite/main.ts?raw';
+import RegisterComponentsWebpack from '@snippets/guides/getting-started/webpack/main.js?raw';
+import RegisterComponentsVueCli from '@snippets/guides/getting-started/vue-cli/main.js?raw';
+
+## 设置
+
+### 添加到你的项目
+
+<Steps>
+1.  安装 `unplugin-gueleton` 包
+    <Tabs>
+      <TabItem label="npm" icon="seti:npm">
+        ```bash
+        npm install unplugin-gueleton
+        ```
+      </TabItem>
+      <TabItem label="pnpm" icon="pnpm">
+        ```bash
+        pnpm add unplugin-gueleton
+        ```
+      </TabItem>
+      <TabItem label="yarn" icon="seti:yarn">
+        ```bash
+        yarn add unplugin-gueleton
+        ```
+      </TabItem>
+    </Tabs>
+2.  将 `unplugin-gueleton` 作为插件添加到你的构建工具配置中
+    <BoundlerSlots>
+      <Code slot="nuxt" code={PluginSetupNuxt} lang="ts" title="nuxt.config.ts" />
+      <Code slot="vite" code={PluginSetupVite} lang="ts" title="vite.config.ts" />
+      <Code slot="webpack" code={PluginSetupWebpack} lang="js" title="webpack.config.js" />
+      <Code slot="vue-cli" code={PluginSetupVueCli} lang="js" title="vue.config.js" />
+    </BoundlerSlots>
+3.  将 Gueleton 组件注册到应用中
+    <BoundlerSlots>
+      <Aside slot="nuxt" type="tip">
+        得益于 Nuxt 的自动导入功能，你无需手动注册组件。只需确保在 `nuxt.config.ts` 中正确配置了插件即可。
+      </Aside>
+      <Code slot="vite" code={RegisterComponentsVite} lang="ts" title="main.ts" />
+      <Code slot="webpack" code={RegisterComponentsWebpack} lang="js" title="main.js" />
+      <Code slot="vue-cli" code={RegisterComponentsVueCli} lang="js" title="main.js" />
+    </BoundlerSlots>
+
+4.  最后，你还需要了解一些特定于 <GueletonLogo /> 的内容。
+    
+    首先，骨架屏一般由一个浅色底（通常是白色）加上一个或多个深色块（通常灰色）组成。
+
+    <div class="my-4 p-4 border border-gray-200 rounded-lg bg-white dark:bg-gray-800">
+      <div class="w-full h-6 bg-white dark:bg-gray-800 rounded mb-4 flex items-center justify-center text-gray-400 dark:text-gray-600 font-medium">
+        <span class="">container</span>
+      </div>
+      <div class="w-full h-12 bg-gray-200 dark:bg-gray-700 rounded mb-4 flex items-center justify-center text-gray-500 dark:text-gray-400 font-medium">
+        <span class="">bone</span>
+      </div>
+      <div class="w-1/2 h-6 bg-gray-200 dark:bg-gray-700 rounded flex items-center justify-center text-gray-500 dark:text-gray-400 font-medium">
+        <span class="">bone</span>
+      </div>
+    </div>
+
+    Gueleton 将浅色底称为 **`container`**，而深色块则称为 **`bone`**。
+
+    当自定义的占位骨架的样式时，你会用它们分别定义底部和骨架块的样式。
+
+    就这些！现在你已经成功安装了 Gueleton，并可以开始使用它来为你的应用添加漂亮的加载骨架屏效果了。
+</Steps>
+
+## 选项
+
+
+
+

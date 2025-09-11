@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+    <style>
+    @media (prefers-color-scheme: light) {
+      .eye {
+        fill: #7a7374;
+      }
+      .nostril {
+        fill: #ed556a;
+      }
+      .mouth {
+        fill: #7a7374;
+      }
+    }
+    @media (prefers-color-scheme: dark) {
+      .eye {
+        fill: #ed556a;
+      }
+      .nostril {
+        fill: #7a7374;
+      }
+      .mouth {
+        fill: #ed556a;
+      }
+    }
+  </style>
+
+  <!-- 眼窝（圆形，颜色 #7a7374，调整大小） -->
+  <circle class="eye" cx="10" cy="12" r="8">
+    <animate attributeName="opacity" values="1;0.3;1" dur="3s" repeatCount="indefinite" />
+  </circle>
+  <circle class="eye" cx="30" cy="12" r="8">
+    <animate attributeName="opacity" values="1;0.3;1" dur="3s" repeatCount="indefinite" />
+  </circle>
+
+  <!-- 鼻孔（三角形朝上，颜色 #ed556a，调整位置） -->
+  <polygon class="nostril" points="16,26 24,26 20,18">
+    <animate attributeName="opacity" values="1;0.3;1" dur="3s" repeatCount="indefinite" />
+  </polygon>
+
+  <!-- 嘴巴（长方形，颜色 #7a7374，调整位置） -->
+  <rect class="mouth" x="10" y="30" width="20" height="6">
+    <animate attributeName="opacity" values="1;0.3;1" dur="3s" repeatCount="indefinite" />
+  </rect>
+</svg>

@@ -1,0 +1,98 @@
+---
+interface Props {
+  className?: string;
+}
+
+const { className = "block mt-4 mb-5" } = Astro.props;
+---
+
+<!-- 使用自定义元素，通过 data 属性传递 className -->
+<boundler-slots data-class-name={className}>
+  <div data-boundler="vite" class="boundler-slot" style="display: none;">
+    <slot name="vite" />
+  </div>
+  <div data-boundler="webpack" class="boundler-slot" style="display: none;">
+    <slot name="webpack" />
+  </div>
+  <div data-boundler="rollup" class="boundler-slot" style="display: none;">
+    <slot name="rollup" />
+  </div>
+  <div data-boundler="esbuild" class="boundler-slot" style="display: none;">
+    <slot name="esbuild" />
+  </div>
+  <div data-boundler="rspack" class="boundler-slot" style="display: none;">
+    <slot name="rspack" />
+  </div>
+  <div data-boundler="farm" class="boundler-slot" style="display: none;">
+    <slot name="farm" />
+  </div>
+  <div data-boundler="astro" class="boundler-slot" style="display: none;">
+    <slot name="astro" />
+  </div>
+  <div data-boundler="nuxt" class="boundler-slot" style="display: none;">
+    <slot name="nuxt" />
+  </div>
+  <div data-boundler="vue-cli" class="boundler-slot" style="display: none;">
+    <slot name="vue-cli" />
+  </div>
+  <div data-boundler="bun" class="boundler-slot" style="display: none;">
+    <slot name="bun" />
+  </div>
+  <div data-boundler="next" class="boundler-slot" style="display: none;">
+    <slot name="next" />
+  </div>
+  <div data-boundler="sveltekit" class="boundler-slot" style="display: none;">
+    <slot name="sveltekit" />
+  </div>
+</boundler-slots>
+
+<script>
+  import { displayedBoundler } from "src/store/frameworks";
+
+  class BoundlerSlots extends HTMLElement {
+    private unsubscribe?: () => void;
+
+    connectedCallback() {
+      // 从 data 属性中读取 className
+      const className = this.dataset.className || "";
+      
+      // 设置类名
+      this.className = `boundler-content ${className}`;
+      
+      // 设置容器属性
+      this.setAttribute('data-boundler-container', '');
+
+      // 绑定更新显示函数
+      this.updateDisplay = this.updateDisplay.bind(this);
+      
+      // 监听框架变化
+      this.unsubscribe = displayedBoundler.subscribe(this.updateDisplay);
+      
+      // 初始化显示
+      this.updateDisplay();
+    }
+
+    disconnectedCallback() {
+      // 清理订阅
+      if (this.unsubscribe) {
+        this.unsubscribe();
+      }
+    }
+
+    updateDisplay() {
+      const currentBoundler = displayedBoundler.get();
+      const allSlots = this.querySelectorAll(".boundler-slot");
+
+      allSlots.forEach(slot => {
+        (slot as HTMLElement).style.display = 'none';
+      });
+      
+      const targetSlot = this.querySelector(`[data-boundler="${currentBoundler}"]`);
+      if (targetSlot) {
+        (targetSlot as HTMLElement).style.display = 'block';
+      }
+    }
+  }
+
+  customElements.define('boundler-slots', BoundlerSlots);
+</script>

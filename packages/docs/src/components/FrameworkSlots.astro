@@ -1,0 +1,95 @@
+---
+interface Props {
+  className?: string;
+}
+
+const { className = "block mt-4 mb-5" } = Astro.props;
+---
+
+<!-- 使用自定义元素，通过 data 属性传递 className -->
+<framework-slots data-class-name={className}>
+  <div data-framework="vite" class="framework-slot" style="display: none;">
+    <slot name="vite" />
+  </div>
+  <div data-framework="webpack" class="framework-slot" style="display: none;">
+    <slot name="webpack" />
+  </div>
+  <div data-framework="rollup" class="framework-slot" style="display: none;">
+    <slot name="rollup" />
+  </div>
+  <div data-framework="esbuild" class="framework-slot" style="display: none;">
+    <slot name="esbuild" />
+  </div>
+  <div data-framework="rspack" class="framework-slot" style="display: none;">
+    <slot name="rspack" />
+  </div>
+  <div data-framework="farm" class="framework-slot" style="display: none;">
+    <slot name="farm" />
+  </div>
+  <div data-framework="astro" class="framework-slot" style="display: none;">
+    <slot name="astro" />
+  </div>
+  <div data-framework="nuxt" class="framework-slot" style="display: none;">
+    <slot name="nuxt" />
+  </div>
+  <div data-framework="vue" class="framework-slot" style="display: none;">
+    <slot name="vue" />
+  </div>
+  <div data-framework="react" class="framework-slot" style="display: none;">
+    <slot name="react" />
+  </div>
+  <div data-framework="solidjs" class="framework-slot" style="display: none;">
+    <slot name="solidjs" />
+  </div>
+</framework-slots>
+
+<script>
+  import { displayedFramework } from "src/store/frameworks";
+
+  class FrameworkSlots extends HTMLElement {
+    private unsubscribe?: () => void;
+
+    connectedCallback() {
+      // 从 data 属性中读取 className
+      const className = this.dataset.className || "";
+      
+      // 设置类名
+      this.className = `framework-content ${className}`;
+      
+      // 设置容器属性
+      this.setAttribute('data-framework-container', '');
+
+      // 绑定更新显示函数
+      this.updateDisplay = this.updateDisplay.bind(this);
+      
+      // 监听框架变化
+      this.unsubscribe = displayedFramework.subscribe(this.updateDisplay);
+      
+      // 初始化显示
+      this.updateDisplay();
+    }
+
+    disconnectedCallback() {
+      // 清理订阅
+      if (this.unsubscribe) {
+        this.unsubscribe();
+      }
+    }
+
+    updateDisplay() {
+      const currentFramework = displayedFramework.get();
+      const allSlots = this.querySelectorAll(".framework-slot");
+
+      allSlots.forEach(slot => {
+        (slot as HTMLElement).style.display = 'none';
+      });
+      
+      const targetSlot = this.querySelector(`[data-framework="${currentFramework}"]`);
+      if (targetSlot) {
+        (targetSlot as HTMLElement).style.display = 'block';
+      }
+    }
+  }
+
+  customElements.define('framework-slots', FrameworkSlots);
+</script>

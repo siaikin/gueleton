@@ -1,0 +1,46 @@
+---
+title: Gueleton
+description: 一种自动生成占位骨架的方案
+template: splash
+hero:
+  tagline: Hi there👋, Gueleton 是一个从现有的页面自动生成占位骨架的插件. 它具有完全的自动化和可自定义样式.
+  image:
+    file: '/src/assets/logo.svg'
+  actions:
+    - text: 快速开始
+      link: /zh-cn/guides/getting-started/installation
+      icon: right-arrow
+    - text: 在 Github 上查看
+      link: https://github.com/siaikin/gueleton
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+import { Icon } from 'astro-icon/components';
+import GueletonLogo from '@components/GueletonLogo.astro';
+
+## 下一步
+
+<CardGrid stagger>
+	<Card title="安装 Gueleton" icon="download" color="#ed556a">
+	<GueletonLogo /> 目前支持作为以下框架及构建工具的插件运行：
+	<div class="flex gap-6 items-center justify-center p-4">
+		<span class="inline-block transition-transform hover:scale-110 hover:rotate-6 duration-300 ease-in-out">
+			<span class="ci ci-nuxt ci-3x drop-shadow-lg"></span>
+		</span>
+		<span class="inline-block transition-transform hover:scale-110 hover:rotate-6 duration-300 ease-in-out">
+			<span class="ci ci-vitejs ci-3x drop-shadow-lg"></span>
+		</span>
+		<span class="inline-block transition-transform hover:scale-110 hover:rotate-6 duration-300 ease-in-out">
+			<span class="ci ci-vue ci-3x drop-shadow-lg"></span>
+		</span>
+		<span class="inline-block transition-transform hover:scale-110 hover:rotate-6 duration-300 ease-in-out">
+			<span class="ci ci-webpack ci-3x drop-shadow-lg"></span>
+		</span>
+	</div>
+	</Card>
+	<Card title="检查配置项" icon="setting">
+		Edit your `sidebar` and other config in `astro.config.mjs`.
+	</Card>
+</CardGrid>
