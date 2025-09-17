@@ -87,7 +87,9 @@ export function useGueleton<T>(
     if (toValue(loading)) {
       return !isNil(gueleton.prestoreData) || toValue(forceRender)
     }
-    return true
+    else {
+      return !isNil(toValue(data)) || toValue(forceRender)
+    }
   })
   const renderData = computed(() => {
     return toValue(loading) ? gueleton.prestoreData : toValue(options.data)

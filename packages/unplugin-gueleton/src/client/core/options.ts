@@ -60,7 +60,18 @@ export interface InternalGueletonOptions<DATA> {
    */
   loading: boolean
   /**
-   * 强制渲染组件, 即使没有预存数据.
+   * 当 `loading`, `data`, 和 `prestoreData` 的值不在预设的情况之内时, 是否强制渲染组件.
+   *
+   * 例如:
+   * - ```json
+   *   {
+   *     "loading": false,
+   *     "data": null,
+   *     "prestoreData": null
+   *   }
+   *   ```
+   *   loading 为 false 时表示数据已经加载完成, 但是 data 和 prestoreData 都为 null, 此时渲染组件将导致组件接收到 null 值.
+   *   因此, 当出现以上组合时默认情况下组件不会被渲染. 如果你希望在这种情况下组件依然被渲染, 可以将 forceRender 设置为 true.
    *
    * @default false
    */
