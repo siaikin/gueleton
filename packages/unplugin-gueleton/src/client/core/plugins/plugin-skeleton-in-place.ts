@@ -1,5 +1,5 @@
 import type { SkeletonOptions, SkeletonPlugin } from '../../../shared'
-import { CopiedCssProperties } from '../constants'
+import { CopiedCssPropertiesWithoutMargin } from '../constants'
 import { isBoneable } from '../is-bone'
 import { resetMountPoint, setupMountPoint } from '../setup-mount-point'
 import { createSkeletonBone, createSkeletonContainer, setupSkeletonBone, setupSkeletonContainer } from '../setup-skeleton-bone'
@@ -20,7 +20,7 @@ export function skeletonInPlacePlugin<CSSTYPE>(root: HTMLElement, options: Skele
       setupSkeletonContainer(boneContainer, options)
 
       const boneNode = createSkeletonBone(child, options)
-      assignStyles(boneNode, child, CopiedCssProperties)
+      assignStyles(boneNode, child, CopiedCssPropertiesWithoutMargin)
       setupSkeletonBone(boneNode, child, options)
 
       boneNode.style.setProperty('width', '100%')

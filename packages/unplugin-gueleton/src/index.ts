@@ -11,7 +11,7 @@ export const unpluginFactory: UnpluginFactory<Options | undefined, false> = (opt
 
   return {
     name: 'unplugin-gueleton',
-    enforce: 'post',
+    enforce: 'pre',
     async buildStart() {
       await initial()
     },

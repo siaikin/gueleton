@@ -29,7 +29,7 @@ export const DefaultSkeletonOptions: SkeletonOptions = {
   },
   container: {
     style: {
-      cursor: 'not-allowed',
+      cursor: 'wait',
       backgroundColor: 'rgba(255, 255, 255, 1)',
     },
     className: '',
@@ -61,12 +61,16 @@ export interface InternalGueletonOptions<DATA> {
   loading: boolean
   /**
    * 强制渲染组件, 即使没有预存数据.
+   *
+   * @default false
    */
   forceRender: boolean
   /**
    * 预存数据的裁剪规则. 接受一个 number 或 对象.
    * - 当 limit 为 number 时, 表示取前 limit 项, 仅对数组有效.
    * - 当 limit 为对象时, length 表示取前 length 项, properties 表示裁剪对象的属性, 仅对对象有效.
+   *
+   * @default 3
    */
   limit: PruneOptions
 }

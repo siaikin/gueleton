@@ -3,7 +3,7 @@ import { createWebpackPlugin } from 'unplugin'
 import { unpluginFactory } from '.'
 import { createGueletonServer } from './server'
 
-export default createWebpackPlugin<Options | undefined, false>((options, meta) => {
+const webpackPlugin = createWebpackPlugin<Options | undefined, false>((options, meta) => {
   const common = unpluginFactory(options, meta)
 
   const { startServer, prettyServerUrl } = createGueletonServer(options)
@@ -31,3 +31,6 @@ export default createWebpackPlugin<Options | undefined, false>((options, meta) =
     },
   }
 })
+
+export default webpackPlugin
+export { webpackPlugin as Gueleton }

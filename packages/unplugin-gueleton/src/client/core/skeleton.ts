@@ -9,7 +9,7 @@ export function skeleton<CSSTYPE>(dom: Node, options: SkeletonOptions<CSSTYPE>):
   }
 
   const plugins: SkeletonPluginFactory<CSSTYPE>[] = [
-    preprocessPlugin,
+    // preprocessPlugin,
   ]
 
   switch (options.type) {

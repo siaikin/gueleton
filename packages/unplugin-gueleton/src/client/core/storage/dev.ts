@@ -8,6 +8,8 @@ const apiPrefix = __GUELETON_API_PREFIX__ as string
 // @ts-expect-error
 const serverPort = __GUELETON_SERVER_PORT__ as number | null
 
+const location = typeof window !== 'undefined' ? window.location : { port: 80, protocol: 'http:', hostname: 'localhost' }
+
 /**
  * 开发环境下的 Storage 实现.
  *
@@ -17,7 +19,7 @@ export class DevelopmentStorage implements SkeletonStorage {
   private apiPrefix: string
 
   constructor() {
-    const { port, protocol, hostname } = location ?? { port: 80, protocol: 'http:', hostname: 'localhost' }
+    const { port, protocol, hostname } = location
 
     /**
      * serverPort 默认为 0, 未设置时默认使用所在页面的 port.
@@ -30,9 +32,9 @@ export class DevelopmentStorage implements SkeletonStorage {
   }
 
   async getItem(key: string): Promise<string> {
-    const url = new URL(`${this.apiPrefix}/storage`, location?.href)
+    const url = new URL(`${this.apiPrefix}/storage`)
     url.searchParams.set('key', key)
-    const res = await fetch(url.toString(), { method: 'GET' })
+    const res = await fetch(url.toString())
     return await res.text()
   }
 

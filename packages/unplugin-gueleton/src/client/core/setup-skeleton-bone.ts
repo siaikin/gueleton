@@ -24,8 +24,6 @@ export function setupSkeletonBone<CSSTYPE>(bone: HTMLElement, source: HTMLElemen
 
   const className = isArray(options.bone.className) ? options.bone.className.join(' ') : options.bone.className
   className && bone.classList.add(...className.split(' '))
-
-  // boneNode.dataset.gueletonBoneSkip = 'true'
 }
 
 export function createSkeletonContainer<CSSTYPE>(source: HTMLElement, _options: SkeletonOptions<CSSTYPE>): HTMLElement {
@@ -43,6 +41,8 @@ export function setupSkeletonContainer<CSSTYPE>(container: HTMLElement, options:
   container.style.setProperty('width', '100%')
   container.style.setProperty('height', '100%')
   container.style.setProperty('margin', '0')
+  container.style.setProperty('padding', '0')
+  container.style.setProperty('overflow', 'hidden')
   container.style.setProperty('z-index', '10')
 
   for (const key of Object.keys(options.container.style || {})) {

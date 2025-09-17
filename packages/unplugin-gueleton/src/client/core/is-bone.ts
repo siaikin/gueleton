@@ -47,10 +47,10 @@ export function isBoneable(node: Node, fuzzy: number = 1): boolean {
         return EarlyReturn
       }
 
-      // if (checkElementBonable(child, voidTags)) {
-      //   result = true
-      //   return EarlyReturn
-      // }
+      if (checkElementBonable(child, Tags.Void)) {
+        result = true
+        return EarlyReturn
+      }
     },
     { depth: fuzzy },
   )

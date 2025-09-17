@@ -21,6 +21,8 @@ export const CopiedCssProperties: (keyof CSS.StandardPropertiesHyphen)[] = [
   ...['vertical-align'],
 ] as const
 
+export const CopiedCssPropertiesWithoutMargin = CopiedCssProperties.filter(prop => !prop.startsWith('margin-'))
+
 export const Tags = {
   /**
    * https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements#text_content
