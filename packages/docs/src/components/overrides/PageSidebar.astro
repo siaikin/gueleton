@@ -1,7 +1,6 @@
 ---
 import Default from '@astrojs/starlight/components/PageSidebar.astro';
 import FrameworkSwitcher from '../FrameworkSwitcher.vue';
-import BoundlerSelector from '@components/BoundlerSwitcher.vue';
 import BoundlerSwitcher from '@components/BoundlerSwitcher.vue';
 
 const props = Astro.locals.starlightRoute;
@@ -9,12 +8,17 @@ const props = Astro.locals.starlightRoute;
 
 <>
     <!-- 框架选择器 -->
-  <div class="framework-switcher-container p-4 border-b border-gray-200 dark:border-gray-700">
-    <div class="w-min flex gap-2">
-    <FrameworkSwitcher size="sm" client:load astroEntry={props.entry} />
-    <BoundlerSwitcher size="sm" client:load />
+  <div
+    class="p-4"
+    style="width: calc(var(--sl-sidebar-width) - 2 * var(--sl-sidebar-pad-x));"
+  >
+    <div class="flex gap-2">
+      <FrameworkSwitcher size="sm" client:load astroEntry={props.entry} />
+      <BoundlerSwitcher size="sm" client:load />
     </div>
   </div>
+
+  <hr class="border-b border-gray-200 dark:border-gray-700" />
 
   <!-- 默认侧边栏 -->
   <Default {...Astro.props}>

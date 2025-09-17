@@ -1,0 +1,35 @@
+---
+title: 基础示例
+frameworks:
+  - vue
+---
+
+
+import { Aside, Tabs, TabItem , Code, Steps, LinkCard } from '@astrojs/starlight/components';
+import FrameworkSlots from '@components/FrameworkSlots.astro';
+import BoundlerSlots from '@components/BoundlerSlots.astro';
+import GueletonLogo from '@components/GueletonLogo.astro';
+
+import GueletonOptionsForm from '@components/GueletonOptionsForm.astro';
+import BasicVue from '@snippets/examples/vue/Basic.vue';
+
+
+<div class="not-content flex flex-col gap-4">
+  <GueletonOptionsForm title="切换 loading 状态查看效果" formFields={['loading']} />
+
+  <BasicVue class="h-96 overflow-auto shadow-lg" client:load />
+</div>
+
+import BasicVueRaw from '@snippets/examples/vue/Basic.vue?raw';
+import TweetCardVueRaw from '@snippets/examples/vue/TweetCard.vue?raw';
+
+<FrameworkSlots>
+  <Tabs slot="vue">
+    <TabItem label="Basic.vue">
+      <Code code={BasicVueRaw.split('// ---cut-after---')[0]} lang="vue" meta="twoslash " />
+    </TabItem>
+    <TabItem label="TweetCard.vue">
+      <Code code={TweetCardVueRaw.split('// ---cut-after---')[0]} lang="vue" meta="twoslash " />
+    </TabItem>
+  </Tabs>
+</FrameworkSlots>

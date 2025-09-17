@@ -38,7 +38,6 @@ import { computed, onMounted, ref } from 'vue';
 import { useStore } from '@nanostores/vue';
 import { 
   displayedFramework, 
-  availableFrameworks, 
   setDisplayedFramework,
   initializeFramework 
 } from '../store/frameworks';

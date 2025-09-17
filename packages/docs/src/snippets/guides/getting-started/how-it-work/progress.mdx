@@ -1,0 +1,41 @@
+```d2
+首次加载: "首次加载阶段"
+后续加载: "后续加载阶段"
+
+首次加载: {
+  near: top-left
+
+  加载中: |html
+    <Gueleton
+      data-key="example"
+      data="fetchedData"
+      loading="true"
+    />
+  |
+  加载完成: |html
+    <Gueleton
+      ...
+      loading="false"
+    />
+  |
+  中间件: "开发服务器中间件\n路由：/__gueleton/**"
+  IndexJson: ".gueleton/index.json\n本地存储"
+
+  加载中 -> 加载完成: "从远端获取到数据"
+  加载完成 -> 中间件: "通过 /__gueleton/** 接口"
+  中间件 -> IndexJson: "保存 data-key 和裁剪后的 data"
+}
+
+后续加载: {
+  near: top-right
+
+  页面: "读取预存数据"
+  IndexJson: ".gueleton/index.json"
+  预存数据: "预存数据"
+  骨架渲染: "骨架屏渲染"
+
+  页面 -> IndexJson: "读取预存数据"
+  IndexJson -> 预存数据: "查找对应 data-key"
+  预存数据 -> 骨架渲染: "渲染插槽内容"
+}
+```

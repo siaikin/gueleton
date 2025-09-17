@@ -12,6 +12,7 @@
   },
   "workspaces": [
     "playground/*",
-    "packages/unplugin-gueleton"
+    "packages/unplugin-gueleton",
+    "packages/docs"
   ]
 }

@@ -10,11 +10,46 @@ hero:
     - text: 快速开始
       link: /zh-cn/guides/getting-started/installation
       icon: right-arrow
+    - text: Gueleton 如何工作？
+      link: /zh-cn/guides/getting-started/how-it-work
+      variant: secondary
     - text: 在 Github 上查看
       link: https://github.com/siaikin/gueleton
       icon: external
       variant: minimal
 ---
+
+import { Aside, Tabs, TabItem, Code, Steps, LinkCard } from '@astrojs/starlight/components';
+
+{/* <div class="not-content flex items-start gap-6">
+	<div class="flex-1">
+#### 动机
+		在现代 web 开发中，骨架屏（Skeleton Screen）已成为提升用户体验的关键技术。它通过在内容加载前显示占位符，减少用户等待时的焦虑感。然而，手动创建和维护这些骨架屏可能非常繁琐且易出错，尤其是在频繁更新的项目中。
+	</div>
+	<div class="flex-1">
+#### 解决方案
+		Gueleton 旨在简化这一过程。作为一个实验性插件，它能够自动生成占位骨架，只需传入数据即可，无需额外配置。通过预存数据机制，Gueleton 可以为尚未存在的内容渲染骨架屏，极大地减少了开发者的工作量。
+	</div>
+</div> */}
+
+import HeroCodeBeforeVue from '@snippets/hero-code/vue/before.vue?raw';
+import HeroCodeAfterVue from '@snippets/hero-code/vue/after.vue?raw';
+
+<div class="flex flex-wrap gap-2 overflow-hidden">
+	<Code
+		class="flex-1"
+		code={HeroCodeBeforeVue}
+		meta="wrap del={'人工编写的骨架代码':2-7} collapse={14-26}"
+		lang="vue"
+	/>
+
+	<Code
+		class="flex-1 mt-0"
+		code={HeroCodeAfterVue}
+		meta="wrap ins={'通过 Gueleton 自动生成':2-8} ins={10} collapse={14-26}"
+		lang="vue"
+	/>
+</div>
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
 import { Icon } from 'astro-icon/components';
@@ -23,24 +58,39 @@ import GueletonLogo from '@components/GueletonLogo.astro';
 ## 下一步
 
 <CardGrid stagger>
-	<Card title="安装 Gueleton" icon="download" color="#ed556a">
-	<GueletonLogo /> 目前支持作为以下框架及构建工具的插件运行：
-	<div class="flex gap-6 items-center justify-center p-4">
-		<span class="inline-block transition-transform hover:scale-110 hover:rotate-6 duration-300 ease-in-out">
-			<span class="ci ci-nuxt ci-3x drop-shadow-lg"></span>
-		</span>
-		<span class="inline-block transition-transform hover:scale-110 hover:rotate-6 duration-300 ease-in-out">
-			<span class="ci ci-vitejs ci-3x drop-shadow-lg"></span>
-		</span>
-		<span class="inline-block transition-transform hover:scale-110 hover:rotate-6 duration-300 ease-in-out">
+	<Card title="支持的前端框架" icon="setting">
+		<GueletonLogo /> 现在仅支持 Vue。
+
+		<a
+			href="/zh-cn/guides/getting-started/installation?framework=vue"
+			class="inline-block transition-transform hover:scale-110 hover:rotate-6 duration-300 ease-in-out"
+		>
 			<span class="ci ci-vue ci-3x drop-shadow-lg"></span>
-		</span>
-		<span class="inline-block transition-transform hover:scale-110 hover:rotate-6 duration-300 ease-in-out">
-			<span class="ci ci-webpack ci-3x drop-shadow-lg"></span>
-		</span>
-	</div>
+		</a>
+
 	</Card>
-	<Card title="检查配置项" icon="setting">
-		Edit your `sidebar` and other config in `astro.config.mjs`.
+
+	<Card title="安装 Gueleton" icon="download" color="#ed556a">
+	<GueletonLogo /> 目前支持作为以下构建工具的插件运行：
+	<div class="flex gap-6 items-center justify-center p-4">
+		<a
+			href="/zh-cn/guides/getting-started/installation?boundler=nuxt"
+			class="inline-block transition-transform hover:scale-110 hover:rotate-6 duration-300 ease-in-out"
+		>
+			<span class="ci ci-nuxt ci-3x drop-shadow-lg"></span>
+		</a>
+		<a
+			href="/zh-cn/guides/getting-started/installation?boundler=vite"
+			class="inline-block transition-transform hover:scale-110 hover:rotate-6 duration-300 ease-in-out"
+		>
+			<span class="ci ci-vitejs ci-3x drop-shadow-lg"></span>
+		</a>
+		<a
+			href="/zh-cn/guides/getting-started/installation?boundler=webpack"
+			class="inline-block transition-transform hover:scale-110 hover:rotate-6 duration-300 ease-in-out"
+		>
+			<span class="ci ci-webpack ci-3x drop-shadow-lg"></span>
+		</a>
+	</div>
 	</Card>
 </CardGrid>

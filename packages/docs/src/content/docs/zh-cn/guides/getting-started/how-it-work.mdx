@@ -1,0 +1,67 @@
+---
+title: Gueleton 是如何工作的
+description: 了解 Gueleton 的工作原理
+frameworks:
+  - vue
+---
+
+import { Aside, Tabs, TabItem, Code, Steps, LinkCard, FileTree } from '@astrojs/starlight/components';
+import GueletonLogo from '@components/GueletonLogo.astro';
+
+import HeroCodeAfterVue from '@snippets/hero-code/vue/after.vue?raw';
+import SampleVue from '@snippets/guides/getting-started/how-it-work/vue/Sample.vue?raw';
+import PrestoreData from '@snippets/guides/getting-started/how-it-work/vue/prestore-data.json?raw';
+
+<GueletonLogo /> 的想法出于我在处理骨架屏的大小、位置和间距时手足无措，并在
+，目前以实验性插件的形式发布。
+
+其核心优势在于**高度自动化**：只需传入数据，即可自动生成占位骨架，无需任何额外配置。依托于 **预存数据** 机制，Gueleton 能够为 _需要远程数据才能渲染的内容_ 渲染骨架屏。
+
+当然，Gueleton 也存在一些局限性：
+- 难以生成完全精确的骨架，尤其针对复杂组件。
+- 对项目代码有一定侵入性。你需要让 `Gueleton` 组件包裹每一个需要生成骨架的内容。
+
+
+如果你对此感兴趣，欢迎继续阅读，了解其实现原理。
+
+## 实现原理
+
+<Steps>
+
+1.  首先，需要预先设置 `data-key` 和 `data`，用于标识和存储数据源。
+    <Code code={SampleVue} lang="vue" meta="wrap {3,4}" />
+
+2.  Gueleton 通过开发服务器注册的中间件路由接口（`/__gueleton/**`），接收 `data-key` 和 `data`，并将其保存在本地文件（`.gueleton/index.json`）中。
+    <div class="flex flex-wrap gap-2">
+      <div class="flex-1">
+        <FileTree class="flex-1">
+
+        - .gueleton
+          - **index.json**
+        - src/
+        - ...
+        - package.json
+        - README.md
+
+        </FileTree>
+      </div>
+
+      <Code class="flex-1" code={PrestoreData} lang="json" title="index.json" />      
+    </div>
+
+3.  **核心流程**
+    -   开发模式下：
+        1.  首次加载页面时，Gueleton 会将 `data-key` 及裁剪后的 `data` 通过 `/__gueleton/**` 接口存入 `.gueleton/index.json`。
+            > 下文将裁剪后的 `data` 称为 **预存数据**。
+
+        2.  在后续页面加载时，Gueleton 将 `data-key` 作为查询参数通过 `/__gueleton/**` 接口从 `.gueleton/index.json` 读取对应 **预存数据**，
+            并用其渲染默认插槽内容，随后再根据 DOM 元素生成骨架屏。
+
+            <Code code={SampleVue} lang="vue" meta="wrap {6,8}" />
+
+    -  生产构建时：
+        1.  构建时，Gueleton 会将 `.gueleton/index.json` 中的所有 **预存数据** 内联到构建产物中。
+        2.  在生产环境中，Gueleton 会使用内联的 **预存数据** 来渲染默认插槽内容，然后再根据 DOM 元素生成骨架屏。
+</Steps>
+
+![Gueleton 工作原理示意图](./how-it-work-progress.svg)

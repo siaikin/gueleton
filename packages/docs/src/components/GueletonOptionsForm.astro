@@ -1,0 +1,668 @@
+---
+import { Icon } from "astro-icon/components";
+
+interface Props {
+  className?: string;
+  title?: string;
+  formFields?: string[];
+}
+
+const {
+  className,
+  title = "",
+  formFields = [
+    "loading",
+    "type",
+    "fuzzy",
+    "style",
+    "network",
+  ],
+} = Astro.props;
+---
+
+<div class={`gueleton-form-container bg-white text-sm not-content ${className || ""}`}>
+  <div class="mb-2 flex items-center gap-2">
+    <h3 class:list={["form-title", { 'hidden!': !!title }]}>{ title }</h3>
+
+    <span class="flex-auto"></span>
+
+    <button type="button" id="reload-data" class="btn btn-primary">
+      <Icon class="btn-icon" name="lucide:refresh-ccw" /> Reload data
+    </button>
+
+    <button type="button" id="reset-form" class="btn btn-secondary hidden!">
+      <Icon class="btn-icon" name="lucide:brush-cleaning" /> Reset
+    </button>
+  </div>
+
+  <form id="gueleton-options-form" class="grid gap-1">
+    <div class="form-grid">
+      <!-- Loading -->
+      <div
+        class:list={["form-field", { "hidden!": !formFields.includes("loading") }]}
+      >
+        <label for="loading" class="field-label">
+          <Icon class="label-icon" name="lucide:loader" />
+          Loading
+          <span class="flex-auto"></span>
+          <input
+            type="checkbox"
+            id="loading"
+            name="loading"
+            class="checkbox-custom"
+          />
+        </label>
+        <p class="field-hint">控制是否显示骨架屏</p>
+      </div>
+
+      <!-- Skeleton Type -->
+      <div
+        class:list={["form-field", { "hidden!": !formFields.includes("type") }]}
+      >
+        <label for="skeletonType" class="field-label">
+          Type
+          <span class="flex-auto"></span>
+          <select id="skeletonType" name="skeletonType" class="field-select">
+            <option value="overlay">Overlay</option>
+            <option value="inPlace">In Place</option>
+          </select>
+        </label>
+      </div>
+
+      <!-- Skeleton Fuzzy -->
+      <div
+        class:list={["form-field", { "hidden!": !formFields.includes("fuzzy") }]}
+      >
+        <label for="skeletonFuzzy" class="field-label">
+          <Icon class="label-icon" name="lucide:list-tree" />
+          Fuzzy
+
+          <input
+            type="range"
+            id="skeletonFuzzy"
+            name="skeletonFuzzy"
+            min="1"
+            max="10"
+            class="field-range flex-auto w-0"
+          />
+          <span class="range-value" id="fuzzyValue">1</span>
+        </label>
+        <p class="field-hint">调整生成骨架的粒度</p>
+      </div>
+    </div>
+
+    <p class:list={[{ "hidden!": !formFields.includes("style") }]}>
+      <Icon class="label-icon" name="lucide:palette" /> Style
+    </p>
+
+    <div class:list={["form-grid", { "hidden!": !formFields.includes("style") }]}>
+      <!-- Bone Background Color -->
+      <div class="form-field">
+        <label for="boneBackgroundColor" class="field-label">
+          <Icon class="label-icon" name="lucide:bone" />
+          Background Color
+
+          <span class="flex-auto"></span>
+          <input
+            type="color"
+            id="boneBackgroundColor"
+            name="boneBackgroundColor"
+            class="field-color"
+            value="#f0f0f0"
+          />
+        </label>
+      </div>
+      <!-- Bone Radius -->
+      <div class="form-field">
+        <label for="boneRadius" class="field-label">
+          <Icon class="label-icon" name="lucide:circle" />
+          Radius
+          <span class="flex-auto"></span>
+
+          <select id="boneRadius" name="boneRadius" class="field-select">
+            <option value="0px">0px</option>
+            <option value="4px">4px</option>
+            <option value="8px">8px</option>
+            <option value="12px">12px</option>
+            <option value="16px">16px</option>
+          </select>
+        </label>
+      </div>
+      <div class="form-field">
+        <label for="boneAnimation" class="field-label">
+          <Icon class="label-icon" name="lucide:play-circle" />
+          Animation
+
+          <span class="flex-auto"></span>
+          <select id="boneAnimation" name="boneAnimation" class="field-select">
+            <option value="">None</option>
+            <option value="animate-pulse">Pulse</option>
+            <option value="animate-wave">Wave</option>
+            <option value="animate-bounce">Bounce</option>
+            <option value="animate-ping">Ping</option>
+            <option value="animate-spin">Spin</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="form-grid">
+        <!-- Container Background Color -->
+        <div class="form-field">
+          <label for="containerBackgroundColor" class="field-label">
+            <Icon class="label-icon" name="lucide:container" />
+            <span
+              class="flex-auto w-0 truncate"
+              title="Container Background Color"
+              >Container Background Color</span
+            >
+
+            <input
+              type="color"
+              id="containerBackgroundColor"
+              name="containerBackgroundColor"
+              class="field-color"
+              value="#ffffff"
+            />
+          </label>
+          <p class="field-hint">type 为 overlay 时效果明显</p>
+        </div>
+      </div>
+    </div>
+
+    <p class:list={[{ "hidden!": !formFields.includes("network") }]}>
+      <Icon class="label-icon" name="lucide:network" /> Network
+    </p>
+
+    <div
+      class:list={["form-grid", { "hidden!": !formFields.includes("network") }]}
+    >
+      <!-- Limit -->
+      <div class="form-field">
+        <label for="limit" class="field-label">
+          <Icon class="label-icon" name="lucide:chevrons-right-left" />
+          Limit
+          <span class="flex-auto"></span>
+
+          <input
+            type="number"
+            id="limit"
+            name="limit"
+            min="1"
+            max="8"
+            class="field-input number-input"
+            placeholder="3"
+          />
+        </label>
+        <p class="field-hint">预存数据的裁剪规则</p>
+      </div>
+
+      <!-- Fetch Delay -->
+      <div class="form-field">
+        <label for="fetchDelay" class="field-label">
+          <Icon class="label-icon" name="lucide:timer" />
+          Fetch Delay
+          <span class="flex-auto"></span>
+
+          <input
+            type="number"
+            id="fetchDelay"
+            name="fetchDelay"
+            min="0"
+            max="10"
+            class="field-input number-input"
+          />
+          <span class="input-suffix">s</span>
+        </label>
+        <p class="field-hint">模拟网络延迟时间</p>
+      </div>
+    </div>
+  </form>
+
+  <script>
+    import { gueletonOptions } from "../store/gueleton-options";
+    import { mockRequest } from "../lib/mock-utils";
+
+    // 表单元素
+    const form = document.getElementById(
+      "gueleton-options-form",
+    ) as HTMLFormElement;
+    const resetButton = document.getElementById(
+      "reset-form",
+    ) as HTMLButtonElement;
+    const reloadButton = document.getElementById(
+      "reload-data",
+    ) as HTMLButtonElement;
+
+    // 输入元素
+    const limitInput = document.getElementById("limit") as HTMLInputElement;
+    const loadingInput = document.getElementById("loading") as HTMLInputElement;
+    const fetchDelayInput = document.getElementById(
+      "fetchDelay",
+    ) as HTMLInputElement;
+    const skeletonTypeSelect = document.getElementById(
+      "skeletonType",
+    ) as HTMLSelectElement;
+    const skeletonFuzzyInput = document.getElementById(
+      "skeletonFuzzy",
+    ) as HTMLInputElement;
+    const fuzzyValue = document.getElementById("fuzzyValue") as HTMLSpanElement;
+    const boneBackgroundColorInput = document.getElementById(
+      "boneBackgroundColor",
+    ) as HTMLInputElement;
+    const containerBackgroundColorInput = document.getElementById(
+      "containerBackgroundColor",
+    ) as HTMLInputElement;
+    const boneRadiusSelect = document.getElementById(
+      "boneRadius",
+    ) as HTMLSelectElement;
+    const boneAnimationSelect = document.getElementById(
+      "boneAnimation",
+    ) as HTMLSelectElement;
+
+    // 初始化表单数据
+    function initializeForm() {
+      const options = gueletonOptions.get();
+
+      limitInput.value = String(options.limit);
+      loadingInput.checked = options.loading;
+      fetchDelayInput.value = String(options.fetchDelay);
+      skeletonTypeSelect.value = options.skeleton.type;
+      skeletonFuzzyInput.value = String(options.skeleton.fuzzy);
+      fuzzyValue.textContent = String(options.skeleton.fuzzy);
+      boneBackgroundColorInput.value =
+        options.skeleton.bone.style?.backgroundColor || "#f0f0f0";
+      containerBackgroundColorInput.value =
+        options.skeleton.container.style?.backgroundColor || "#ffffff";
+      boneRadiusSelect.value = String(
+        options.skeleton.bone.style?.borderRadius || "0px",
+      );
+      boneAnimationSelect.value = String(
+        options.skeleton.bone.className ||
+          options.skeleton.container.className ||
+          "",
+      );
+    }
+
+    // 表单提交处理
+    function handleSubmit(event: Event) {
+      event.preventDefault();
+
+      const options = gueletonOptions.get();
+
+      const formData = new FormData(form);
+
+      const newOptions = {
+        dataKey: "example", // 保持默认值
+        data: options.data,
+        prestoreData: options.prestoreData,
+        forceRender: false, // 保持默认值
+        limit: parseInt(formData.get("limit") as string) || 3,
+        loading: formData.get("loading") === "on",
+        fetchDelay: parseFloat(formData.get("fetchDelay") as string) || 1,
+        skeleton: {
+          type: formData.get("skeletonType") as "overlay" | "inPlace",
+          fuzzy: parseInt(formData.get("skeletonFuzzy") as string) || 1,
+          bone: {
+            style: {
+              backgroundColor:
+                (formData.get("boneBackgroundColor") as string) || "#f0f0f0",
+              borderRadius: formData.get("boneRadius") as string,
+            },
+            className:
+              formData.get("boneAnimation") === "animate-wave"
+                ? ""
+                : (formData.get("boneAnimation") as string),
+          },
+          container: {
+            style: {
+              backgroundColor:
+                (formData.get("containerBackgroundColor") as string) ||
+                "#ffffff",
+            },
+            className:
+              formData.get("boneAnimation") === "animate-wave"
+                ? (formData.get("boneAnimation") as string)
+                : "",
+          },
+        },
+      };
+
+      // 更新状态
+      gueletonOptions.set(newOptions);
+    }
+
+    // 重置表单
+    function handleReset() {
+      initializeForm();
+    }
+
+    async function handleReloadData() {
+      const currentOptions = gueletonOptions.get();
+      gueletonOptions.set({
+        ...currentOptions,
+        loading: true,
+        data: undefined,
+      });
+      reloadButton.disabled = true;
+
+      const data = await mockRequest(currentOptions.fetchDelay * 1000);
+      gueletonOptions.set({ ...currentOptions, data, loading: false });
+
+      reloadButton.disabled = false;
+    }
+
+    // 监听状态变化，实时更新表单
+    let unsubscribe: (() => void) | undefined;
+
+    function setupSubscription() {
+      unsubscribe = gueletonOptions.subscribe(() => {
+        initializeForm();
+      });
+    }
+
+    // 页面加载时初始化
+    document.addEventListener("DOMContentLoaded", () => {
+      initializeForm();
+      setupSubscription();
+      setupInteractiveFeatures();
+
+      // 初始加载数据
+      handleReloadData();
+    });
+
+    // 设置交互功能
+    function setupInteractiveFeatures() {
+      // 滑块值实时更新
+      skeletonFuzzyInput.addEventListener("input", () => {
+        fuzzyValue.textContent = skeletonFuzzyInput.value;
+      });
+
+      // 实时表单提交
+      form.addEventListener("input", () => {
+        handleSubmit(new Event("input"));
+      });
+    }
+
+    // 绑定事件
+    form.addEventListener("submit", handleSubmit);
+    resetButton.addEventListener("click", handleReset);
+    reloadButton.addEventListener("click", handleReloadData);
+
+    // 清理订阅
+    window.addEventListener("beforeunload", () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    });
+  </script>
+
+  <style>
+    /* 容器样式 */
+    .gueleton-form-container {
+      position: relative;
+      padding: 4px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .form-title {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 4px;
+      font-size: 1em;
+      font-weight: 500;
+      color: #1f2937;
+      margin: 0 0 2px 0;
+    }
+
+    .form-icon {
+      width: 16px;
+      height: 16px;
+      color: var(--sl-color-text-accent);
+    }
+
+    /* 表单网格 */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 4px;
+    }
+
+    /* 表单字段 */
+    .form-field {
+      padding: 4px;
+      background-color: var(--color-red-50);
+    }
+
+    .form-field.field-focused {
+      border-color: var(--sl-color-text-accent);
+    }
+
+    /* 标签样式 */
+    .field-label {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 1em;
+      font-weight: 500;
+      color: #374151;
+      cursor: pointer;
+    }
+
+    .label-icon {
+      width: 12px;
+      height: 12px;
+      color: var(--sl-color-text-accent);
+    }
+
+    /* 输入框样式 */
+    .field-input {
+      padding: 0 6px;
+      border: 1px solid #d1d5db;
+      background: white;
+      transition: border-color 0.2s ease;
+      outline: none;
+    }
+
+    .field-input:focus {
+      border-color: var(--sl-color-text-accent);
+    }
+
+    .number-input {
+      font-family: "JetBrains Mono", monospace;
+    }
+
+    /* 输入组样式 */
+    .input-group {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-suffix {
+      color: #6b7280;
+      font-weight: 500;
+      pointer-events: none;
+    }
+
+    /* 复选框样式 */
+    .checkbox-container {
+      position: relative;
+      display: inline-block;
+    }
+
+    .checkbox-custom {
+      width: 16px;
+      height: 16px;
+      border: 1px solid #d1d5db;
+      background: white;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .checkbox-custom {
+      background: var(--sl-color-text-accent);
+      border-color: var(--sl-color-text-accent);
+    }
+
+    .checkbox-custom::after {
+      content: "✓";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    /* 选择框样式 */
+    .select-container {
+      position: relative;
+    }
+
+    .field-select {
+      padding: 0 20px 0 6px;
+      border: 1px solid #d1d5db;
+      background: white;
+      cursor: pointer;
+      appearance: none;
+      transition: border-color 0.2s ease;
+      outline: none;
+    }
+
+    .field-select:focus {
+      border-color: var(--sl-color-text-accent);
+    }
+
+    .select-arrow {
+      position: absolute;
+      right: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 12px;
+      height: 12px;
+      color: #6b7280;
+      pointer-events: none;
+    }
+
+    /* 滑块样式 */
+    .range-container {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .field-range {
+      flex: 1;
+      height: 3px;
+      background: #e5e7eb;
+      outline: none;
+      appearance: none;
+    }
+
+    .field-range::-webkit-slider-thumb {
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      background: var(--sl-color-text-accent);
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .field-range::-webkit-slider-thumb:hover {
+      transform: scale(1.1);
+    }
+
+    .range-value {
+      min-width: 20px;
+      text-align: center;
+      font-weight: 500;
+      color: var(--sl-color-text-accent);
+    }
+
+    /* 颜色输入样式 */
+    .color-input-container {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .field-color {
+      width: 24px;
+      height: 24px;
+      border: none;
+      cursor: pointer;
+      outline: none;
+      transition: transform 0.2s ease;
+    }
+
+    .field-color:hover {
+      transform: scale(1.05);
+    }
+
+    /* 提示文字 */
+    .field-hint {
+      font-size: 0.75em;
+      color: #6b7280;
+      margin: 2px 0 0 0;
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      border: 1px solid #d1d5db;
+      cursor: pointer;
+    }
+
+    .btn-icon {
+      width: 12px;
+      height: 12px;
+    }
+
+    .btn-primary {
+      background: var(--sl-color-text-accent);
+      border-color: var(--sl-color-text-accent);
+      color: white;
+    }
+
+    .btn-primary:disabled {
+      background: #d1d5db;
+      border-color: #d1d5db;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background: #f9fafb;
+      color: #374151;
+    }
+  </style>
+
+  <style is:global>
+    .animate-wave::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 0;
+      display: block;
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #fff0, #ffffff80, #fff0);
+      animation: wave 1.5s linear infinite;
+    }
+    @keyframes wave {
+      0% {
+        transform: translate(-100%);
+      }
+      100% {
+        transform: translate(100%);
+      }
+    }
+  </style>
+</div>

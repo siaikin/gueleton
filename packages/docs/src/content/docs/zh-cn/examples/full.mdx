@@ -1,0 +1,38 @@
+---
+title: 完整示例
+frameworks:
+  - vue
+---
+
+
+import { Aside, Tabs, TabItem , Code, Steps, LinkCard } from '@astrojs/starlight/components';
+import FrameworkSlots from '@components/FrameworkSlots.astro';
+import BoundlerSlots from '@components/BoundlerSlots.astro';
+import GueletonLogo from '@components/GueletonLogo.astro';
+
+import GueletonOptionsForm from '@components/GueletonOptionsForm.astro';
+import FullVue from '@snippets/examples/vue/Full.vue';
+
+
+<div class="not-content flex flex-col gap-4">
+  <GueletonOptionsForm title="全部的配置选项" />
+
+  <FullVue class="h-96 overflow-auto shadow-lg" client:load />
+</div>
+
+import FullVueRaw from '@snippets/examples/vue/Full.vue?raw';
+import TweetCardVueRaw from '@snippets/examples/vue/TweetCard.vue?raw';
+
+<FrameworkSlots>
+  <Tabs slot="vue">
+    <TabItem label="Full.vue">
+      <Code code={FullVueRaw.split('// ---cut-after---')[0]} lang="vue" meta="twoslash" />
+    </TabItem>
+    <TabItem label="TweetCard.vue">
+      <Code code={TweetCardVueRaw.split('// ---cut-after---')[0]} lang="vue" meta="twoslash" />
+    </TabItem>
+  </Tabs>
+</FrameworkSlots>
+
+<FrameworkSlots>
+</FrameworkSlots>
