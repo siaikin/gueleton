@@ -5,6 +5,10 @@ export function createSkeletonBone<CSSTYPE>(source: HTMLElement, _options: Skele
   const nodeName = source.nodeName.toLowerCase()
   const boneNode = document.createElement('div')
   boneNode.dataset.as = nodeName
+  /**
+   * 确保骨架屏元素有内容，从而使其在某些情况下（如行内元素）能够正确显示。
+   */
+  boneNode.innerHTML = '&nbsp;'
   return boneNode
 }
 

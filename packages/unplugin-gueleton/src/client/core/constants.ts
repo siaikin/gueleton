@@ -19,6 +19,8 @@ export const CopiedCssProperties: (keyof CSS.StandardPropertiesHyphen)[] = [
   ...['border-radius', 'border-bottom-right-radius', 'border-bottom-left-radius', 'border-top-right-radius', 'border-top-left-radius', 'border-end-start-radius', 'border-end-end-radius', 'border-start-start-radius', 'border-start-end-radius'],
   // inline
   ...['vertical-align'],
+  // font
+  ...['font-size', 'word-spacing', 'line-height', 'white-space', 'font-family', 'direction'],
 ] as const
 
 export const CopiedCssPropertiesWithoutMargin = CopiedCssProperties.filter(prop => !prop.startsWith('margin-'))
