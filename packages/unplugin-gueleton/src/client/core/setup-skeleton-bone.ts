@@ -33,7 +33,7 @@ export function createSkeletonContainer<CSSTYPE>(source: HTMLElement, _options: 
   return containerNode
 }
 
-export function setupSkeletonContainer<CSSTYPE>(container: HTMLElement, options: SkeletonOptions<CSSTYPE>): void {
+export function setupSkeletonContainer<CSSTYPE>(container: HTMLElement, options: SkeletonOptions<CSSTYPE>['container']): void {
   container.style.setProperty('display', 'block')
   container.style.setProperty('position', 'absolute')
   container.style.setProperty('top', '0')
@@ -45,14 +45,14 @@ export function setupSkeletonContainer<CSSTYPE>(container: HTMLElement, options:
   container.style.setProperty('overflow', 'hidden')
   container.style.setProperty('z-index', '10')
 
-  for (const key of Object.keys(options.container.style || {})) {
-    const value = options.container.style?.[key as keyof CSSTYPE]
+  for (const key of Object.keys(options.style || {})) {
+    const value = options.style?.[key as keyof CSSTYPE]
     if (value) {
       container.style.setProperty(kebabCase(key), value.toString())
     }
   }
 
-  const className = isArray(options.container.className) ? options.container.className.join(' ') : options.container.className
+  const className = isArray(options.className) ? options.className.join(' ') : options.className
   className && container.classList.add(...className.split(' '))
 
   // container.dataset.gueletonBoneSkip = 'true'

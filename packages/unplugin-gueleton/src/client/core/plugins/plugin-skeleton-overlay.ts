@@ -9,7 +9,7 @@ import { assignStyles, getChildNodes, isCustomElement, SkipChildren, walkWithMap
 export function skeletonOverlayPlugin<CSSTYPE>(root: HTMLElement, options: SkeletonOptions<CSSTYPE>): SkeletonPlugin {
   const skeletonContainer = createSkeletonContainer(root, options)
   assignStyles(skeletonContainer, root, CopiedCssProperties)
-  setupSkeletonContainer(skeletonContainer, options)
+  setupSkeletonContainer(skeletonContainer, options.container)
 
   const tree = walkWithMap<HTMLElement | Node, HTMLElement>(
     root,
