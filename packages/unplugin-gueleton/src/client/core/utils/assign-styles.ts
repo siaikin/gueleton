@@ -1,7 +1,8 @@
-import { kebabCase } from 'lodash-es'
+import type { SkeletonStyleOptions } from '../options'
+import { isArray, kebabCase } from 'lodash-es'
 
 export function assignStyles<CSSTYPE>(target: HTMLElement, source: HTMLElement, properties: (keyof CSSTYPE)[]): void {
-  const sourceStyleMap = source.computedStyleMap()
+  const styles = globalThis.getComputedStyle(source)
   const rectBox = source.getBoundingClientRect()
 
   for (const key of properties) {
@@ -22,9 +23,23 @@ export function assignStyles<CSSTYPE>(target: HTMLElement, source: HTMLElement, 
         break
       }
       default: {
-        target.style.setProperty(_key, sourceStyleMap.get(_key)?.toString() ?? '')
+        target.style.setProperty(_key, styles.getPropertyValue(_key)?.toString() ?? '')
         break
       }
     }
+  }
+}
+
+export function assignSkeletonStyle<CSSTYPE>(target: HTMLElement, options: Partial<SkeletonStyleOptions<CSSTYPE>>): void {
+  for (const key of Object.keys(options.style || {})) {
+    const value = options.style?.[key as keyof CSSTYPE]
+    if (value) {
+      target.style.setProperty(kebabCase(key), value.toString())
+    }
+  }
+
+  const className = isArray(options.className) ? options.className.join(' ') : options.className
+  if (className) {
+    target.classList.add(...className.split(' '))
   }
 }

@@ -3,7 +3,8 @@ import { isNil } from 'lodash-es'
 import { CopiedCssProperties, CopiedCssPropertiesWithoutMargin } from '../constants'
 import { isBoneable } from '../is-bone'
 import { resetMountPoint, setupMountPoint } from '../setup-mount-point'
-import { createSkeletonBone, createSkeletonContainer, setupSkeletonBone, setupSkeletonContainer } from '../setup-skeleton-bone'
+import { createSkeletonBone, setupSkeletonBone } from '../setup-skeleton-bone'
+import { createSkeletonContainer, removeSkeletonContainer, setupSkeletonContainer } from '../setup-skeleton-container'
 import { assignStyles, getChildNodes, isCustomElement, SkipChildren, walkWithMap } from '../utils'
 
 export function skeletonOverlayPlugin<CSSTYPE>(root: HTMLElement, options: SkeletonOptions<CSSTYPE>): SkeletonPlugin {
@@ -41,7 +42,7 @@ export function skeletonOverlayPlugin<CSSTYPE>(root: HTMLElement, options: Skele
       if (isBoneable(child, options.fuzzy)) { // 当前节点可以作为 bone 时, 创建一个 bone 元素返回并跳过剩余子节点.
         const skeletonNode = createSkeletonBone(child, options)
         assignStyles(skeletonNode, child, copiedCssProperties)
-        setupSkeletonBone(skeletonNode, child, options)
+        setupSkeletonBone(skeletonNode, child, options.bone)
 
         const rect = child.getBoundingClientRect()
         skeletonNode.style.setProperty('width', `${rect.width}px`)
@@ -75,9 +76,9 @@ export function skeletonOverlayPlugin<CSSTYPE>(root: HTMLElement, options: Skele
       setupMountPoint(root)
       root.append(skeletonContainer)
     },
-    unmount() {
+    async unmount() {
+      await removeSkeletonContainer(skeletonContainer, options.container)
       resetMountPoint(root)
-      skeletonContainer.remove()
     },
   }
 }

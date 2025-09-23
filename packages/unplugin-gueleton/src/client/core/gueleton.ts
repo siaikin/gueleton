@@ -13,7 +13,7 @@ export class Gueleton<DATA> {
 
   prestoreDataResolved: boolean = false
 
-  private _unmountSkeleton: (() => void) | null = null
+  private _unmountSkeleton: (() => void | Promise<void>) | null = null
 
   constructor(
     dataKey: string,

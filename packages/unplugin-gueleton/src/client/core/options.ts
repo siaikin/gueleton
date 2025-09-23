@@ -8,14 +8,17 @@ export interface SkeletonOptions<CSSTYPE = CSS.StandardProperties> {
   container: Partial<SkeletonContainerOptions<CSSTYPE>>
 }
 
-export interface SkeletonBoneOptions<CSSTYPE> {
+export interface SkeletonStyleOptions<CSSTYPE> {
   style: CSSTYPE
   className: string | string[]
 }
 
-export interface SkeletonContainerOptions<CSSTYPE> {
-  style: CSSTYPE
-  className: string | string[]
+export interface SkeletonBoneOptions<CSSTYPE> extends SkeletonStyleOptions<CSSTYPE> {
+  leave: Partial<SkeletonBoneOptions<CSSTYPE>>
+}
+
+export interface SkeletonContainerOptions<CSSTYPE> extends SkeletonStyleOptions<CSSTYPE> {
+  leave: Partial<SkeletonBoneOptions<CSSTYPE>>
 }
 
 export const DefaultSkeletonOptions: SkeletonOptions = {

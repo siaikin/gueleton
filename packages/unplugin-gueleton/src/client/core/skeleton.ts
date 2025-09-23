@@ -2,10 +2,10 @@ import type { SkeletonPluginFactory } from '../../shared'
 import type { SkeletonOptions } from './options'
 import { preprocessPlugin, skeletonInPlacePlugin, skeletonOverlayPlugin } from './plugins'
 
-export function skeleton<CSSTYPE>(dom: Node, options: SkeletonOptions<CSSTYPE>): () => void {
+export function skeleton<CSSTYPE>(dom: Node, options: SkeletonOptions<CSSTYPE>): () => Promise<void> {
   if (!skeletonSourceElementCheck(dom)) {
     // maybe error log
-    return () => {}
+    return async () => {}
   }
 
   const plugins: SkeletonPluginFactory<CSSTYPE>[] = [
@@ -29,8 +29,10 @@ export function skeleton<CSSTYPE>(dom: Node, options: SkeletonOptions<CSSTYPE>):
     return unmount
   })
 
-  return () => {
-    unmountList.forEach(unmount => unmount())
+  return async () => {
+    for (const unmount of unmountList) {
+      await unmount()
+    }
   }
 }
 

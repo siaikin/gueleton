@@ -1,10 +1,10 @@
 import { kebabCase } from 'lodash-es'
 
 export function setupMountPoint(mountPoint: HTMLElement): void {
-  // const nodeName = mountPoint.nodeName.toLowerCase()
-  const styleMap = mountPoint.computedStyleMap()
+  const style = globalThis.getComputedStyle(mountPoint)
+  const position = style.getPropertyValue('position')?.toString()
+  const display = style.getPropertyValue('display')?.toString()
 
-  const position = styleMap.get('position')?.toString()
   switch (position) {
     case 'static':
       mountPoint.style.setProperty('position', 'relative')
@@ -12,7 +12,6 @@ export function setupMountPoint(mountPoint: HTMLElement): void {
       break
   }
 
-  const display = styleMap.get('display')?.toString()
   switch (display) {
     case 'inline':
       mountPoint.style.setProperty('display', 'inline-block')
