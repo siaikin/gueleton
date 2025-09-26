@@ -86,10 +86,12 @@ import DevServerVueCli from '@snippets/guides/getting-started/installation/vue-c
       <DevServerVueCli slot="vue-cli" />
     </BoundlerSlots>
 
+    ![Prestore Data Panel](@assets/images/prestore-data-panel.png)
+
 
 5.  最后，你还需要了解一些特定于 <GueletonLogo /> 的内容。
     
-    首先，占位骨架一般由一个浅色底加上一个或多个深色块组成。
+    占位骨架一般由一个浅色底加上一个或多个深色块组成。
 
     <div class="my-4 p-4 border border-gray-200 rounded-lg bg-white dark:bg-gray-800">
       <div class="w-full h-6 bg-white dark:bg-gray-800 rounded mb-4 flex items-center justify-center text-gray-400 dark:text-gray-600 font-medium">
@@ -108,7 +110,7 @@ import DevServerVueCli from '@snippets/guides/getting-started/installation/vue-c
 
     Gueleton 将浅色底称为 **`container`**，而深色块则称为 **`bone`**。
 
-    当自定义的占位骨架的样式时，你会用它们分别定义底部和骨架块的样式。
+    当自定义的占位骨架的样式时，你会用它们分别定义占位骨架的背景和骨架块的样式。
 
     就这些！现在你已经成功安装了 Gueleton，并可以开始使用它来为你的应用添加占位骨架屏了。
 </Steps>
@@ -137,6 +139,9 @@ import DevServerVueCli from '@snippets/guides/getting-started/installation/vue-c
 
 使用 `skeleton.fuzzy` 选项可以调整 Gueleton 如何确定哪些 DOM 元素被识别为 `bone`。
 
+较低的 fuzzy 会生成更多、更细粒度的骨架块，而较高的值则会生成更少、更大块的骨架。这也是 Gueleton 能够自动适应不同 UI 组件库的关键。
+
+
 -   默认值: `1`
 -   示例：
     1.  当 `skeleton.fuzzy` 设置为 `1` 时，`p1` 和 `span1` 分别被识别为 `bone`。
@@ -160,9 +165,7 @@ import DevServerVueCli from '@snippets/guides/getting-started/installation/vue-c
         ```
 
 <Aside type="tip" class="mt-4">
-  你可以通过调整 `skeleton.fuzzy` 的值来控制骨架屏的粒度。较低的值会生成更多、更细粒度的骨架块，而较高的值则会生成更少、更大块的骨架。
-
-  这也是 Gueleton 能够自动适应不同 UI 组件库的关键。
+  查看 [fuzzy 示例](/zh-cn/examples/fuzzy) 以更好的了解 fuzzy 机制。
 </Aside>
 
 ### `skeleton.type`
@@ -173,17 +176,13 @@ import DevServerVueCli from '@snippets/guides/getting-started/installation/vue-c
   - `overlay` (默认): 整个占位骨架会覆盖在实际内容上。
   - `inPlace`: `bone` 会覆盖在它的父元素上。
 
-<LinkCard
-  title="查看xx章节了解 Gueleton 如何处理两种渲染逻辑"
-/>
-
 ### `skeleton.bone` 和 `skeleton.container`
 
 使用 `skeleton.bone` 和 `skeleton.container` 选项分别可以自定义 `bone` 和 `container` 的样式。
 
-它们接受一个 style 对象和 className 字符串。
+它们都可以接受一个 style 对象和 className 字符串。
 
-#### bone
+#### `bone`
 
 - 默认值:
   ```js
@@ -195,7 +194,7 @@ import DevServerVueCli from '@snippets/guides/getting-started/installation/vue-c
   }
   ```
 
-#### container
+#### `container`
 
 - 默认值:
   ```js
@@ -204,6 +203,22 @@ import DevServerVueCli from '@snippets/guides/getting-started/installation/vue-c
       cursor: 'not-allowed',
       backgroundColor: 'rgba(255, 255, 255, 1)',
     },
+    className: '',
+    leave: {}
+  }
+  ```
+
+##### `container.leave`
+
+当数据加载完成后，Gueleton 会移除占位骨架并显示实际内容。`container.leave` 选项允许你为 `container` 元素定义离开时的样式。
+配合 `transition` 属性使用，可以实现更平滑的过渡效果。
+
+[过渡动画示例](/zh-cn/examples/transition) 展示了通过修改 leave 样式来实现骨架淡出效果。
+
+- 默认值:
+  ```js
+  {
+    style: {},
     className: '',
   }
   ```

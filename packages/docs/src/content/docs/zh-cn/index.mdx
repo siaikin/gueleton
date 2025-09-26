@@ -58,16 +58,17 @@ import GueletonLogo from '@components/GueletonLogo.astro';
 ## 下一步
 
 <CardGrid stagger>
-	<Card title="支持的前端框架" icon="setting">
+	<Card title="快速查看示例" icon="setting">
 		<GueletonLogo /> 现在仅支持 Vue。
 
-		<a
-			href="/zh-cn/guides/getting-started/installation?framework=vue"
-			class="inline-block transition-transform hover:scale-110 hover:rotate-6 duration-300 ease-in-out"
-		>
-			<span class="ci ci-vue ci-3x drop-shadow-lg"></span>
-		</a>
-
+		<div class="flex gap-6 items-center justify-center p-4">
+			<a
+				href="/zh-cn/examples/full/?framework=vue"
+				class="inline-block transition-transform hover:scale-110 hover:rotate-6 duration-300 ease-in-out hover:animate-bounce"
+			>
+				<span class="ci ci-vue ci-3x drop-shadow-lg"></span>
+			</a>
+		</div>
 	</Card>
 
 	<Card title="安装 Gueleton" icon="download" color="#ed556a">

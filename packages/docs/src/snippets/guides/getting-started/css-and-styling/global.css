@@ -1,0 +1,89 @@
+.animate-pulse {
+  --animate-pulse: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+  animation: var(--animate-pulse); /* pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite */
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* ---cut--- */
+
+.animate-wave {
+  position: relative;
+  overflow: hidden;
+}
+
+.animate-wave::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 0;
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, #fff0, #ffffff80, #fff0);
+  animation: wave 1.5s linear infinite;
+}
+@keyframes wave {
+  0% {
+    transform: translate(-100%);
+  }
+  100% {
+    transform: translate(100%);
+  }
+}
+
+/* ---cut--- */
+
+.animate-bounce {
+  --animate-bounce: bounce 1s infinite;
+
+  animation: var(--animate-bounce); /* bounce 1s infinite */
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(-25%);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+  }
+  50% {
+    transform: none;
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+
+/* ---cut--- */
+
+.animate-ping {
+  --animate-ping: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+
+  animation: var(--animate-ping); /* ping 1s cubic-bezier(0, 0, 0.2, 1) infinite */
+}
+
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+/* ---cut--- */
+
+.animate-spin {
+  --animate-spin: spin 1s linear infinite;
+  
+  animation: var(--animate-spin); /* spin 1s linear infinite */
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

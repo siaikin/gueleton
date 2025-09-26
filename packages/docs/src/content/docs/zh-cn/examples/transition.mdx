@@ -1,0 +1,44 @@
+---
+title: 过渡动画示例
+frameworks:
+  - vue
+---
+
+import { Aside, Tabs, TabItem , Code, Steps, LinkCard } from '@astrojs/starlight/components';
+import FrameworkSlots from '@components/FrameworkSlots.astro';
+import BoundlerSlots from '@components/BoundlerSlots.astro';
+import GueletonLogo from '@components/GueletonLogo.astro';
+
+本示例展示了如何在 Vue 组件中使用 Gueleton 的离开动画功能。
+
+示例中，我们通过 `container.leave` 属性为包含多个推文卡片的容器添加了离开动画效果。
+当用户点击 "Reload Data" 按钮，并完成数据加载后，当前显示的占位骨架会先执行离开动画，等待动画执行完毕后，再显示新的内容。
+
+<Aside>
+ 占位骨架**实际**移除的时机是由 `container.leave` 动画的结束事件决定的。
+
+ 这意味着，只有当离开动画真正结束后，占位骨架才会被移除，从而确保动画的流畅性和用户体验。
+</Aside>
+
+import GueletonOptionsForm from '@components/GueletonOptionsForm.astro';
+import LeaveTransitionVue from '@snippets/examples/vue/LeaveTransition.vue';
+
+<div class="not-content flex flex-col gap-4">
+  <GueletonOptionsForm title="点击 Reload Data 查看效果" formFields={['loading','type']} />
+
+  <LeaveTransitionVue class="h-96 overflow-auto shadow-lg" client:load />
+</div>
+
+import LeaveTransitionVueRaw from '@snippets/examples/vue/LeaveTransition.vue?raw';
+import TweetCardVueRaw from '@snippets/examples/vue/TweetCard.vue?raw';
+
+<FrameworkSlots>
+  <Tabs slot="vue">
+    <TabItem label="LeaveTransition.vue">
+      <Code code={LeaveTransitionVueRaw} lang="vue" meta="twoslash {'使用 Tailwind 设置离开动画':8-13}" />
+    </TabItem>
+    <TabItem label="TweetCard.vue">
+      <Code code={TweetCardVueRaw.split('// ---cut-after---')[0]} lang="vue" meta="twoslash " />
+    </TabItem>
+  </Tabs>
+</FrameworkSlots>

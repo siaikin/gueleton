@@ -1,0 +1,44 @@
+---
+title: 并行加载示例
+frameworks:
+  - vue
+---
+
+
+import { Aside, Tabs, TabItem , Code, Steps, LinkCard } from '@astrojs/starlight/components';
+import FrameworkSlots from '@components/FrameworkSlots.astro';
+import BoundlerSlots from '@components/BoundlerSlots.astro';
+import GueletonLogo from '@components/GueletonLogo.astro';
+
+通过使用多个 `<Gueleton>` 组件，可以在一个页面中实现并行加载的效果。占位骨架屏会根据各自的加载状态独立显示和隐藏。
+
+下面是一个示例，其中有两个推特卡片组件和一个用户信息组件，它们会并行加载数据并显示各自的骨架屏。
+
+点击 **`Reload Data`** 按钮可以重新加载所有组件的数据。
+
+import GueletonOptionsForm from '@components/GueletonOptionsForm.astro';
+import ParallelVue from '@snippets/examples/vue/Parallel.vue';
+
+<div class="not-content flex flex-col gap-4">
+  <GueletonOptionsForm title="全部的配置选项" />
+
+  <ParallelVue class="shadow-lg" client:load />
+</div>
+
+import ParallelVueRaw from '@snippets/examples/vue/Parallel.vue?raw';
+import TweetCardVueRaw from '@snippets/examples/vue/TweetCard.vue?raw';
+import UserCardVueRaw from '@snippets/examples/vue/UserCard.vue?raw';
+
+<FrameworkSlots>
+  <Tabs slot="vue">
+    <TabItem label="Parallel.vue">
+      <Code code={ParallelVueRaw} lang="vue" meta="twoslash" />
+    </TabItem>
+    <TabItem label="UserCard.vue">
+      <Code code={UserCardVueRaw.split('// ---cut-after---')[0]} lang="vue" meta="twoslash" />
+    </TabItem>
+    <TabItem label="TweetCard.vue">
+      <Code code={TweetCardVueRaw.split('// ---cut-after---')[0]} lang="vue" meta="twoslash" />
+    </TabItem>
+  </Tabs>
+</FrameworkSlots>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="256" viewBox="0 128 512 256">
+  <path
+    d="M 0 256
+       Q 128 0, 256 256
+       T 512 256"
+    stroke="white"
+    stroke-width="2"
+    fill="none"
+  />
+</svg>

@@ -1,0 +1,37 @@
+---
+title: 手动设置 bone
+frameworks:
+  - vue
+---
+
+import { Aside, Tabs, TabItem , Code, Steps, LinkCard } from '@astrojs/starlight/components';
+import FrameworkSlots from '@components/FrameworkSlots.astro';
+import BoundlerSlots from '@components/BoundlerSlots.astro';
+import GueletonLogo from '@components/GueletonLogo.astro';
+
+本示例展示了如何通过添加 `data-gueleton-bone` 属性来控制一个元素被检测为 `bone`。
+
+示例中，我们手动将推文卡片的用户名和内容部分的父元素加上 `data-gueleton-bone` 属性，这样 Gueleton 就会将这些部分识别为一个 `bone`。
+
+import GueletonOptionsForm from '@components/GueletonOptionsForm.astro';
+import ManualVue from '@snippets/examples/vue/Manual.vue';
+
+<div class="not-content flex flex-col gap-4">
+  <GueletonOptionsForm title="点击 Reload Data 查看效果" formFields={['loading','type']} />
+
+  <ManualVue client:load />
+</div>
+
+import ManualVueRaw from '@snippets/examples/vue/Manual.vue?raw';
+import TweetCardVueRaw from '@snippets/examples/vue/TweetCard.vue?raw';
+
+<FrameworkSlots>
+  <Tabs slot="vue">
+    <TabItem label="Manual.vue">
+      <Code code={ManualVueRaw} lang="vue" meta="twoslash {16}" />
+    </TabItem>
+    <TabItem label="TweetCard.vue">
+      <Code code={TweetCardVueRaw.split('// ---cut-after---')[0]} lang="vue" meta="twoslash " />
+    </TabItem>
+  </Tabs>
+</FrameworkSlots>

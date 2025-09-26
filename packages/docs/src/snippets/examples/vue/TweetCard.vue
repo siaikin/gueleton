@@ -12,10 +12,8 @@
           <span class="font-semibold text-sm">{{ author }}</span>
           <span class="text-gray-500 text-sm">@user · {{ date }}</span>
         </div>
-        <p class="mt-2 text-gray-800 p-4 bg-(--color-red-50)">
-          <div>
-            {{ content }}
-          </div>
+        <p class="mt-2 text-gray-800">
+          {{ content }}
         </p>
       </div>
     </div>

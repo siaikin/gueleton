@@ -1,0 +1,37 @@
+---
+title: fuzzy 示例
+frameworks:
+  - vue
+---
+
+import { Aside, Tabs, TabItem , Code, Steps, LinkCard } from '@astrojs/starlight/components';
+import FrameworkSlots from '@components/FrameworkSlots.astro';
+import BoundlerSlots from '@components/BoundlerSlots.astro';
+import GueletonLogo from '@components/GueletonLogo.astro';
+
+本示例展示如何通过调整 `fuzzy` 选项来控制占位骨架的显示效果。
+
+示例中，展示了一个具有多层级嵌套结构的组件。通过设置不同的 `fuzzy` 值，可以观察到占位骨架在模糊处理上的差异。
+
+import GueletonOptionsForm from '@components/GueletonOptionsForm.astro';
+import FuzzyVue from '@snippets/examples/vue/Fuzzy.vue';
+
+<div class="not-content flex flex-col gap-4">
+  <GueletonOptionsForm title="点击 Reload Data 查看效果" formFields={['loading','type', 'fuzzy']} />
+
+  <FuzzyVue client:load />
+</div>
+
+import FuzzyVueRaw from '@snippets/examples/vue/Fuzzy.vue?raw';
+import TweetCardVueRaw from '@snippets/examples/vue/TweetCard.vue?raw';
+
+<FrameworkSlots>
+  <Tabs slot="vue">
+    <TabItem label="Fuzzy.vue">
+      <Code code={FuzzyVueRaw} lang="vue" meta="twoslash" />
+    </TabItem>
+    <TabItem label="TweetCard.vue">
+      <Code code={TweetCardVueRaw.split('// ---cut-after---')[0]} lang="vue" meta="twoslash " />
+    </TabItem>
+  </Tabs>
+</FrameworkSlots>

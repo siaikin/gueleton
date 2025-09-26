@@ -14,21 +14,21 @@ import BasicVue from '@snippets/examples/vue/Basic.vue';
 
 要让 Gueleton 正常工作，必须传递以下三个参数：
 
-1.  `data-key`：唯一标识数据源的字符串键。
-2.  `data`：数据源对象。
-3.  `loading`：布尔值，指示是否显示骨架屏。
+1. `data-key`：唯一标识数据源的字符串键
+2. `data`：数据源对象
+3. `loading`：布尔值，指示是否显示骨架屏
 
-此外，Gueleton 会在默认插槽中提供一个名为 `data` 的作用域变量，代表**预存数据**或 原始的 `data`。你需要使用这个变量来渲染你的内容。就像这样。
+此外，Gueleton 会在默认插槽中提供一个名为 `data` 的作用域变量，代表**预存数据**或原始的 `data`。你需要使用这个变量来渲染你的内容，就像这样：
 
 import BasicVueRaw from '@snippets/examples/vue/Basic.vue?raw';
 
 <FrameworkSlots>
-  <Code slot="vue" code={BasicVueRaw.split('// ---cut-after---')[0]} lang="vue" meta="twoslash wrap" title="Basic.vue" />
+  <Code slot="vue" code={BasicVueRaw.split('// ---cut-after---')[0]} lang="vue" meta="twoslash wrap {3-5}" title="Basic.vue" />
 </FrameworkSlots>
 
-完成后，第一次渲染你的页面时，从远程获取的 `data` 和 `data-key` 会被存储在 `.gueleton/index.json` 文件中。
+当页面首次渲染时，从远程获取的 `data` 和 `data-key` 会被存储在 `.gueleton/index.json` 文件中。
 
-后续页面加载时，Gueleton 会优先使用 `.gueleton/index.json` 中的 **预存数据** 来渲染默认插槽内容，然后再根据 DOM 元素生成骨架屏。
+在后续的页面加载中，Gueleton 会优先使用 `.gueleton/index.json` 中的**预存数据**来渲染默认插槽内容，然后再根据 DOM 元素生成骨架屏。
 
 <LinkCard
   title="在线基础示例"
@@ -41,15 +41,15 @@ import BasicVueRaw from '@snippets/examples/vue/Basic.vue?raw';
 />
 
 ## 可选参数
-除了上述三个必需参数，在安装章节中提到的[全局选项](/zh-cn/guides/getting-started/installation/#选项)也都可以使用。
 
+除了上述三个必需参数外，在安装章节中提到的[全局选项](/zh-cn/guides/getting-started/installation/#选项)也都可以在组件中使用。
 
 下面是一个完整的示例：
 
 import FullVueRaw from '@snippets/examples/vue/full.vue?raw';
 
 <FrameworkSlots>
-  <Code slot="vue" code={FullVueRaw.split('// ---cut-after---')[0]} lang="vue" meta="ins={6} ins={'      除 limit 之外的可选参数通过 skeleton 传递':7-13}" title="Full.vue" />
+  <Code slot="vue" code={FullVueRaw.split('// ---cut-after---')[0]} lang="vue" meta="ins={6} ins={'      除 limit 外的可选参数通过 skeleton 属性传递':7-13}" title="Full.vue" />
 </FrameworkSlots>
 
 <LinkCard

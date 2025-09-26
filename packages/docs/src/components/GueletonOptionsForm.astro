@@ -22,7 +22,7 @@ const {
 
 <div class={`gueleton-form-container bg-white text-sm not-content ${className || ""}`}>
   <div class="mb-2 flex items-center gap-2">
-    <h3 class:list={["form-title", { 'hidden!': !!title }]}>{ title }</h3>
+    <h3 class:list={["form-title", { 'hidden!': !title }]}>{ title }</h3>
 
     <span class="flex-auto"></span>
 
@@ -177,7 +177,7 @@ const {
       class:list={["form-grid", { "hidden!": !formFields.includes("network") }]}
     >
       <!-- Limit -->
-      <div class="form-field">
+      <div class="hidden form-field">
         <label for="limit" class="field-label">
           <Icon class="label-icon" name="lucide:chevrons-right-left" />
           Limit

@@ -1,0 +1,160 @@
+---
+title: CSS & 样式
+description: 如何使用自定义 CSS 和样式来定制 Gueleton 的骨架屏
+frameworks:
+  - vue
+---
+
+import { Aside, Tabs, TabItem, Code, Steps, LinkCard } from '@astrojs/starlight/components';
+import FrameworkSlots from '@components/FrameworkSlots.astro';
+import BoundlerSlots from '@components/BoundlerSlots.astro';
+import GueletonLogo from '@components/GueletonLogo.astro';
+
+你可以通过 `skeleton.bone` 和 `skeleton.container` 属性传递 style 或 class 分别定制 `bone` 和 `container` 的样式。
+
+在本文档中，Gueleton 使用 [Tailwind CSS](https://tailwindcss.com/docs/animation) 的 `animate-*` 实用类为占位骨架增加动画效果，当然你可以根据自己的需求进行修改。
+
+<LinkCard
+  title="切换在线示例的 Animation 选项查看效果"
+  href="/zh-cn/examples/full"
+/>
+
+## 自定义 CSS 样式
+
+对于不使用 Tailwind CSS 的项目，文档提供了几种常见的 CSS 动画效果，你可以直接使用这些 CSS 代码，或者根据你的需求进行修改。
+
+import "@snippets/guides/getting-started/css-and-styling/global.css";
+import TailwindEqualStyleRaw from '@snippets/guides/getting-started/css-and-styling/global.css?raw';
+
+import PulseOptionsVueRaw from '@snippets/guides/getting-started/css-and-styling/pulse-options.vue?raw';
+import PulseOptionsTsxRaw from '@snippets/guides/getting-started/css-and-styling/pulse-options.tsx?raw';
+
+import BounceOptionsVueRaw from '@snippets/guides/getting-started/css-and-styling/bounce-options.vue?raw';
+import BounceOptionsTsxRaw from '@snippets/guides/getting-started/css-and-styling/bounce-options.tsx?raw';
+
+import PingOptionsVueRaw from '@snippets/guides/getting-started/css-and-styling/ping-options.vue?raw';
+import PingOptionsTsxRaw from '@snippets/guides/getting-started/css-and-styling/ping-options.tsx?raw';
+
+import SpinOptionsVueRaw from '@snippets/guides/getting-started/css-and-styling/spin-options.vue?raw';
+import SpinOptionsTsxRaw from '@snippets/guides/getting-started/css-and-styling/spin-options.tsx?raw';
+
+import WaveOptionsVueRaw from '@snippets/guides/getting-started/css-and-styling/wave-options.vue?raw';
+import WaveOptionsTsxRaw from '@snippets/guides/getting-started/css-and-styling/wave-options.tsx?raw';
+
+### Pluse 动画
+
+<div class="not-content animate-pulse w-full max-w-sm space-y-2 rounded border border-gray-200 bg-white p-4 shadow-lg mx-auto dark:border-gray-700 dark:bg-gray-800">
+  <div class="h-4 w-3/4 rounded bg-gray-300 dark:bg-gray-700"></div>
+  <div class="mt-2 h-4 w-5/6 rounded bg-gray-300 dark:bg-gray-700"></div>
+</div>
+
+<Tabs>
+  <TabItem label="配置">
+    <FrameworkSlots>
+        <Code slot="vue" code={PulseOptionsVueRaw} lang="vue" meta="wrap" title="Foo.vue" />
+        <Code slot="react" code={PulseOptionsTsxRaw} lang="tsx" meta="wrap" title="Foo.tsx" />
+        <Code slot="solidjs" code={PulseOptionsTsxRaw} lang="tsx" meta="wrap" title="Foo.tsx" />
+        <Fragment slot="svelte">
+          Not available yet.
+        </Fragment>
+    </FrameworkSlots>
+  </TabItem>
+
+  <TabItem label="CSS">
+    <Code code={TailwindEqualStyleRaw.split('/* ---cut--- */')[0]} lang="css" meta="twoslash wrap" title="styles.css" />
+  </TabItem>
+</Tabs>
+
+
+### Wave 动画
+
+<div class="not-content animate-wave w-full max-w-sm space-y-2 rounded border border-gray-200 bg-white p-4 shadow-lg mx-auto dark:border-gray-700 dark:bg-gray-800">
+  <div class="h-4 w-3/4 rounded bg-gray-300 dark:bg-gray-700"></div>
+  <div class="mt-2 h-4 w-5/6 rounded bg-gray-300 dark:bg-gray-700"></div>
+</div>
+
+<Tabs>
+  <TabItem label="配置">
+    <FrameworkSlots>
+        <Code slot="vue" code={WaveOptionsVueRaw} lang="vue" meta="wrap" title="Foo.vue" />
+        <Code slot="react" code={WaveOptionsTsxRaw} lang="tsx" meta="wrap" title="Foo.tsx" />
+        <Code slot="solidjs" code={WaveOptionsTsxRaw} lang="tsx" meta="wrap" title="Foo.tsx" />
+        <Fragment slot="svelte">
+          Not available yet.
+        </Fragment>
+    </FrameworkSlots>
+  </TabItem>
+  <TabItem label="CSS">
+    <Code code={TailwindEqualStyleRaw.split('/* ---cut--- */')[1]} lang="css" meta="twoslash wrap" title="styles.css" />
+  </TabItem>
+</Tabs>
+
+### Bounce 动画
+
+<div class="not-content animate-bounce w-full max-w-sm space-y-2 rounded border border-gray-200 bg-white p-4 shadow-lg mx-auto dark:border-gray-700 dark:bg-gray-800">
+  <div class="h-4 w-3/4 rounded bg-gray-300 dark:bg-gray-700"></div>
+  <div class="mt-2 h-4 w-5/6 rounded bg-gray-300 dark:bg-gray-700"></div>
+</div>
+
+<Tabs>
+  <TabItem label="配置">
+    <FrameworkSlots>
+        <Code slot="vue" code={BounceOptionsVueRaw} lang="vue" meta="wrap" title="Foo.vue" />
+        <Code slot="react" code={BounceOptionsTsxRaw} lang="tsx" meta="wrap" title="Foo.tsx" />
+        <Code slot="solidjs" code={BounceOptionsTsxRaw} lang="tsx" meta="wrap" title="Foo.tsx" />
+        <Fragment slot="svelte">
+          Not available yet.
+        </Fragment>
+    </FrameworkSlots>
+  </TabItem>
+  <TabItem label="CSS">
+    <Code code={TailwindEqualStyleRaw.split('/* ---cut--- */')[2]} lang="css" meta="twoslash wrap" title="styles.css" />
+  </TabItem>
+</Tabs>
+
+### Ping 动画
+
+<div class="not-content animate-ping w-full max-w-sm space-y-2 rounded border border-gray-200 bg-white p-4 shadow-lg mx-auto dark:border-gray-700 dark:bg-gray-800">
+  <div class="h-4 w-3/4 rounded bg-gray-300 dark:bg-gray-700"></div>
+  <div class="mt-2 h-4 w-5/6 rounded bg-gray-300 dark:bg-gray-700"></div>
+</div>
+
+<Tabs>
+  <TabItem label="配置">
+    <FrameworkSlots>
+        <Code slot="vue" code={PingOptionsVueRaw} lang="vue" meta="wrap" title="Foo.vue" />
+        <Code slot="react" code={PingOptionsTsxRaw} lang="tsx" meta="wrap" title="Foo.tsx" />
+        <Code slot="solidjs" code={PingOptionsTsxRaw} lang="tsx" meta="wrap" title="Foo.tsx" />
+        <Fragment slot="svelte">
+          Not available yet.
+        </Fragment>
+    </FrameworkSlots>
+  </TabItem>
+  <TabItem label="CSS">
+    <Code code={TailwindEqualStyleRaw.split('/* ---cut--- */')[3]} lang="css" meta="twoslash wrap" title="styles.css" />
+  </TabItem>
+</Tabs>
+
+### Spin 动画 🤪
+
+<div class="not-content animate-spin w-full max-w-sm space-y-2 rounded border border-gray-200 bg-white p-4 shadow-lg mx-auto dark:border-gray-700 dark:bg-gray-800">
+  <div class="h-4 w-3/4 rounded bg-gray-300 dark:bg-gray-700"></div>
+  <div class="mt-2 h-4 w-5/6 rounded bg-gray-300 dark:bg-gray-700"></div>
+</div>
+
+<Tabs>
+  <TabItem label="配置">
+    <FrameworkSlots>
+        <Code slot="vue" code={SpinOptionsVueRaw} lang="vue" meta="wrap" title="Foo.vue" />
+        <Code slot="react" code={SpinOptionsTsxRaw} lang="tsx" meta="wrap" title="Foo.tsx" />
+        <Code slot="solidjs" code={SpinOptionsTsxRaw} lang="tsx" meta="wrap" title="Foo.tsx" />
+        <Fragment slot="svelte">
+          Not available yet.
+        </Fragment>
+    </FrameworkSlots>
+  </TabItem>
+  <TabItem label="CSS">
+    <Code code={TailwindEqualStyleRaw.split('/* ---cut--- */')[4]} lang="css" meta="twoslash wrap" title="styles.css" />
+  </TabItem>
+</Tabs>
+
