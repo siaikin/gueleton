@@ -44,9 +44,8 @@ export function skeletonOverlayPlugin<CSSTYPE>(root: HTMLElement, options: Skele
         assignStyles(skeletonNode, child, copiedCssProperties)
         setupSkeletonBone(skeletonNode, child, options.bone)
 
-        const rect = child.getBoundingClientRect()
-        skeletonNode.style.setProperty('width', `${rect.width}px`)
-        skeletonNode.style.setProperty('height', `${rect.height}px`)
+        skeletonNode.style.setProperty('width', `${child.offsetWidth}px`)
+        skeletonNode.style.setProperty('height', `${child.offsetHeight}px`)
 
         mappedParent?.appendChild(skeletonNode)
 
