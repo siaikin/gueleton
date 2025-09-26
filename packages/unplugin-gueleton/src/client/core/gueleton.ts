@@ -1,5 +1,5 @@
 import type { InternalGueletonOptions, SkeletonOptions } from './options'
-import { isNil, isNumber, merge } from 'lodash-es'
+import { isFunction, isNil, isNumber, merge } from 'lodash-es'
 import { GueletonProvider } from './gueleton-provider'
 import { prune } from './prune'
 import { skeleton } from './skeleton'
@@ -13,7 +13,7 @@ export class Gueleton<DATA> {
 
   prestoreDataResolved: boolean = false
 
-  private _unmountSkeleton: (() => void | Promise<void>) | null = null
+  private _unmountSkeleton: (() => Promise<void>) | null = null
 
   constructor(
     dataKey: string,
@@ -68,8 +68,11 @@ export class Gueleton<DATA> {
     this._unmountSkeleton = skeleton(_target, merge({}, this.provider.options.skeleton, styleOptions))
   }
 
-  public unmount(): void {
-    this._unmountSkeleton?.()
+  public async unmount(): Promise<void> {
+    if (isFunction(this._unmountSkeleton)) {
+      await this._unmountSkeleton()
+    }
+
     this._unmountSkeleton = null
   }
 }

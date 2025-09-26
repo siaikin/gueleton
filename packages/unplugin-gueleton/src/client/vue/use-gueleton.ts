@@ -66,7 +66,9 @@ export function useGueleton<T>(
       () => toValue(skeleton),
       () => gueleton.prestoreData,
     ] as const,
-    async ([_container, _isMounted, _loading, _options, _prestoreData], _, onCleanup) => {
+    async ([_container, _isMounted, _loading, _options, _prestoreData]) => {
+      await gueleton.unmount()
+
       if (isNil(_container) || !_isMounted || !_loading) {
         return
       }
@@ -77,7 +79,6 @@ export function useGueleton<T>(
       }
 
       gueleton.mount(_el, _options)
-      onCleanup(() => gueleton.unmount())
     },
     { immediate: true, flush: 'post' },
   )
