@@ -23,6 +23,7 @@
     import { createApp, ref, onMounted, reactive, computed } from 'https://cdn.jsdelivr.net/npm/vue@3/dist/vue.esm-browser.prod.js';
     import { filesize } from 'https://cdn.jsdelivr.net/npm/filesize@11/+esm';
     import * as fflate from 'https://cdn.skypack.dev/fflate@0.8.2?min';
+    import AhoCorasick from 'https://cdn.jsdelivr.net/npm/modern-ahocorasick@2/+esm';
 
     const apiPrefix = __GUELETON_API_PREFIX__
 
@@ -90,14 +91,81 @@
       }
     }
 
+    const sensitiveWords = await fetch('https://cdn.jsdelivr.net/gh/Bo0oM/fuzz.txt/fuzz.txt')
+      .then(res => res.text())
+      .then(text => text.split('\n')
+      .map(word => word.trim())
+      .filter(word => word.length > 0))
+    const ahocorasick = new AhoCorasick(sensitiveWords)
+
     createApp({
+      data() {
+        const prestoreStorage = reactive(new DevelopmentStorage())
+
+        const formattedPrestoreData = reactive(new Map())
+        return {
+          prestoreStorage,
+          keys: computed(() => Array(prestoreStorage.length).fill('').map((_, index) => prestoreStorage.key(index))),
+          formattedPrestoreData,
+        }
+      },
+      mounted() {
+        window.addEventListener('visibilitychange', () => document.visibilityState === 'visible' && this.refresh())
+        this.refresh()
+      },
       methods: {
         async handleDelete(key) {
           if (!confirm('Are you sure you want to delete this item?')) {
             return
           }
           await this.prestoreStorage.removeItem(key)
-          await this.prestoreStorage.sync()
+          await this.refresh()
+        },
+        formatJsonWithSensitiveDetect(key) {
+          if (!key) return {
+            content: '',
+            sensitive: {
+              count: 0,
+              words: []
+            }
+          }
+
+          const str = this.formatJson(key)
+          if (!str) return {
+            content: '',
+            sensitive: {
+              count: 0,
+              words: []
+            }
+          }
+
+          // 执行敏感词检测
+          const matches = ahocorasick.search(str)
+
+          if (matches.length === 0) {
+            return str
+          }
+          
+          // 按位置倒序排列，避免替换时位置偏移
+          matches.sort((a, b) => b[0] - a[0])
+          
+          let result = str
+          for (const [position, keywords] of matches) {
+            for (const word of keywords) {
+              const start = position - word.length + 1
+              const end = position + 1
+              const redWord = `<span class="text-red-500 font-bold bg-red-100">${word}</span>`
+              result = result.substring(0, start) + redWord + result.substring(end)
+            }
+          }
+          
+          return {
+            content: result,
+            sensitive: {
+              count: matches.length,
+              words: Array.from(new Set(matches.flatMap(m => m[1])))
+            }
+          }
         },
         formatJson(key) {
           const value = this.prestoreStorage.getItem(key)
@@ -138,15 +206,12 @@
           event.target.innerText = 'Copied!'
           setTimeout(() => event.target.innerText = 'Copy', 500)
         },
-      },
-      setup() {
-        const prestoreStorage = reactive(new DevelopmentStorage())
-        onMounted(() => prestoreStorage.sync())
-        window.addEventListener('visibilitychange', () => document.visibilityState === 'visible' && prestoreStorage.sync())
+        async refresh() {
+          await this.prestoreStorage.sync()
 
-        return {
-          prestoreStorage,
-          keys: computed(() => Array(prestoreStorage.length).fill('').map((_, index) => prestoreStorage.key(index))),
+          for (const key of Array.from({ length: this.prestoreStorage.length }, (_, index) => this.prestoreStorage.key(index))) {
+            this.formattedPrestoreData.set(key, this.formatJsonWithSensitiveDetect(key))
+          }
         }
       },
       template: `
@@ -170,9 +235,15 @@
                 <td class="px-2 py-1 border border-gray-300">
                   <details>
                     <summary class="cursor-pointer">
-                      <div class="inline-flex flex-col">
-                        <div>
-                          <span class="">{{ key }}</span>
+                      <div class="w-[calc(100%-1rem)] inline-flex flex-col">
+                        <div class="flex gap-2 items-center">
+                          <span>{{ key }}</span>
+                          <span class="flex-auto"></span>
+                          <span v-if="formattedPrestoreData.get(key)?.sensitive.count" class="inline-flex items-center px-1.5 py-0.5 text-xs font-medium bg-red-100 text-red-700 rounded-full">
+                            <iconify-icon icon="carbon:warning" class="mr-1"></iconify-icon>
+                            存在 {{ formattedPrestoreData.get(key)?.sensitive.count }} 个可能的敏感词
+                          </span>
+
                         </div>
                         <div class="flex flex-row gap-1 items-center text-xs">
                           <span v-html="getContentSize(prestoreStorage.getItem(key))"></span>
@@ -186,7 +257,7 @@
                       </div>
                     </summary>
                     <div class="relative">
-                      <pre :id="key" class="whitespace-pre-wrap text-xs p-2 bg-gray-100">{{ formatJson(key) }}</pre>
+                      <pre :id="key" class="whitespace-pre-wrap text-xs p-2 bg-gray-100" v-html="formattedPrestoreData.get(key)?.content"></pre>
                       <button class="absolute top-1 right-1 p-1 text-xs text-white bg-gray-500" @click="copyToClipboard($event, key)">Copy</button>
                     </div>
                   </details>
